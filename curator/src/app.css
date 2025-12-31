@@ -1,0 +1,99 @@
+@import 'tailwindcss';
+@import 'tw-golden-spacing';
+
+@plugin "tailwindcss-motion";
+@plugin 'daisyui' {
+	themes:
+		fantasy --default,
+		my-dark --prefersdark;
+}
+@plugin '@tailwindcss/typography';
+/* @plugin '@tailwindcss/forms'; */
+/* @plugin '@tailwindcss/aspect-ratio'; */
+@plugin 'tailwind-scrollbar';
+
+@plugin "daisyui/theme" {
+	name: 'fantasy';
+	default: true;
+	--color-primary: oklch(27% 0.46 203);
+	--color-primary-content: oklch(97% 0.014 254);
+	--radius-selector: 0.5rem;
+	--radius-field: 0.5rem;
+	--radius-box: 0.5rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 1px;
+	--depth: 0;
+	--noise: 0;
+}
+
+@plugin "daisyui/theme" {
+	name: 'dark';
+	default: false;
+	prefersdark: true;
+	color-scheme: 'dark';
+	--color-primary: oklch(27% 0.46 200);
+	--color-primary-content: oklch(97% 0.014 254);
+	--radius-selector: 0.5rem;
+	--radius-field: 0.5rem;
+	--radius-box: 0.5rem;
+	--size-selector: 0.25rem;
+	--size-field: 0.25rem;
+	--border: 1px;
+	--depth: 0;
+	--noise: 0;
+}
+
+@font-face {
+	font-family: 'Concourse4';
+	src: url('/concourse_4_regular.woff2') format('woff2');
+	font-style: normal;
+	font-variant-numeric: oldstyle-nums;
+}
+
+@font-face {
+	font-family: 'Concourse4_bold';
+	src: url('/concourse_4_bold.woff2') format('woff2');
+	font-style: bold;
+	font-variant-numeric: oldstyle-nums;
+}
+
+@theme {
+	--font-display: 'Concourse4', 'sans-serif';
+	--font-bold: 'Concourse4_bold', 'sans-serif';
+	--break-point-2xl: 100rem;
+	--breakpoint-3xl: 120rem;
+	--breakpoint-4xl: 160rem;
+	--breakpoint-5xl: 240rem;
+}
+
+@layer base {
+	html {
+		@apply 3xl:text-lg 4xl:text-2xl 5xl:text-4xl 2xl:text-lg;
+	}
+
+	body {
+		@apply overflow-hidden;
+	}
+}
+
+/* * {
+	border: 1px solid black;
+} */
+
+/* html {
+	box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+	box-sizing: inherit;
+} */
+
+input,
+label,
+textarea,
+select {
+	@apply scrollbar-thin outline-none;
+}

@@ -1,0 +1,17 @@
+services:
+  pocketbase:
+    image: kangruixiang/curator:latest
+    volumes:
+      - pb_data:/pb/pb_data
+    ports:
+      - "8090:8090"
+
+  curator:
+    image: yourname/curator-app:latest
+    depends_on:
+      - pocketbase
+    ports:
+      - "3000:3000"
+
+volumes:
+  pb_data:

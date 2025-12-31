@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' https://www.youtube.com https://www.google.com;
+        script-src 'self' 'unsafe-inline' http://127.0.0.1:8090 ws://127.0.0.1:8090; 
+        style-src 'self' 'unsafe-inline';
+        img-src 'self' data: http://127.0.0.1:8090 https://i.ytimg.com;
+        media-src 'self' data: http://127.0.0.1:8090;
+        frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com http://127.0.0.1:8090 ws://127.0.0.1:8090;
+        connect-src 'self' https://i.ytimg.com https://www.googleapis.com  http://127.0.0.1:8090 ws://127.0.0.1:8090 ws://localhost:*/;
+
+        " />
+    <link rel="icon" href="%sveltekit.assets%/icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    %sveltekit.head%
+</head>
+
+<body data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
+</body>
+
+</html>
