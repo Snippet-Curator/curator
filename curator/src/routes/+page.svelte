@@ -32,6 +32,7 @@
 	};
 
 	setNotelistState(notebookID, noteType);
+    setSearchState()
 
     let searchState = $state<SearchState>()
 
@@ -69,13 +70,12 @@
 		searchState.makeSearchQuery(searchState.searchInput);
 		await notelistState.getByFilter(searchState.customFilter, newPage);
 		searchState.searchTerm = searchState.searchInput;
-	};
+	}; 
 
-	isLoading = false;
+	isLoading =    false;
 	let initialLoading = $state();
 
 	onMount(async () => {
-        setSearchState()
         searchState = getSearchState();
 
 		if (searchState.searchTerm) {
@@ -83,11 +83,14 @@
 		}
 		initialLoading = updatePage(savedPage);
 	});
+
+
+    
 </script>
 
 <Topbar.Root>
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
-    {#if searchState}
+    {#if searchState }
 	<Search
 		bind:searchInput={searchState.searchInput}
 		searchNotes={() => updatePage(1)}
@@ -103,7 +106,8 @@
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
 
-<ScrollArea scrollHideDelay={200} class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto">
+<!-- <ScrollArea scrollHideDelay={200} class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto"> -->
+ <div class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto">
 	{#await initialLoading}
 		<NoteLoading />
 	{:then}
@@ -137,7 +141,8 @@
 			<!-- <NoteLoading /> -->
 		{/if}
 	{/await}
-</ScrollArea>
+    </div>
+<!-- </ScrollArea> -->
 
 <FilterSearch
 	bind:isOpen={isFilterSearch}
