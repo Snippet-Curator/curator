@@ -32,9 +32,9 @@
 	};
 
 	setNotelistState(notebookID, noteType);
-    setSearchState()
+	setSearchState();
 
-    let searchState = $state<SearchState>()
+	let searchState = $state<SearchState>();
 
 	const notelistState = getNotelistState(notebookID);
 
@@ -44,7 +44,7 @@
 		// saves current clicked page number
 		saveCurrentPage(newPage);
 		notelistState.clickedPage = newPage;
-        if (!searchState) return
+		if (!searchState) return;
 
 		// get default page if no filters
 		if (
@@ -70,44 +70,40 @@
 		searchState.makeSearchQuery(searchState.searchInput);
 		await notelistState.getByFilter(searchState.customFilter, newPage);
 		searchState.searchTerm = searchState.searchInput;
-	}; 
+	};
 
-	isLoading =    false;
+	isLoading = false;
 	let initialLoading = $state();
 
 	onMount(async () => {
-        searchState = getSearchState();
+		searchState = getSearchState();
 
 		if (searchState.searchTerm) {
 			searchState.searchInput = searchState.searchTerm;
 		}
 		initialLoading = updatePage(savedPage);
 	});
-
-
-    
 </script>
 
 <Topbar.Root>
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
-    {#if searchState }
-	<Search
-		bind:searchInput={searchState.searchInput}
-		searchNotes={() => updatePage(1)}
-		clearNote={() => {
-			searchState.searchTerm = '';
-			searchState.resetCustomFilter();
-			updatePage(1);
-		}}
-	/>
-    {:else} 
-    {/if}
+	{#if searchState}
+		<Search
+			bind:searchInput={searchState.searchInput}
+			searchNotes={() => updatePage(1)}
+			clearNote={() => {
+				searchState.searchTerm = '';
+				searchState.resetCustomFilter();
+				updatePage(1);
+			}}
+		/>
+	{:else}{/if}
 	<Topbar.Filter bind:isOpen={isFilterSearch} />
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
 
 <!-- <ScrollArea scrollHideDelay={200} class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto"> -->
- <div class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto">
+<div class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto">
 	{#await initialLoading}
 		<NoteLoading />
 	{:then}
@@ -133,7 +129,6 @@
 				bind:selectedNotesID
 				notes={notelistState.notes}
 			/>
-        
 		{:else if searchState?.searchInput || searchState?.searchNotebookID || searchState?.selectedTagIdArray.length > 0}
 			<div class="grid h-full place-items-center">No Notes Found.</div>
 		{:else}
@@ -141,7 +136,7 @@
 			<!-- <NoteLoading /> -->
 		{/if}
 	{/await}
-    </div>
+</div>
 <!-- </ScrollArea> -->
 
 <FilterSearch
