@@ -33,27 +33,27 @@
 		{
 			name: 'Discover',
 			icon: Newspaper,
-			url: '#/discover'
+			url: '/discover'
 		},
 		{
 			name: 'Search',
 			icon: Search,
-			url: '#/'
+			url: '/'
 		},
 		{
 			name: 'Inbox',
 			icon: NotebookIcon,
-			url: `#/notebook/${inboxID}`
+			url: `/notebook/${inboxID}`
 		},
 		{
 			name: 'Archive',
 			icon: Archive,
-			url: '#/archive'
+			url: '/archive'
 		},
 		{
 			name: 'Trash',
 			icon: Trash2,
-			url: '#/trash'
+			url: '/trash'
 		}
 	];
 
@@ -61,17 +61,17 @@
 		{
 			name: 'Organize',
 			icon: WalletCards,
-			url: '#/organize'
+			url: '/organize'
 		},
 		{
 			name: 'Import',
 			icon: Import,
-			url: '#/import'
+			url: '/import'
 		},
 		{
 			name: 'Settings',
 			icon: Settings,
-			url: '#/settings'
+			url: '/settings'
 		}
 	];
 
@@ -116,7 +116,7 @@
 				<Command.Item
 					class="motion-opacity-in-0 motion-duration-75"
 					onSelect={() => {
-						goto(`#/notebook/${notebook.id}`);
+						goto(`/notebook/${notebook.id}`);
 						isOpen = false;
 					}}
 					><NotebookIcon class="text-base-content/30" size={18} />{notebook.name}
@@ -137,7 +137,7 @@
 			{#each tags as tag}
 				<Command.Item
 					onSelect={() => {
-						goto(`#/tags/${tag.id}`);
+						goto(`/tags/${tag.id}`);
 						isOpen = false;
 					}}
 					><Tags class="text-base-content/30" size={18} />{tag.name}

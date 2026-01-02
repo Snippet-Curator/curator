@@ -17,7 +17,7 @@
 {#snippet renderNotebook(notebook: Notebook, NotebookIcon)}
 	<div class="flex w-full cursor-auto items-center justify-between px-2">
 		<a
-			href="#/notebook/{notebook.id}"
+			href="/notebook/{notebook.id}"
 			class="badge hover:badge-neutral flex items-center text-nowrap transition-colors"
 			><NotebookIcon size={18} />{notebook.name}
 		</a>
@@ -57,9 +57,9 @@
 			<ul class="menu w-full">
 				<NotebookList allowEdit={true} notebooks={notebookState.notebooks} />
 
-				<li class="mr-4 ml-0 pl-0"><a href="#/archive"><Archive size={18} />Archive</a></li>
+				<li class="mr-4 ml-0 pl-0"><a href="/archive"><Archive size={18} />Archive</a></li>
 
-				<li class="mr-4 ml-0 pl-0"><a href="#/trash"><Trash2 size={18} />Trash</a></li>
+				<li class="mr-4 ml-0 pl-0"><a href="/trash"><Trash2 size={18} />Trash</a></li>
 			</ul>
 		</div>
 

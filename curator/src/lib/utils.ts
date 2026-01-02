@@ -176,7 +176,8 @@ export function getResourceforThumbGen(resources: Resource[]) {
 		'video/x-msvideo',
 		'video/x-matroska',
 		'video/3gpp',
-		'video/ogg'
+		'video/ogg',
+		'video/x-m4v'
 	];
 
 	// Find all images
