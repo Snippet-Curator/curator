@@ -1,14 +1,25 @@
 <script lang="ts">
-	import { NoteContent, Delete, EditNotebook, EditTags, Navbar, EditNote } from '$lib/components/';
+	import {
+		NoteContent,
+		Delete,
+		EditNotebook,
+		EditTags,
+		Navbar,
+		EditNote,
+		FilterDiscover
+	} from '$lib/components/';
 	import { NoteState } from '$lib/db.svelte';
 	import * as Topbar from '$lib/components/Topbar/index';
 	import { onMount } from 'svelte';
 	import { getMobileState } from '$lib/utils.svelte';
+	import { getSearchState, SearchState, setSearchState } from './discover.svelte';
 
 	const noteState = new NoteState('discovery');
 
 	let note = $derived(noteState.note);
 	const mobileState = getMobileState();
+	let searchState = $state<SearchState>();
+	setSearchState();
 
 	let totalPages = $state(0);
 	let currentPage = $state(1);
@@ -19,6 +30,8 @@
 	let isEditTagsOpen = $state(false);
 	let isEditNotebookOpen = $state(false);
 	let isEditNoteOpen = $state(false);
+
+	let isFilterSearch = $state(false);
 
 	async function getNextNote() {
 		if (currentIndex == lastItemIndex && currentPage == totalPages) return;
@@ -56,7 +69,8 @@
 	let initialLoading = $state();
 
 	onMount(async () => {
-		await noteState.getDiscoverNoteList(1);
+		searchState = getSearchState();
+		await noteState.getDiscoverNoteList();
 		initialLoading = await noteState.getDiscoverNote(0);
 		totalPages = noteState.noteList.totalPages;
 	});
@@ -77,6 +91,7 @@
 				></Topbar.NavBtns>
 				<Topbar.Weight onUp={upvote} onDown={downvote}></Topbar.Weight>
 			{/if}
+			<Topbar.Filter bind:isOpen={isFilterSearch} />
 			<!-- {note.score.toFixed(2)} -->
 			<div class="hidden grow md:block"></div>
 
@@ -186,3 +201,11 @@
 		></EditNote>
 	{/if}
 {/await}
+
+<FilterDiscover
+	bind:isOpen={isFilterSearch}
+	search={async (customFilters) => {
+		await noteState.getDiscoverNoteList(customFilters, 1);
+		await noteState.getDiscoverNote(0);
+	}}
+/>
