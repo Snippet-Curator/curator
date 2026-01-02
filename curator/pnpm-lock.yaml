@@ -32,6 +32,9 @@ importers:
       pocketbase:
         specifier: ^0.26.5
         version: 0.26.5
+      runed:
+        specifier: ^0.37.1
+        version: 0.37.1(@sveltejs/kit@2.49.2(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.1)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.46.1)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.46.1)
       sanitize-html:
         specifier: ^2.17.0
         version: 2.17.0
@@ -1490,6 +1493,18 @@ packages:
       '@sveltejs/kit':
         optional: true
 
+  runed@0.37.1:
+    resolution: {integrity: sha512-MeFY73xBW8IueWBm012nNFIGy19WUGPLtknavyUPMpnyt350M47PhGSGrGoSLbidwn+Zlt/O0cp8/OZE3LASWA==}
+    peerDependencies:
+      '@sveltejs/kit': ^2.21.0
+      svelte: ^5.7.0
+      zod: ^4.1.0
+    peerDependenciesMeta:
+      '@sveltejs/kit':
+        optional: true
+      zod:
+        optional: true
+
   sade@1.8.1:
     resolution: {integrity: sha512-xal3CZX1Xlo/k4ApwCFrHVACi9fBqJ7V+mwhBsuf/1IOKbBy098Fex+Wa/5QMubw09pSZ/u8EY8PWgevJsXp1A==}
     engines: {node: '>=6'}
@@ -2927,6 +2942,15 @@ snapshots:
       svelte: 5.46.1
 
   runed@0.35.1(@sveltejs/kit@2.49.2(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.1)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.46.1)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.46.1):
+    dependencies:
+      dequal: 2.0.3
+      esm-env: 1.2.2
+      lz-string: 1.5.0
+      svelte: 5.46.1
+    optionalDependencies:
+      '@sveltejs/kit': 2.49.2(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.1)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.46.1)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2))
+
+  runed@0.37.1(@sveltejs/kit@2.49.2(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.46.1)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.46.1)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.46.1):
     dependencies:
       dequal: 2.0.3
       esm-env: 1.2.2
