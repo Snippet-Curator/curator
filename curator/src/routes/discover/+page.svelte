@@ -38,7 +38,7 @@
 		currentIndex++;
 		if (currentIndex == 30) {
 			currentPage++;
-			await noteState.getDiscoverNoteList(undefined, currentPage);
+			await noteState.getDiscoverNoteList(searchState?.customFilter, currentPage);
 			currentIndex = 0;
 		}
 		// const start = performance.now();
@@ -54,8 +54,8 @@
 		currentIndex--;
 		if (currentIndex < 0 && currentPage > 1) {
 			currentPage--;
-			await noteState.getDiscoverNoteList(undefined, currentPage);
-			currentIndex = 99;
+			await noteState.getDiscoverNoteList(searchState?.customFilter, currentPage);
+			currentIndex = 29;
 		}
 		await noteState.getDiscoverNote(currentIndex);
 	}
