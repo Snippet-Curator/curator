@@ -79,8 +79,6 @@ export class SearchState {
 			.openBracket()
 			.like('title', this.searchInput)
 			.or()
-			.like('content', searchInput)
-			.or()
 			.like('tags', this.searchedTagID)
 			.or()
 			.equal('notebook', this.searchNotebookID)
@@ -98,11 +96,7 @@ export class SearchState {
 		const tagFilter = this.getTagFilter(this.selectedTagIdArray);
 		const tagExcludeFilter = this.getTagExcludeFilter(this.selectedExcludeTagIdArray);
 		this.customFilter = this.query
-			.openBracket()
 			.like('title', searchInput)
-			.or()
-			.like('content', searchInput)
-			.closeBracket()
 			.and()
 			.customFilter(tagFilter)
 			.and()

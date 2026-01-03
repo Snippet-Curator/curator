@@ -841,8 +841,9 @@ export class NoteState {
 
 	async getDiscoverNoteList(filter: string = `status="active"`, page = 1) {
 		const start = performance.now();
+		console.log(filter);
 		const { data, error } = await tryCatch(
-			pb.collection(notesCollection).getList(page, 100, {
+			pb.collection(viewNotesCollection).getList(page, 100, {
 				expand: 'notebook,tags',
 				sort: '-score',
 				filter: filter

@@ -63,7 +63,7 @@
 			<input
 				type="text"
 				class="input col-span-8 col-start-4 w-full"
-				placeholder="Search title and content..."
+				placeholder="Search title..."
 				bind:value={searchState.searchInput}
 			/>
 
