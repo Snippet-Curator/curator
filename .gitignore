@@ -3,6 +3,7 @@ node_modules
 **/pb_data
 **/build
 **/.svelte-kit
+*.woff2
 
 # Output
 .output
