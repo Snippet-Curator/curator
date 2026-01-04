@@ -98,16 +98,16 @@
 				'daysOld',
 				'Refresh Score Cutoff (Day)',
 				settingState.daysOld,
-				'Notes with score older than this will get a score refresh on startup to recalculate based on recency. Use 0 to refresh all notes (can increase load time).',
+				'Notes with score older than this will get a score refresh on startup and every few hours to recalculate based on recency. Use 0 to refresh all notes (can increase load time).',
 				0,
 				365,
 				1
 			)}
 			{@render renderDiscoverSetting(
 				'scoreRefreshHour',
-				'Score Refresh Frequency When Open (Hour)',
+				'Score Refresh Frequency (Hour)',
 				settingState.scoreRefreshHour,
-				'Curator will refresh scores when open. Default refresh is every 6 hours. Changing it to 0 to stop refresh automatically.',
+				'Curator will refresh scores in the background. Default refresh is every 6 hours. Changing it to 0 to stop refresh automatically.',
 				0,
 				24,
 				1
