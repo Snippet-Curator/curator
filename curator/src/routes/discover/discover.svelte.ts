@@ -84,11 +84,7 @@ export class SearchState {
 			.equal('notebook', this.searchNotebookID)
 			.closeBracket()
 			.and()
-			.openBracket()
 			.equal('status', 'active')
-			.or()
-			.equal('status', 'archived')
-			.closeBracket()
 			.build();
 	}
 
@@ -104,11 +100,7 @@ export class SearchState {
 			.and()
 			.equal('notebook', this.searchNotebookID)
 			.and()
-			.openBracket()
 			.equal('status', 'active')
-			.or()
-			.equal('status', 'archived')
-			.closeBracket()
 			.build();
 	}
 }
