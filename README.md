@@ -7,6 +7,11 @@ Read the [documentation](https://curator.krxiang.com).
 
 ![](/images/front.png)
 
+It differs from other bookmarking sites by its method of importing items and rediscovering them. 
+
+Import only what you need (SingleFile saves, Evernote export, files, etc.), and discover them via an algorithm:
+
+![](/images/discoverDark.png)
 
 ## Installation 
 
