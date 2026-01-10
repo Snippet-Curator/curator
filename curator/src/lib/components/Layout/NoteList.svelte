@@ -37,13 +37,7 @@
 {#snippet renderNotes(note: Note)}
 	{#key note.thumbnail}
 		<figure class="motion-opacity-in-0 motion-duration-300 w-full">
-			<!-- {#if ['mp4', 'webm', 'ogg'].some((ext) => note.thumbnail.includes(ext))}
-			<video style="width:100%" loop autoplay muted
-				><source src={note.thumbnail} />Your browser does not support the video tag.</video
-			>
-		{:else} -->
 			<img class="w-full" src={replacePbUrl(note.thumbnail)} alt="" />
-			<!-- {/if} -->
 		</figure>
 	{/key}
 	<div id="card-body" class="card-body p-golden-lg w-full">
