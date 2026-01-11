@@ -75,7 +75,7 @@
 		// {
 		// 	name: 'Test',
 		// 	icon: Settings,
-		// 	url: '#/test'
+		// 	url: '/test'
 		// }
 	];
 
