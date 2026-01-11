@@ -37,6 +37,7 @@ import {
 
 const pb = new PocketBase(pbURL);
 
+// removed FTS temporarily due to performance issues
 // const re = new RegExp('/api/collections/notes/records?filter=');
 // pb.beforeSend = (url, options) => {
 // 	if (re.test(url) && options.method === 'GET') {
