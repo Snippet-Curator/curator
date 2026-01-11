@@ -24,11 +24,11 @@
 	<div class="grow"></div>
 </Topbar.Root>
 
-<ScrollArea class="h-[calc(100vh-60px)] overflow-y-auto">
+<div class="h-[calc(100vh-60px)] overflow-y-auto">
 	<div class="mx-auto mb-20 max-w-5xl">
 		<File {notebookState} {tagState} />
 		<Youtube {notebooks} {tags} />
 		<div class="divider"></div>
 		<Status />
 	</div>
-</ScrollArea>
+</div>

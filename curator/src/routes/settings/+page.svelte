@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import * as Topbar from '$lib/components/Topbar/index';
 	import { KBD, DiscoverSetting, Version } from '$lib/components/Settings';
 </script>
@@ -10,7 +9,7 @@
 	<div class="grow"></div>
 </Topbar.Root>
 
-<ScrollArea class="h-[calc(100vh-60px)]">
+<div class="h-[calc(100vh-60px)] overflow-y-auto">
 	<div class="p-golden-xl mx-auto max-w-5xl">
 		<KBD />
 		<div class="divider"></div>
@@ -18,4 +17,4 @@
 		<div class="divider"></div>
 		<Version />
 	</div>
-</ScrollArea>
+</div>

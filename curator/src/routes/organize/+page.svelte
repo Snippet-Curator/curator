@@ -1,6 +1,5 @@
 <script lang="ts">
 	import * as Topbar from '$lib/components/Topbar/index';
-	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import { Archive, Trash2 } from 'lucide-svelte';
 
 	import { New, NotebookList, TagList, Pinned } from '$lib/components';
@@ -31,7 +30,7 @@
 	<div class="grow"></div>
 </Topbar.Root>
 
-<ScrollArea class="h-[calc(100vh-60px)]">
+<div class="h-[calc(100vh-60px)] overflow-y-auto">
 	<div class="p-golden-xl mx-auto max-w-5xl">
 		<div class="flex items-center px-3">
 			<h1 class="grow">Pinned</h1>
@@ -79,7 +78,7 @@
 			<TagList allowEdit={true} tags={tagState.tags} />
 		</ul>
 	</div>
-</ScrollArea>
+</div>
 <div class="mb-20"></div>
 
 <New
