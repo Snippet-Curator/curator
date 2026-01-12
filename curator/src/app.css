@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap');
+/* Import a font where every character is a scribble */
+@import url('https://fonts.googleapis.com/css2?family=Redacted+Script&display=swap');
 @import 'tailwindcss';
 @import 'tw-golden-spacing';
 
@@ -61,6 +63,8 @@
 }
 
 
+
+
 @theme {
 	--font-display: 'Concourse4', 'Inter', 'sans-serif';
 	--font-bold: 'Concourse4_bold', 'Inter' 'sans-serif';
@@ -101,4 +105,19 @@ label,
 textarea,
 select {
 	@apply scrollbar-thin outline-none;
+}
+
+
+
+.privacy-filter {
+    font-family: 'Redacted Script', cursive !important;
+    user-select: none; /* Prevents people from highlighting to read */
+
+}
+
+/* Optional: Show the real value on hover */
+.privacy-filter:hover {
+    font-family: inherit; 
+    user-select: auto;
+    color: inherit;
 }
