@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getSettingState } from '$lib/db.svelte';
+	import { getSettingState } from '$lib/setting.svelte';
 	const settingState = getSettingState();
 </script>
 
@@ -37,7 +37,7 @@
 	</div>
 {/snippet}
 
-<div class="card mb-20">
+<div class="card">
 	<div class="card-body">
 		<div class="card-title text-xl">Discover Settings</div>
 		<p>Settings are updated on restart.</p>
@@ -116,13 +116,13 @@
 
 		<div class="divider"></div>
 		<div class="gap-x-golden-md grid grid-cols-12 items-center">
-			<div class="col-span-3">
+			<div class="col-span-4">
 				<legend class="fieldset-legend">Youtube API Key</legend>
 				Used to add youtube videos.
 			</div>
 			<input
 				type="text"
-				class="input col-span-9 w-full text-right"
+				class="input col-span-8 w-full text-right"
 				bind:value={settingState.youtubeAPIKey}
 				onchange={async () => {
 					const newValue = await settingState.changeSetting(

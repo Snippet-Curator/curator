@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getSettingState } from '$lib/db.svelte';
+	import { getSettingState } from '$lib/setting.svelte';
 	import { getMouseState } from '$lib/utils.svelte';
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getImportState } from './import.svelte';

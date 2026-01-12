@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Topbar from '$lib/components/Topbar/index';
-	import { KBD, DiscoverSetting, Version } from '$lib/components/Settings';
+	import { KBD, DiscoverSetting, Version, NoteSetting } from './index';
 </script>
 
 <Topbar.Root>
@@ -14,6 +14,8 @@
 		<KBD />
 		<div class="divider"></div>
 		<DiscoverSetting />
+		<div class="divider"></div>
+		<NoteSetting />
 		<div class="divider"></div>
 		<Version />
 	</div>

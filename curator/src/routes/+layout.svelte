@@ -7,14 +7,9 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area/index';
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 
-	import {
-		getNotebookState,
-		setNotebookState,
-		getTagState,
-		setTagState,
-		setSettingState,
-		getSettingState
-	} from '$lib/db.svelte';
+	import { getNotebookState, setNotebookState, getTagState, setTagState } from '$lib/db.svelte';
+
+	import { setSettingState, getSettingState } from '$lib/setting.svelte';
 
 	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
 	import { getMobileState, setMobileState, getMouseState, setMouseState } from '$lib/utils.svelte';

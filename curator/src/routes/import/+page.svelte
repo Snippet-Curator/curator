@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import * as Topbar from '$lib/components/Topbar/index';
 
-	import { setImportState } from '$lib/components/Import/import.svelte';
+	import { setImportState } from './import.svelte';
 
-	import File from '$lib/components/Import/File.svelte';
-	import Youtube from '$lib/components/Import/Youtube.svelte';
-	import Status from '$lib/components/Import/Status.svelte';
+	import File from './File.svelte';
+	import Youtube from './Youtube.svelte';
+	import Status from './Status.svelte';
 
 	import { getNotebookState, getTagState } from '$lib/db.svelte';
 
