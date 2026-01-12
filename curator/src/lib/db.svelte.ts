@@ -1184,94 +1184,11 @@ export class NoteState {
 	}
 }
 
-export class settingState {
-	ratingWeight = $state<number>();
-	recencyWeight = $state<number>();
-	weightWeight = $state<number>();
-	randomWeight = $state<number>();
-	fullPenaltyWindow = $state<number>();
-	decayWindow = $state<number>();
-	maxDay = $state<number>();
-	daysOld = $state<number>();
-	scoreRefreshHour = $state<number>();
-	youtubeAPIKey = $state<string>();
-
-	async makeDefaultValue<T extends string | number>(name: string, defaultValue: T) {
-		const { data, error } = await tryCatch<Setting, PError>(
-			pb.collection(settingCollection).create({
-				name: name,
-				value: defaultValue
-			})
-		);
-
-		if (error) {
-			console.error('Error making setting: ', name, error.message);
-			return;
-		}
-
-		if (!data) return;
-
-		return data.value as T;
-	}
-
-	async changeSetting<T extends number | string>(name: string, newValue: T) {
-		const { data: settingRecord, error } = await tryCatch<Setting, PError>(
-			pb.collection(settingCollection).getFirstListItem(`name="${name}"`)
-		);
-
-		if (error || !settingRecord) {
-			console.error('Error getting setting: ', name, error.message);
-			return;
-		}
-
-		const { data: settingUpdate, error: errorUpdate } = await tryCatch<Setting, PError>(
-			pb.collection(settingCollection).update(settingRecord.id, {
-				value: newValue
-			})
-		);
-
-		if (errorUpdate || !settingUpdate) {
-			console.error('Error making setting: ', name, errorUpdate.message);
-			return;
-		}
-
-		return settingUpdate.value;
-	}
-
-	async getSetting<T extends string | number>(name: string, defaultValue: T) {
-		const { data, error } = await tryCatch<Setting, PError>(
-			pb.collection(settingCollection).getFirstListItem(`name="${name}"`)
-		);
-
-		if (error || !data) {
-			console.error('Error getting setting: ', name, error.message);
-			const newSettingValue = await this.makeDefaultValue(name, defaultValue);
-			return newSettingValue;
-		}
-
-		return data.value as T;
-	}
-
-	async getDefaultSettings() {
-		this.ratingWeight = await this.getSetting('ratingWeight', 0.3);
-		this.recencyWeight = await this.getSetting('recencyWeight', 0.3);
-		this.weightWeight = await this.getSetting('weightWeight', 0.3);
-		this.randomWeight = await this.getSetting('randomWeight', 0.3);
-		this.maxDay = await this.getSetting('maxDay', 60);
-		this.fullPenaltyWindow = await this.getSetting('fullPenaltyWindow', 1);
-		this.decayWindow = await this.getSetting('decayWindow', 12);
-		this.daysOld = await this.getSetting('daysOld', 0);
-		this.scoreRefreshHour = await this.getSetting('scoreRefreshHour', 6);
-		this.youtubeAPIKey = await this.getSetting('youtubeAPIKey', '');
-	}
-}
-
 export default pb;
 
 const TAG_KEY = Symbol('TAG');
 const NOTEBOOK_KEY = Symbol('NOTEBOOK');
 const INBOX_KEY = Symbol('INBOX');
-const SETTING_KEY = Symbol('SETTING');
 
 export function setTagState() {
 	return setContext(TAG_KEY, new TagState());
@@ -1303,12 +1220,4 @@ export function setNoteState(NOTE_KEY: string) {
 
 export function getNoteState(NOTE_KEY: string) {
 	return getContext<ReturnType<typeof setNoteState>>(NOTE_KEY);
-}
-
-export function setSettingState() {
-	return setContext(SETTING_KEY, new settingState());
-}
-
-export function getSettingState() {
-	return getContext<ReturnType<typeof setSettingState>>(SETTING_KEY);
 }
