@@ -59,7 +59,11 @@
 		</div>
 
 		{#if !note.thumbnail}
-			<p class="line-clamp-3 text-left text-pretty">
+			<p
+				class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && settingState.nsfwBlur
+					? 'privacy-filter'
+					: ''} line-clamp-3 text-left text-pretty"
+			>
 				{note.description}
 			</p>
 		{/if}
