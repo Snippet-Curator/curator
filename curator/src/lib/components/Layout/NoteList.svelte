@@ -37,13 +37,19 @@
 {#snippet renderNotes(note: Note)}
 	{#key note.thumbnail}
 		<figure class="motion-opacity-in-0 motion-duration-300 w-full">
-			<img class="w-full" src={replacePbUrl(note.thumbnail)} alt="" />
+			<img
+				class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') ? 'blur-2xl' : ''} w-full"
+				src={replacePbUrl(note.thumbnail)}
+				alt=""
+			/>
 		</figure>
 	{/key}
 	<div id="card-body" class="card-body p-golden-lg w-full">
 		<div
 			id="card-title"
-			class="card-title overflow-hidden text-left text-pretty break-words text-ellipsis"
+			class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw')
+				? 'privacy-filter'
+				: ''} card-title overflow-hidden text-left text-pretty break-words text-ellipsis"
 		>
 			{note.title}
 		</div>
