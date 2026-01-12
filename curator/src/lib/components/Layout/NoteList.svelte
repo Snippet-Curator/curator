@@ -8,6 +8,7 @@
 	import type { NoteList, Note } from '$lib/types';
 	import { getNoteState, setNoteState } from '$lib/db.svelte';
 	import { replacePbUrl } from '$lib/utils';
+	import { getSettingState } from '$lib/setting.svelte';
 
 	type Props = {
 		isBulkEdit: boolean;
@@ -20,6 +21,7 @@
 
 	setNoteState('');
 	const noteState = getNoteState('');
+	const settingState = getSettingState();
 	let isDeleteOpen = $state(false);
 	let isEditTagsOpen = $state(false);
 	let isEditNotebookOpen = $state(false);
@@ -38,7 +40,9 @@
 	{#key note.thumbnail}
 		<figure class="motion-opacity-in-0 motion-duration-300 w-full">
 			<img
-				class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') ? 'blur-2xl' : ''} w-full"
+				class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && settingState.nsfwBlur
+					? 'blur-2xl'
+					: ''} w-full"
 				src={replacePbUrl(note.thumbnail)}
 				alt=""
 			/>
@@ -47,7 +51,7 @@
 	<div id="card-body" class="card-body p-golden-lg w-full">
 		<div
 			id="card-title"
-			class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw')
+			class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && settingState.nsfwBlur
 				? 'privacy-filter'
 				: ''} card-title overflow-hidden text-left text-pretty break-words text-ellipsis"
 		>
