@@ -25,6 +25,7 @@ services:
       - ./pb_data:/app/db/pb_data # database folder
     ports:
       - "8090:8090"
+    restart: unless-stopped
 
   curator:
     image: kangruixiang/curator:latest
@@ -35,4 +36,5 @@ services:
       - pocketbase
     ports: 
       - "3000:3000"
+    restart: unless-stopped
 ```
