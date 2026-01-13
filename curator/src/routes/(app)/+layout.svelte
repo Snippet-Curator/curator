@@ -98,7 +98,7 @@
 			collapsedSize={0}
 		>
 			<div class="mt-2 mb-5 ml-1 flex h-6 items-center gap-x-1">
-				<Icon /> <span class="text-xl font-semibold select-none">Curator</span>
+				<Icon /> <span class="text-2xl font-semibold select-none">Curator</span>
 			</div>
 
 			<li>
