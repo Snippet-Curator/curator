@@ -1,18 +1,12 @@
 <script lang="ts">
-	import {
-		NoteContent,
-		Delete,
-		EditNotebook,
-		EditTags,
-		Navbar,
-		EditNote,
-		FilterDiscover
-	} from '$lib/components/';
+	import { NoteContent, Delete, EditNotebook, EditTags, Navbar, EditNote } from '$lib/components/';
 	import { NoteState } from '$lib/db.svelte';
 	import * as Topbar from '$lib/components/Topbar/index';
 	import { onMount } from 'svelte';
 	import { getMobileState } from '$lib/utils.svelte';
 	import { getSearchState, SearchState, setSearchState } from './discover.svelte';
+
+	import FilterDiscover from './FilterDiscover.svelte';
 
 	const noteState = new NoteState('discovery');
 

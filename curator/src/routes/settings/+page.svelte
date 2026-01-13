@@ -1,10 +1,10 @@
 <script lang="ts">
 	import * as Topbar from '$lib/components/Topbar/index';
 	import { KBD, DiscoverSetting, Version, NoteSetting } from './index';
+	import { Dock } from '$lib/components';
 </script>
 
 <Topbar.Root>
-	<Topbar.SidebarIcon></Topbar.SidebarIcon>
 	<Topbar.Back />
 	<div class="grow"></div>
 </Topbar.Root>
@@ -20,3 +20,5 @@
 		<Version />
 	</div>
 </div>
+
+<Dock />
