@@ -15,6 +15,6 @@
 	let { children } = $props();
 </script>
 
-<div class="font-display">
+<div class="font-jost">
 	{@render children()}
 </div>

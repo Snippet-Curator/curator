@@ -106,18 +106,3 @@ textarea,
 select {
 	@apply scrollbar-thin outline-none;
 }
-
-
-
-.privacy-filter {
-    font-family: 'Redacted Script', cursive !important;
-    user-select: none; /* Prevents people from highlighting to read */
-
-}
-
-/* Optional: Show the real value on hover */
-.privacy-filter:hover {
-    font-family: inherit; 
-    user-select: auto;
-    color: inherit;
-}

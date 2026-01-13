@@ -23,13 +23,14 @@
 	let isNewNotebookOpen = $state(false);
 	let selectedNotebook = $state<Notebook>();
 	let flatNotebooks = $derived(notebookState.flatNotebooks);
-
-    
 </script>
 
 {#snippet renderNotebook(notebook: Notebook)}
 	<div class=" flex w-full items-center justify-between">
-		<a href="/notebook/{notebook.id}" class="w-full items-center gap-x-2 text-nowrap px-3 py-1">
+		<a
+			href="/notebook/{notebook.id}"
+			class="w-full items-center gap-x-2 px-3 py-1 font-[450] text-nowrap"
+		>
 			{notebook.name}
 		</a>
 		<span class="text-right">{notebook.note_count}</span>
@@ -82,7 +83,6 @@
 
 <svelte:boundary>
 	{#each notebooks as notebook}
-  
 		{#if notebook.name != 'Inbox'}
 			<li class="group mr-4">
 				{#if notebook.children?.length > 0}
@@ -112,34 +112,33 @@
 </svelte:boundary>
 
 {#if selectedNotebook}
-<Rename
-	bind:isOpen={isEditOpen}
-	renameType="Notebook"
-	currentName={selectedNotebook.name}
-	action={(newName) => notebookState.updateOnebyName(selectedNotebook.id, newName)}
-/>
+	<Rename
+		bind:isOpen={isEditOpen}
+		renameType="Notebook"
+		currentName={selectedNotebook.name}
+		action={(newName) => notebookState.updateOnebyName(selectedNotebook.id, newName)}
+	/>
 
+	<Delete
+		bind:isOpen={isDeleteOpen}
+		name="Notebook"
+		action={() => notebookState.delete(selectedNotebook.id)}>this notebook?</Delete
+	>
 
+	<ChangeParent
+		bind:isOpen={isChangeParentOpen}
+		type="notebook"
+		fullList={flatNotebooks}
+		currentItemID={selectedNotebook?.id}
+		clear={() => notebookState.updateOnebyParent(selectedNotebook?.id, '')}
+		action={(selectedParentNotebookID) =>
+			notebookState.updateOnebyParent(selectedNotebook?.id, selectedParentNotebookID)}
+	/>
 
-<Delete
-	bind:isOpen={isDeleteOpen}
-	name="Notebook"
-	action={() => notebookState.delete(selectedNotebook.id)}>this notebook?</Delete
->
-
-<ChangeParent
-	bind:isOpen={isChangeParentOpen}
-	type="notebook"
-	fullList={flatNotebooks}
-	currentItemID={selectedNotebook?.id}
-	clear={() => notebookState.updateOnebyParent(selectedNotebook?.id, '')}
-	action={(selectedParentNotebookID) =>
-		notebookState.updateOnebyParent(selectedNotebook?.id, selectedParentNotebookID)}
-/>
-
-<New
-	bind:isOpen={isNewNotebookOpen}
-	newType="Notebook"
-	action={(newNotebookName) => notebookState.createOnebyName(newNotebookName, selectedNotebook.id)}
-/>
+	<New
+		bind:isOpen={isNewNotebookOpen}
+		newType="Notebook"
+		action={(newNotebookName) =>
+			notebookState.createOnebyName(newNotebookName, selectedNotebook.id)}
+	/>
 {/if}
