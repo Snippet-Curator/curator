@@ -52,7 +52,7 @@
 		<div
 			id="card-title"
 			class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && settingState.nsfwBlur
-				? 'privacy-filter'
+				? 'font-redacted hover:font-display'
 				: ''} card-title overflow-hidden text-left text-pretty break-words text-ellipsis"
 		>
 			{note.title}
@@ -61,7 +61,7 @@
 		{#if !note.thumbnail}
 			<p
 				class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && settingState.nsfwBlur
-					? 'privacy-filter'
+					? 'font-redacted hover:font-display'
 					: ''} line-clamp-3 text-left text-pretty"
 			>
 				{note.description}
