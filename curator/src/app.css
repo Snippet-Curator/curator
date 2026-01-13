@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap');
-/* Import a font where every character is a scribble */
-@import url('https://fonts.googleapis.com/css2?family=Redacted+Script&display=swap');
+/* custom font */
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&family=Redacted+Script&display=swap');
+
 @import 'tailwindcss';
 @import 'tw-golden-spacing';
 
@@ -63,11 +63,11 @@
 }
 
 
-
-
 @theme {
-	--font-display: 'Concourse4', 'Inter', 'sans-serif';
-	--font-bold: 'Concourse4_bold', 'Inter' 'sans-serif';
+	--font-display: 'Concourse4',  'sans-serif';
+	--font-bold: 'Concourse4_bold',  'sans-serif';
+	--font-jost: 'Jost', 'sans-serif';
+	--font-redacted: 'Redacted Script', cursive;
 	--break-point-2xl: 100rem;
 	--breakpoint-3xl: 120rem;
 	--breakpoint-4xl: 160rem;

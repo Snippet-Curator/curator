@@ -1,4 +1,5 @@
 <script type="ts">
+	import '../app.css';
 	import { setNotebookState, setTagState } from '$lib/db.svelte';
 
 	import { setSettingState } from '$lib/setting.svelte';
@@ -14,4 +15,6 @@
 	let { children } = $props();
 </script>
 
-{@render children()}
+<div class="font-display">
+	{@render children()}
+</div>

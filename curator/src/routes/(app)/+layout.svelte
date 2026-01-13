@@ -1,5 +1,4 @@
 <script lang="ts">
-	import '../../app.css';
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 
@@ -86,9 +85,7 @@
 {#if browser}
 	<Resizable.PaneGroup
 		direction="horizontal"
-		class="{mouseState.isBusy
-			? 'cursor-progress'
-			: ''} font-display max-h-screen min-h-screen w-full"
+		class="{mouseState.isBusy ? 'cursor-progress' : ''} max-h-screen min-h-screen w-full"
 	>
 		<Resizable.Pane
 			class="{mobileState.isSidebarOpen
