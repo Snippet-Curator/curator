@@ -1,14 +1,41 @@
-import type { Handle } from '@sveltejs/kit';
+import PocketBase from 'pocketbase';
+import { redirect, type Handle } from '@sveltejs/kit';
 import { env } from '$env/dynamic/public';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// 1. Get the dynamic URL (fallback to localhost for safety)
 	const pbUrl = env.PUBLIC_POCKETBASE_URL || 'http://localhost:8090';
+	// Initialize pocketbase
+	event.locals.pb = new PocketBase(pbUrl);
+
+	const cookie = event.request.headers.get('cookie') || '';
+	event.locals.pb.authStore.loadFromCookie(cookie);
+
+	try {
+		// 3. Get latest user data if the session is valid
+		if (event.locals.pb.authStore.isValid) {
+			await event.locals.pb.collection('users').authRefresh();
+			event.locals.user = event.locals.pb.authStore.record;
+		} else {
+			event.locals.user = null;
+		}
+	} catch (_) {
+		// Clear auth store if the token is invalid/expired
+		event.locals.pb.authStore.clear();
+		event.locals.user = null;
+	}
+
+	const isLoginPath = event.url.pathname === '/login';
+	const isSignupPath = event.url.pathname.startsWith('/signup');
+
+	if (!event.locals.user && !isLoginPath && !isSignupPath) {
+		throw redirect(303, '/login');
+	}
 
 	// 2. Resolve the request
 	const response = await resolve(event);
 
-	// 3. Define the CSP policy
+	// Define the CSP policy
 	// 'self' allows the app to talk to its own origin (homenas:3003)
 	// ${pbUrl} allows the browser to talk to PocketBase
 	const csp = [
@@ -26,6 +53,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	// 4. Set the header
 	response.headers.set('Content-Security-Policy', csp);
+
+	response.headers.set(
+		'set-cookie',
+		event.locals.pb.authStore.exportToCookie({ secure: false }) // Set 'secure: true' in production!
+	);
 
 	return response;
 };

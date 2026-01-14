@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import Icon from '$lib/components/Layout/Icon.svelte';
-	import { ArrowBigRight } from 'lucide-svelte';
+
+	let { form } = $props();
 </script>
 
 <section class="bg-base-100 flex min-h-screen w-full items-center justify-center">
@@ -11,17 +13,21 @@
 			<Icon /> <span class="text-3xl font-semibold select-none">Curator</span>
 		</div>
 		<div>
-			<fieldset class="fieldset rounded-box w-xs p-4">
+			<form method="POST" action="?/login" class="fieldset rounded-box w-xs p-4" use:enhance>
 				<label class="fieldset-legend">Email</label>
-				<input type="email" class="input" placeholder="Email" />
+				<input type="email" required name="email" class="input validator" placeholder="Email" />
 
 				<label class="fieldset-legend">Password</label>
-				<input type="password" class="input" placeholder="Password" />
+				<input type="password" name="password" required class="input" placeholder="Password" />
+
+				{#if form?.error}
+					<div class="alert alert-soft alert-error mt-2">{form.error}</div>
+				{/if}
 
 				<button class="btn btn-neutral mt-4">Login</button>
 
 				<a class="link mt-2 text-right" href="/signup"> Sign Up </a>
-			</fieldset>
+			</form>
 		</div>
 	</div>
 </section>
