@@ -11,8 +11,8 @@ import {
 export async function load() {
 	// await getAuth();
 	await makeDefaultNotebook();
-	await addNotesToUser();
-	await addSettingToUser();
-	await addNotebooksToUser();
-	await addTagsToUser();
+	// await addNotesToUser();
+	// await addSettingToUser();
+	// await addNotebooksToUser();
+	// await addTagsToUser();
 }

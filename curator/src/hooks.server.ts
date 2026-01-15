@@ -1,10 +1,12 @@
 import PocketBase from 'pocketbase';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { env } from '$env/dynamic/public';
+import { getPbURL } from '$lib/const';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// 1. Get the dynamic URL (fallback to localhost for safety)
-	const pbUrl = env.PUBLIC_INTERNAL_POCKETBASE_URL || 'http://localhost:8090';
+	const pbUrl = getPbURL();
+	const pbUrlPublic = env.PUBLIC_POCKETBASE_URL;
 
 	// Initialize pocketbase
 	event.locals.pb = new PocketBase(pbUrl);
@@ -41,12 +43,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// ${pbUrl} allows the browser to talk to PocketBase
 	const csp = [
 		"default-src 'self'",
-		`connect-src 'self' http://127.0.0.1:8090 ${pbUrl} http://localhost:8090 https://www.googleapis.com https://i.ytimg.com https://www.youtube.com`,
-		`img-src 'self' https://i.ytimg.com data: http://127.0.0.1:8090 http://localhost:8090 ${pbUrl} blob:${pbUrl}`,
-		`media-src 'self' data: http://127.0.0.1:8090 http://pocketbase:8090 http://localhost:8090 ${pbUrl}`,
+		`connect-src 'self' http://127.0.0.1:8090 ${pbUrl} ${pbUrlPublic} http://localhost:8090 https://www.googleapis.com https://i.ytimg.com https://www.youtube.com`,
+		`img-src 'self' https://i.ytimg.com data: http://127.0.0.1:8090 http://localhost:8090 ${pbUrl} blob:${pbUrl} ${pbUrlPublic} blob:${pbUrlPublic}`,
+		`media-src 'self' data: http://127.0.0.1:8090 http://pocketbase:8090 http://localhost:8090 ${pbUrl} ${pbUrlPublic}`,
 		"script-src 'self' 'unsafe-inline'", // Svelte needs inline scripts for hydration
 		"style-src 'self' 'unsafe-inline' http://127.0.0.1:8090 https://fonts.googleapis.com/ http://localhost:8090",
-		`font-src 'self' data: http://127.0.0.1:8090  https://fonts.googleapis.com https://fonts.gstatic.com http://localhost:8090 ${pbUrl}`,
+		`font-src 'self' data: http://127.0.0.1:8090  https://fonts.googleapis.com https://fonts.gstatic.com http://localhost:8090 ${pbUrl} ${pbUrlPublic}`,
 		"object-src 'none'",
 		"frame-ancestors 'none'",
 		`frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com http://127.0.0.1:8090 http://localhost:8090`

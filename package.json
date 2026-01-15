@@ -1,6 +1,6 @@
 {
   "name": "curator",
-  "version": "0.0.15",
+  "version": "0.0.18",
   "description": "test\r Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).",
   "license": "ISC",
   "author": "",

@@ -23,12 +23,17 @@ const isDev = import.meta.env.DEV;
 console.log('isDev:', isDev);
 console.log('browser', browser);
 
+export function getPbURL() {
+	const pbURL = isDev
+		? env.PUBLIC_POCKETBASE_URL // Browser sees localhost
+		: browser
+			? env.PUBLIC_POCKETBASE_URL
+			: env.PUBLIC_INTERNAL_POCKETBASE_URL; // Server sees Docker name
+	return pbURL;
+}
+
 // Determine the correct URL based on where the code is executing
-export const pbURL = isDev
-	? env.PUBLIC_POCKETBASE_URL // Browser sees localhost
-	: browser
-		? env.PUBLIC_POCKETBASE_URL
-		: env.PUBLIC_INTERNAL_POCKETBASE_URL; // Server sees Docker name
+export const pbURL = getPbURL();
 
 console.log('pocketbase public:', env.PUBLIC_POCKETBASE_URL);
 console.log('pocketbase internal', env.PUBLIC_INTERNAL_POCKETBASE_URL);
