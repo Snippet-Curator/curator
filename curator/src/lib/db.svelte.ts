@@ -57,6 +57,7 @@ export async function addNotesToUser() {
 	}
 
 	for (const note of notes) {
+		if (note.user) return;
 		await pb.collection(notesCollection).update(note.id, {
 			user: pb.authStore.record?.id
 		});

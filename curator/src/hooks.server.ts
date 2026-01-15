@@ -4,7 +4,8 @@ import { env } from '$env/dynamic/public';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	// 1. Get the dynamic URL (fallback to localhost for safety)
-	const pbUrl = env.PUBLIC_POCKETBASE_URL || 'http://localhost:8090';
+	const pbUrl = env.PUBLIC_INTERNAL_POCKETBASE_URL || 'http://localhost:8090';
+
 	// Initialize pocketbase
 	event.locals.pb = new PocketBase(pbUrl);
 
@@ -40,7 +41,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// ${pbUrl} allows the browser to talk to PocketBase
 	const csp = [
 		"default-src 'self'",
-		`connect-src 'self' http://127.0.0.1:8090 ${pbUrl} https://www.googleapis.com https://i.ytimg.com https://www.youtube.com`,
+		`connect-src 'self' http://127.0.0.1:8090 ${pbUrl} http://localhost:8090 https://www.googleapis.com https://i.ytimg.com https://www.youtube.com`,
 		`img-src 'self' https://i.ytimg.com data: http://127.0.0.1:8090 http://localhost:8090 ${pbUrl} blob:${pbUrl}`,
 		`media-src 'self' data: http://127.0.0.1:8090 http://pocketbase:8090 http://localhost:8090 ${pbUrl}`,
 		"script-src 'self' 'unsafe-inline'", // Svelte needs inline scripts for hydration
