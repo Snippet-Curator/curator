@@ -61,7 +61,8 @@ export class settingState {
 		const { data, error } = await tryCatch<Setting, PError>(
 			pb.collection(settingCollection).create({
 				name: name,
-				value: stringValue
+				value: stringValue,
+				user: pb.authStore.record?.id
 			})
 		);
 

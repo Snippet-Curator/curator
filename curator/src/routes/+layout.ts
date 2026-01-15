@@ -1,7 +1,18 @@
-import { addFtsCollection, getAuth, makeDefaultNotebook } from '$lib/db.svelte';
+import {
+	addFtsCollection,
+	getAuth,
+	makeDefaultNotebook,
+	addNotesToUser,
+	addSettingToUser,
+	addNotebooksToUser,
+	addTagsToUser
+} from '$lib/db.svelte';
 
 export async function load() {
-	await getAuth();
+	// await getAuth();
 	await makeDefaultNotebook();
-	// await addFtsCollection(); temporarilty hold fts due to performance
+	await addNotesToUser();
+	await addSettingToUser();
+	await addNotebooksToUser();
+	await addTagsToUser();
 }

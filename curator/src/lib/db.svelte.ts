@@ -1,4 +1,4 @@
-import PocketBase, { type RecordModel } from 'pocketbase';
+import { type RecordModel } from 'pocketbase';
 
 import { getContext, setContext } from 'svelte';
 
@@ -8,7 +8,6 @@ import {
 	type Note,
 	type NoteRecord,
 	type PError,
-	type Setting,
 	type NoteType
 } from './types';
 
@@ -22,20 +21,17 @@ import {
 	viewTagsCollectionName,
 	viewNotesCollection,
 	viewNotebooksCollection,
-	settingCollection,
 	inboxNotebook,
-	pbURL,
-	baseURL
+	baseURL,
+	settingCollection
 } from './const';
 import {
 	addThumbnailToRecord,
 	createMergedNoteData,
 	createNewResources,
-	getContentBeforeMerge,
 	mergeContents
 } from './utils';
-
-const pb = new PocketBase(pbURL);
+import { pb } from './pocketbase';
 
 // removed FTS temporarily due to performance issues
 // const re = new RegExp('/api/collections/notes/records?filter=');
@@ -51,17 +47,88 @@ export async function getAuth() {
 	console.log('Logged in to Pocket client: ', pb.authStore.isValid);
 }
 
-export async function makeDefaultNotebook() {
-	const { data, error } = await tryCatch<RecordModel, PError>(
-		pb.collection(notebooksCollection).create({ name: inboxNotebook })
+export async function addNotesToUser() {
+	const { data: notes, error } = await tryCatch<RecordModel, PError>(
+		pb.collection(notesCollection).getFullList()
 	);
 
 	if (error) {
-		if (error.data.data.name.code == 'validation_not_unique') {
-			console.log('Inbox already exists');
-		} else {
-			console.error('Error making Inbox: ', error.message);
-		}
+		console.log(error);
+	}
+
+	for (const note of notes) {
+		await pb.collection(notesCollection).update(note.id, {
+			user: pb.authStore.record?.id
+		});
+	}
+}
+
+export async function addSettingToUser() {
+	const { data: settings, error } = await tryCatch<RecordModel, PError>(
+		pb.collection(settingCollection).getFullList()
+	);
+
+	if (error) {
+		console.log('Error getting settings:', error);
+	}
+
+	for (const setting of settings) {
+		if (setting.user) return;
+		await pb.collection(settingCollection).update(setting.id, {
+			user: pb.authStore.record?.id
+		});
+	}
+}
+
+export async function addTagsToUser() {
+	const { data: tags, error } = await tryCatch<RecordModel, PError>(
+		pb.collection(tagsCollection).getFullList()
+	);
+
+	if (error) {
+		console.log('Error getting tags:', error);
+	}
+
+	for (const tag of tags) {
+		if (tag.user) return;
+		await pb.collection(tagsCollection).update(tag.id, {
+			user: pb.authStore.record?.id
+		});
+	}
+}
+
+export async function addNotebooksToUser() {
+	const { data: notebooks, error } = await tryCatch<RecordModel, PError>(
+		pb.collection(notebooksCollection).getFullList()
+	);
+
+	if (error) {
+		console.log('Error getting notebooks:', error);
+	}
+
+	for (const notebook of notebooks) {
+		if (notebook.user) return;
+		await pb.collection(notebooksCollection).update(notebook.id, {
+			user: pb.authStore.record?.id
+		});
+	}
+}
+
+export async function makeDefaultNotebook() {
+	const { data, error } = await tryCatch<RecordModel, PError>(
+		pb
+			.collection(notebooksCollection)
+			.create({ name: inboxNotebook, user: pb.authStore.record?.id })
+	);
+
+	if (error) {
+		// if (error.data.data.name.code == 'validation_not_unique') {
+		// 	console.log('Inbox already exists');
+		// } else {
+		// 	console.error('Error making Inbox: ', error.message);
+		// }
+		console.log('Error making Inbox: ', error.message);
+		return;
 	}
 }
 
@@ -188,7 +255,8 @@ export class TagState {
 		const { data, error } = await tryCatch(
 			pb.collection(tagsCollection).create({
 				name: newName,
-				parent: parentTagID
+				parent: parentTagID,
+				user: pb.authStore.record?.id
 			})
 		);
 		if (error) {
@@ -352,7 +420,8 @@ export class NotebookState {
 		const { data, error } = await tryCatch(
 			pb.collection(notebooksCollection).create({
 				name: newName,
-				parent: parentNotebookID
+				parent: parentNotebookID,
+				user: pb.authStore.record?.id
 			})
 		);
 		if (error) {

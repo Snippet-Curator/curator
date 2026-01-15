@@ -4,7 +4,8 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import type { EnNote, EnMedia, EnResource, Resource, PError } from './types';
-import pb, { uploadFileToPocketbase } from '$lib/db.svelte';
+import { uploadFileToPocketbase } from '$lib/db.svelte';
+import { pb } from '$lib/pocketbase';
 import { tryCatch } from './utils.svelte';
 import type { RecordModel } from 'pocketbase';
 import {
@@ -230,7 +231,8 @@ export class htmlImport {
 			tags: this.selectedTagIdArrays,
 			last_score_updated: new Date().toISOString(),
 			sources: JSON.stringify(sources),
-			status: 'active'
+			status: 'active',
+			user: pb.authStore.record?.id
 		};
 
 		const { data: record, error } = await tryCatch(
@@ -515,7 +517,8 @@ export class EnImport {
 			notebook: this.selectedNotebookdID,
 			last_score_updated: new Date().toISOString(),
 			sources: JSON.stringify(sources),
-			status: 'active'
+			status: 'active',
+			user: pb.authStore.record?.id
 		};
 
 		const { data: record, error } = await tryCatch<RecordModel, PError>(
@@ -594,7 +597,8 @@ export class fileImport {
 			weight: 5,
 			added: this.added,
 			status: 'active',
-			sources: sources
+			sources: sources,
+			user: pb.authStore.record?.id
 		};
 
 		const { data: record, error } = await tryCatch<RecordModel, PError>(
@@ -807,7 +811,8 @@ export class youtubeImport {
 			last_score_updated: new Date().toISOString(),
 			weight: 5,
 			added: new Date().toISOString(),
-			status: 'active'
+			status: 'active',
+			user: pb.authStore.record?.id
 		};
 
 		const filter = `sources.0.source = "Youtube" && sources.0.source_url ~ "${this.youtubeID}"`;

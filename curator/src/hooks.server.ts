@@ -54,9 +54,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 	// 4. Set the header
 	response.headers.set('Content-Security-Policy', csp);
 
-	response.headers.set(
+	response.headers.append(
 		'set-cookie',
-		event.locals.pb.authStore.exportToCookie({ secure: false }) // Set 'secure: true' in production!
+		event.locals.pb.authStore.exportToCookie({ httpOnly: false, secure: false })
 	);
 
 	return response;
