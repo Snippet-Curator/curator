@@ -7,6 +7,7 @@
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 
 	import { getNotebookState, getTagState, setNotebookState, setTagState } from '$lib/db.svelte';
+	import { pb } from '$lib/pocketbase';
 	import { getSettingState, setSettingState } from '$lib/setting.svelte';
 	import { getMobileState, getMouseState, setMobileState, setMouseState } from '$lib/utils.svelte';
 
@@ -14,10 +15,13 @@
 
 	let { children } = $props();
 
+	if (typeof document !== 'undefined') {
+		pb.authStore.loadFromCookie(document.cookie);
+	}
+
 	setTagState();
 	setNotebookState();
 	setMobileState();
-
 	setMouseState();
 
 	const tagState = getTagState();
