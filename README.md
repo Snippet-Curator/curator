@@ -30,9 +30,9 @@ services:
   curator:
     image: kangruixiang/curator:latest
     environment: 
-      - PUBLIC_POCKETBASE_URL=http://localhost:8090 # change this to your actual server URL 
+      - PUBLIC_POCKETBASE_URL=http://localhost:8090 # change this to your actual pocketbase service URL 
       - PUBLIC_INTERNAL_POCKETBASE_URL=http://pocketbase:8090
-      - ORIGIN=http://127.0.0.1:3000 # change this to server URL
+      - ORIGIN=http://127.0.0.1:3000 # change this to curator server URL
     depends_on: 
       - pocketbase
     ports: 
