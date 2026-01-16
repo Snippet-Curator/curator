@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { ScrollArea } from '$lib/components/ui/scroll-area';
-
 	import { saveCurrentPage, signalPageState } from '$lib/utils.svelte';
 	import { getNotelistState, setNotelistState, type NoteType } from '$lib/db.svelte';
 	import { Pagination, NoteList, BulkToolbar, BulkEditBtn, Delete, Blank } from '$lib/components/';
@@ -44,7 +42,7 @@
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
 
-<ScrollArea class="mb-20 h-[calc(100vh-60px)] overflow-y-auto">
+<div class="mb-20 h-[calc(100vh-60px)] overflow-y-auto">
 	{#await initialLoading}
 		<br />
 	{:then}
@@ -75,4 +73,4 @@
 			<br />
 		{/if}
 	{/await}
-</ScrollArea>
+</div>

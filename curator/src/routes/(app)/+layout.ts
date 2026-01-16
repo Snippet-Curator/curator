@@ -1,6 +1,4 @@
 import {
-	addFtsCollection,
-	getAuth,
 	makeDefaultNotebook,
 	addNotesToUser,
 	addSettingToUser,

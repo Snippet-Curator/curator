@@ -1,20 +1,24 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
 	import { Import, Notebook as NotebookIcon, Settings, Tags, WalletCards } from 'lucide-svelte';
-	import { ScrollArea } from '$lib/components/ui/scroll-area/index';
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 
-	import { getNotebookState, getTagState } from '$lib/db.svelte';
-
-	import { getSettingState } from '$lib/setting.svelte';
+	import { getNotebookState, getTagState, setNotebookState, setTagState } from '$lib/db.svelte';
+	import { getSettingState, setSettingState } from '$lib/setting.svelte';
+	import { getMobileState, getMouseState, setMobileState, setMouseState } from '$lib/utils.svelte';
 
 	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
-	import { getMobileState, getMouseState } from '$lib/utils.svelte';
-	import { browser } from '$app/environment';
 
 	let { children } = $props();
+
+	setTagState();
+	setNotebookState();
+	setMobileState();
+
+	setMouseState();
 
 	const tagState = getTagState();
 	const notebookState = getNotebookState();
@@ -129,7 +133,7 @@
 
 			<div class="divider my-0 py-0"></div>
 
-			<ScrollArea scrollHideDelay={200} class="h-10 grow">
+			<div class="h-10 grow overflow-y-auto">
 				<Pinned />
 
 				<span class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto"
@@ -141,7 +145,7 @@
 				<span class="menu-title flex items-center gap-2"><Tags size={18} /> Tags</span>
 
 				<TagList tags={tagState.tags} />
-			</ScrollArea>
+			</div>
 
 			{#snippet renderBottomPages(name: string, url: string, icon: any)}
 				{@const Icon = icon}
