@@ -30,7 +30,7 @@
 {#snippet bar(item)}
 	{@const Icon = item.icon}
 	<button
-		class={page.url.hash == item.url ? 'dock-active' : ''}
+		class={page.url.pathname == item.url ? 'dock-active' : ''}
 		onclick={() => goto(`${item.url}`)}
 	>
 		<Icon size={18} class="text-base-content/70" />

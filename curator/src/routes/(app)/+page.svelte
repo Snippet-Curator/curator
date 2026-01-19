@@ -37,7 +37,7 @@
 
 	const notelistState = getNotelistState(notebookID);
 
-	const savedPage = $derived<number>(signalPageState.savedPages.get(page.url.hash) ?? 1);
+	const savedPage = $derived<number>(signalPageState.savedPages.get(page.url.pathname) ?? 1);
 
 	let scrollEl = $state<HTMLElement>();
 

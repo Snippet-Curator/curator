@@ -18,7 +18,7 @@
 	setNotelistState(tagID, noteType);
 	const notelistState = getNotelistState(tagID);
 
-	const savedPage = $derived(signalPageState.savedPages.get(page.url.hash));
+	const savedPage = $derived(signalPageState.savedPages.get(page.url.pathname));
 
 	const updatePage = async (newPage: number) => {
 		await notelistState.getByTag(tagID, newPage);

@@ -1,6 +1,19 @@
 <script lang="ts">
-	import { getNotebookState } from '$lib/db.svelte';
-	import { fullTextSearch } from '$lib/search.svelte';
+	import { NoteList } from '$lib/components';
+	import { getNotebookState, getNotelistState, setNotelistState } from '$lib/db.svelte';
+	import type { NoteType } from '$lib/types';
+
+	let notebookID = 'homepage';
+	const noteType: NoteType = {
+		type: 'default'
+	};
+
+
+	let isBulkEdit = false
+	let selectedNotesID = $state()
+
+	setNotelistState(notebookID, noteType);
+
 </script>
 
 <svelte:boundary>
@@ -11,8 +24,16 @@
 	{#snippet failed(err)}
 		{err}
 	{/snippet}
+	
 
-	{@const notebookState = getNotebookState()}
+	{@const notelistState = await getNotelistState(notebookID)}
 
-	{notebookState.totalNoteCount}
+	{notelistState.notes.totalItems}
+
+	<NoteList
+				{isBulkEdit}
+				update={()=>null}
+				bind:selectedNotesID
+				notes={notelistState.notes}
+			/>
 </svelte:boundary>

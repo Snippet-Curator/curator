@@ -18,7 +18,7 @@
 	setNotelistState('deleted', noteType);
 	const notelistState = getNotelistState('deleted');
 
-	const savedPage = $derived(signalPageState.savedPages.get(page.url.hash) ?? 1);
+	const savedPage = $derived(signalPageState.savedPages.get(page.url.pathname) ?? 1);
 
 	const updatePage = async (newPage: number) => {
 		await notelistState.getDeleted(newPage);
