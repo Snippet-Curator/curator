@@ -91,7 +91,7 @@
 				return;
 		}
 
-		if (event.ctrlKey && event.key === 'l') {
+		if (event.ctrlKey && event.key === '/') {
 			event.preventDefault();
 			isOpen = true;
 		}

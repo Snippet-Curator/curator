@@ -74,7 +74,7 @@
 	];
 	const navigations: KBD[] = [
 		{
-			displays: ['ctrl + l'],
+			displays: ['ctrl + /'],
 			description: 'Navigation box'
 		},
 		{
