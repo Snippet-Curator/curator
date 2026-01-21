@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import * as Dialog from '$lib/components/ui/dialog/index';
 	import type { Note } from '$lib/types';
 	import { X } from 'lucide-svelte';
@@ -137,7 +136,7 @@
 
 		<div>
 			<legend class="fieldset-legend">Change Thumbnail</legend>
-			<ScrollArea class="card border-base-content/20 max-h-[350px] overflow-y-hidden border">
+			<div class="card border-base-content/20 max-h-[350px] overflow-y-hidden border">
 				<div class="gap-y-golden-xl m-golden-xl grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 					{#if note && note.resources}
 						{#each note.resources as resource}
@@ -177,7 +176,7 @@
 						</label>
 					{/if}
 				</div>
-			</ScrollArea>
+			</div>
 		</div>
 
 		<div class="flex justify-end gap-x-2">

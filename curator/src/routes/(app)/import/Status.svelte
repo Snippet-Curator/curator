@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import * as Tabs from '$lib/components/ui/tabs/index';
 	import { getImportState } from './import.svelte';
 
@@ -29,7 +28,7 @@
 				<Tabs.Trigger value="errors">Errors</Tabs.Trigger>
 			</Tabs.List>
 			<Tabs.Content value="success">
-				<ScrollArea class="h-100">
+				<div class="h-100 overflow-y-auto">
 					<table class="table-zebra table">
 						<thead>
 							<tr>
@@ -46,10 +45,10 @@
 							{/each}
 						</tbody>
 					</table>
-				</ScrollArea>
+				</div>
 			</Tabs.Content>
 			<Tabs.Content value="errors">
-				<ScrollArea class="h-100">
+				<div class="overflow-y-auto h-100">
 					<table class="table-zebra table">
 						<thead>
 							<tr>
@@ -68,7 +67,7 @@
 							{/each}
 						</tbody>
 					</table>
-				</ScrollArea>
+				</div>
 			</Tabs.Content>
 		</Tabs.Root>
 	{/if}

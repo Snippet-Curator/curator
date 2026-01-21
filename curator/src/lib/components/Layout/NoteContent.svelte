@@ -6,8 +6,6 @@
 
 	import { CaseSensitive, CircleX } from 'lucide-svelte';
 
-	import { ScrollArea } from '$lib/components/ui/scroll-area/index';
-
 	import { NoteState, uploadFileToPocketbase } from '$lib/db.svelte';
 	import {
 		addMediaToContent,
@@ -226,7 +224,7 @@
 	</div>
 </div>
 
-<ScrollArea scrollHideDelay={200} type="scroll" class="mb-20 h-full">
+<div class="mb-20 h-full overflow-y-auto">
 	<div class="card mx-auto mt-10 max-w-3xl px-2 pb-40 md:px-10 lg:max-w-5xl">
 		<iframe
 			title="content"
@@ -296,7 +294,7 @@
 			</div>
 		{/if}
 	</div>
-</ScrollArea>
+</div>
 
 {#if isOpen}
 	<div
