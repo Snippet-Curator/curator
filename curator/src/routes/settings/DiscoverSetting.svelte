@@ -3,6 +3,43 @@
 	const settingState = getSettingState();
 </script>
 
+{#snippet renderSliderSetting(
+	name: string,
+	title: string,
+	initialValue = 0,
+	description = '',
+	min = 0,
+	max = 10,
+	step = 1
+)}
+	<div class="gap-x-golden-md grid grid-cols-12 content-start">
+		<legend class="fieldset-legend col-span-12">{title}</legend>
+		<div class="col-span-11">
+			<p>{description}</p>
+		</div>
+		<div class="space-x-golden-lg mt-golden-md col-span-11 flex">
+			<input
+				type="range"
+				class="range range-sm w-full text-right"
+				required
+				{min}
+				{max}
+				value={initialValue}
+				{step}
+				oninput={(event: Event) => {
+					const input = event.target as HTMLInputElement;
+					let newValue = input.valueAsNumber;
+					if (!newValue) newValue = 0;
+					settingState[name] = newValue;
+					console.log('Changed setting: ', name, newValue);
+					settingState.changeSetting(name, newValue);
+				}}
+			/>
+			<span>{settingState[name]}</span>
+		</div>
+	</div>
+{/snippet}
+
 {#snippet renderDiscoverSetting(
 	name: string,
 	title: string,
@@ -19,7 +56,7 @@
 		</div>
 		<input
 			type="number"
-			class="input col-span-2 text-right"
+			class="input col-span-2"
 			required
 			{min}
 			{max}
@@ -43,25 +80,25 @@
 		<p>Settings are updated on restart.</p>
 
 		<div class="gap-x-golden-md space-y-golden-lg grid grid-cols-1 md:grid-cols-2">
-			{@render renderDiscoverSetting(
+			{@render renderSliderSetting(
 				'recencyWeight',
 				'Recency Weight',
 				settingState.recencyWeight,
 				'Weight of how recently a note was seen. Older notes will be ranked higher.'
 			)}
-			{@render renderDiscoverSetting(
+			{@render renderSliderSetting(
 				'ratingWeight',
 				'Rating Weight',
 				settingState.ratingWeight,
 				'Weight of note rating in score calculation. Higher rated notes will be ranked higher.'
 			)}
-			{@render renderDiscoverSetting(
+			{@render renderSliderSetting(
 				'weightWeight',
 				'Voting Weight',
 				settingState.weightWeight,
 				'Weight of upvote vs downvote of a note. More upvoted notes will be ranked higher'
 			)}
-			{@render renderDiscoverSetting(
+			{@render renderSliderSetting(
 				'randomWeight',
 				'Random Weight',
 				settingState.randomWeight,
@@ -112,26 +149,6 @@
 				24,
 				1
 			)}
-		</div>
-
-		<div class="divider"></div>
-		<div class="gap-x-golden-md grid grid-cols-12 items-center">
-			<div class="col-span-4">
-				<legend class="fieldset-legend">Youtube API Key</legend>
-				Used to add youtube videos.
-			</div>
-			<input
-				type="text"
-				class="input col-span-8 w-full text-right"
-				bind:value={settingState.youtubeAPIKey}
-				onchange={async () => {
-					const newValue = await settingState.changeSetting(
-						'youtubeAPIKey',
-						settingState.youtubeAPIKey
-					);
-					console.log('Changed setting, youtube API:', newValue);
-				}}
-			/>
 		</div>
 	</div>
 </div>

@@ -11,6 +11,7 @@ export { default as Command } from './Layout/Command.svelte';
 export { default as Pinned } from './Layout/Pinned.svelte';
 export { default as SelectTags } from './Layout/SelectTags.svelte';
 export { default as SelectNotebook } from './Layout/SelectNotebook.svelte';
+export { default as InputText } from './Layout/InputText.svelte';
 
 // notes
 export { default as Pagination } from './Layout/Pagination.svelte';
