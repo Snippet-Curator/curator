@@ -14,7 +14,7 @@
 		FilterSearch
 	} from '$lib/components/';
 	import * as Topbar from '$lib/components/Topbar/index';
-	import { saveCurrentPage, signalPageState } from '$lib/utils.svelte';
+	import { getMouseState, saveCurrentPage, signalPageState } from '$lib/utils.svelte';
 	import { getSearchState, setSearchState, type SearchState } from '$lib/search.svelte';
 	import type { NoteType } from '$lib/types';
 	import { ScrollState } from 'runed';
@@ -36,6 +36,7 @@
 	let searchState = $state<SearchState>();
 
 	const notelistState = getNotelistState(notebookID);
+	const mouseState = getMouseState();
 
 	const savedPage = $derived<number>(signalPageState.savedPages.get(page.url.pathname) ?? 1);
 
@@ -54,6 +55,7 @@
 		if (!searchState) return;
 
 		// get default page if no filters
+		mouseState.isBusy = true;
 		if (
 			!searchState.searchInput &&
 			!searchState.searchNotebookID &&
@@ -62,12 +64,14 @@
 			searchState.searchTerm = '';
 			searchState.resetCustomFilter();
 			await notelistState.getByPage(newPage);
+			mouseState.isBusy = false;
 			return;
 		}
 
 		// run same filter if search term is same
 		if (searchState.searchTerm === searchState.searchInput) {
 			await notelistState.getByFilter(searchState.customFilter, newPage);
+			mouseState.isBusy = false;
 			return;
 		}
 
@@ -77,6 +81,7 @@
 		searchState.makeSearchQuery(searchState.searchInput);
 		await notelistState.getByFilter(searchState.customFilter, newPage);
 		searchState.searchTerm = searchState.searchInput;
+		mouseState.isBusy = false;
 	};
 
 	isLoading = false;
@@ -119,7 +124,7 @@
 			changePage={(newPage: number) => updatePage(newPage)}
 		/>
 
-		{#if notelistState.notes.totalItems > 0}
+		{#if notelistState.notes && notelistState.notes.totalItems > 0}
 			<NoteList
 				{isBulkEdit}
 				update={() => updatePage(notelistState.clickedPage)}
