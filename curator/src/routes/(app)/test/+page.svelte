@@ -1,39 +1,21 @@
 <script lang="ts">
-	import { NoteList } from '$lib/components';
-	import { getNotebookState, getNotelistState, setNotelistState } from '$lib/db.svelte';
-	import type { NoteType } from '$lib/types';
+	import { getSettingState } from '$lib/setting.svelte';
+	import { fetchYoutubePlaylist } from './youtube';
+	const settingState = getSettingState();
 
-	let notebookID = 'homepage';
-	const noteType: NoteType = {
-		type: 'default'
-	};
-
-
-	let isBulkEdit = false
-	let selectedNotesID = $state()
-
-	setNotelistState(notebookID, noteType);
-
+	const playlist = 'PLWaHMoScaN1ZhqWur8-J6rsiaLf6zVWJ4';
 </script>
 
 <svelte:boundary>
 	{#snippet pending()}
-		hello
+		Fetching...
 	{/snippet}
 
 	{#snippet failed(err)}
-		{err}
+		Fetch failed: {err}
 	{/snippet}
-	
 
-	{@const notelistState = await getNotelistState(notebookID)}
+	{@const youtubePlaylist = await fetchYoutubePlaylist(settingState.youtubeAPIKey ?? '', playlist)}
 
-	{notelistState.notes.totalItems}
-
-	<NoteList
-				{isBulkEdit}
-				update={()=>null}
-				bind:selectedNotesID
-				notes={notelistState.notes}
-			/>
+	{JSON.stringify(youtubePlaylist, null, 2)}
 </svelte:boundary>

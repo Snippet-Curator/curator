@@ -49,7 +49,15 @@
 	});
 
 	function handler(event: KeyboardEvent) {
+		const target = event.target as HTMLElement;
+
 		if (isOpen == false) return;
+
+		switch (target.tagName) {
+			case 'INPUT':
+			case 'TEXTAREA':
+				return;
+		}
 
 		switch (event.key) {
 			case 'Enter':
