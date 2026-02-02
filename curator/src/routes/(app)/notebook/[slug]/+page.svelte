@@ -1,30 +1,40 @@
 <script lang="ts">
-	import { saveCurrentPage, signalPageState } from '$lib/utils.svelte';
-	import { getNotelistState, setNotelistState, type NoteType } from '$lib/db.svelte';
-	import { Pagination, NoteList, BulkToolbar, BulkEditBtn, Delete, Blank } from '$lib/components/';
-	import * as Topbar from '$lib/components/Topbar/index';
-
 	import { page } from '$app/state';
+	import { ScrollState } from 'runed';
+
+	import { getMouseState, saveCurrentPage, signalPageState } from '$lib/utils.svelte';
+	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
+	import { Pagination, NoteList, BulkToolbar, BulkEditBtn } from '$lib/components/';
+	import * as Topbar from '$lib/components/Topbar/index';
+	import type { NoteType } from '$lib/types';
 
 	let notebookID = $derived(page.params.slug);
 	let isBulkEdit = $state(false);
-	let isEmptyTrashOpen = $state(false);
 	let selectedNotesID = $state<string[]>([]);
+	let scrollEl = $state<HTMLElement>();
 
 	const noteType: NoteType = {
 		type: 'notebooks',
 		id: page.params.slug
 	};
 
+	const scroll = new ScrollState({
+		element: () => scrollEl
+	});
+
 	setNotelistState(notebookID, noteType);
 	const notelistState = getNotelistState(notebookID);
+	const mouseState = getMouseState();
 
 	const savedPage = $derived(signalPageState.savedPages.get(page.url.pathname) ?? 1);
 
 	const updatePage = async (newPage: number) => {
+		scroll.scrollToTop();
+		mouseState.isBusy = true;
 		notelistState.clickedPage = newPage;
 		await notelistState.getByNotebook(notebookID, newPage);
 		saveCurrentPage(newPage);
+		mouseState.isBusy = false;
 	};
 
 	let initialLoading = $state<Promise<void>>();
@@ -43,14 +53,17 @@
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
 
-<div class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto">
+<div bind:this={scrollEl} class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto">
 	{#await initialLoading}
 		<br />
 	{:then}
 		<Pagination
 			currentPage={notelistState.notes.page}
 			totalPages={notelistState.notes.totalPages}
-			changePage={(newPage: number) => updatePage(newPage)}
+			changePage={(newPage: number) => {
+				if (mouseState.isBusy) return;
+				updatePage(newPage);
+			}}
 		/>
 
 		{#if notelistState.notes.totalItems > 0}

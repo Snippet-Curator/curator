@@ -1,14 +1,18 @@
 <script lang="ts">
-	import { saveCurrentPage, signalPageState } from '$lib/utils.svelte';
-	import { getNotelistState, setNotelistState, type NoteType } from '$lib/db.svelte';
+	import { page } from '$app/state';
+	import { ScrollState } from 'runed';
+
+	import { getMouseState, saveCurrentPage, signalPageState } from '$lib/utils.svelte';
+	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
 	import { Pagination, NoteList, BulkToolbar, BulkEditBtn, Delete } from '$lib/components/';
 	import * as Topbar from '$lib/components/Topbar/index';
-
-	import { page } from '$app/state';
+	import type { NoteType } from '$lib/types';
 
 	let isBulkEdit = $state(false);
 	let isEmptyTrashOpen = $state(false);
 	let selectedNotesID = $state<string[]>([]);
+	let scrollEl = $state<HTMLElement>();
+	let initialLoading = $state<Promise<void>>();
 
 	const noteType: NoteType = {
 		type: 'trash',
@@ -17,16 +21,22 @@
 
 	setNotelistState('deleted', noteType);
 	const notelistState = getNotelistState('deleted');
+	const mouseState = getMouseState();
+
+	const scroll = new ScrollState({
+		element: () => scrollEl
+	});
 
 	const savedPage = $derived(signalPageState.savedPages.get(page.url.pathname) ?? 1);
 
 	const updatePage = async (newPage: number) => {
+		scroll.scrollToTop();
+		mouseState.isBusy = true;
 		await notelistState.getDeleted(newPage);
 		saveCurrentPage(newPage);
 		notelistState.clickedPage = newPage;
+		mouseState.isBusy = false;
 	};
-
-	let initialLoading = $state<Promise<void>>();
 
 	$effect(() => {
 		initialLoading = updatePage(savedPage);
@@ -41,14 +51,17 @@
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
 
-<div class="mb-20 h-[calc(100vh-60px)] overflow-y-auto">
+<div bind:this={scrollEl} class="mb-20 h-[calc(100vh-60px)] overflow-y-auto">
 	{#await initialLoading}
 		<br />
 	{:then}
 		<Pagination
 			currentPage={notelistState.notes.page}
 			totalPages={notelistState.notes.totalPages}
-			changePage={(newPage: number) => updatePage(newPage)}
+			changePage={(newPage: number) => {
+				if (mouseState.isBusy) return;
+				updatePage(newPage);
+			}}
 		/>
 		{#if isBulkEdit}
 			<BulkToolbar

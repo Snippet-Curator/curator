@@ -19,13 +19,16 @@
 	import type { NoteType } from '$lib/types';
 	import { ScrollState } from 'runed';
 
+	let notebookID = 'homepage';
 	let searchInput = $state('');
 	let isBulkEdit = $state(false);
 	let selectedNotesID = $state<string[]>([]);
-	let isLoading = $state(true);
 	let isFilterSearch = $state(false);
+	let searchState = $state<SearchState>();
+	let scrollEl = $state<HTMLElement>();
 
-	let notebookID = 'homepage';
+	let initialLoading = $state();
+
 	const noteType: NoteType = {
 		type: 'default'
 	};
@@ -33,14 +36,10 @@
 	setNotelistState(notebookID, noteType);
 	setSearchState();
 
-	let searchState = $state<SearchState>();
-
 	const notelistState = getNotelistState(notebookID);
 	const mouseState = getMouseState();
 
 	const savedPage = $derived<number>(signalPageState.savedPages.get(page.url.pathname) ?? 1);
-
-	let scrollEl = $state<HTMLElement>();
 
 	const scroll = new ScrollState({
 		element: () => scrollEl
@@ -84,9 +83,6 @@
 		mouseState.isBusy = false;
 	};
 
-	isLoading = false;
-	let initialLoading = $state();
-
 	onMount(async () => {
 		searchState = getSearchState();
 
@@ -121,7 +117,10 @@
 		<Pagination
 			currentPage={notelistState.notes.page}
 			totalPages={notelistState.notes.totalPages}
-			changePage={(newPage: number) => updatePage(newPage)}
+			changePage={(newPage: number) => {
+				if (mouseState.isBusy) return;
+				updatePage(newPage);
+			}}
 		/>
 
 		{#if notelistState.notes && notelistState.notes.totalItems > 0}
