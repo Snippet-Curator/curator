@@ -1,10 +1,10 @@
 {
 	"name": "svelte-app",
-	"version": "0.0.27",
+	"version": "0.0.28",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"docker": "docker build -t kangruixiang/curator:0.0.27 . && docker tag kangruixiang/curator:0.0.27 kangruixiang/curator:latest && docker push kangruixiang/curator:0.0.27 && docker push kangruixiang/curator:latest",
+		"docker": "docker build -t kangruixiang/curator:0.0.28 . && docker tag kangruixiang/curator:0.0.28 kangruixiang/curator:latest && docker push kangruixiang/curator:0.0.28 && docker push kangruixiang/curator:latest",
 		"build": "vite build",
 		"preview": "vite preview",
 		"start": "vite build && vite preview --host",

@@ -137,8 +137,6 @@ export class settingState {
 			return;
 		}
 
-		console.log(settingUpdate.jsonValue);
-
 		return settingUpdate.jsonValue;
 	}
 

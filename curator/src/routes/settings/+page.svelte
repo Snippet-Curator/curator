@@ -5,7 +5,7 @@
 	import User from './User.svelte';
 	import APIs from './APIs.svelte';
 
-	let { data } = $props();
+	let { data, form } = $props();
 </script>
 
 <Topbar.Root>
@@ -23,7 +23,7 @@
 		<div class="divider"></div>
 		<NoteSetting />
 		<div class="divider"></div>
-		<APIs />
+		<APIs {form} />
 		<div class="divider"></div>
 		<Version />
 	</div>

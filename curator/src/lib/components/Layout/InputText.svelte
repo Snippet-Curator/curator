@@ -15,8 +15,8 @@
 </script>
 
 {#if isEdit}
-	<div class="space-x-golden-md col-span-8 flex">
-		<input type="text" class="input w-full text-right" bind:value={textInput} />
+	<div class="space-x-golden-md flex justify-end">
+		<input type="text" class="input" bind:value={textInput} />
 		<div class="space-x-golden-sm flex">
 			<button onclick={changeInput} class="btn btn-primary">Save</button>
 			<button
@@ -28,8 +28,8 @@
 		</div>
 	</div>
 {:else}
-	<div class="space-x-golden-lg col-span-8 flex items-center justify-end">
-		<span>{textInput}</span>
+	<div class="space-x-golden-lg flex items-center justify-end">
+		<span class="truncate">{textInput}</span>
 		<button onclick={() => (isEdit = true)} class="btn">Edit</button>
 	</div>
 {/if}
