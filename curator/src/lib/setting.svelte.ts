@@ -16,6 +16,7 @@ export class settingState {
 	scoreRefreshHour = $state<number>();
 	youtubeAPIKey = $state<string>();
 	nsfwBlur = $state<boolean>();
+	karakeepData = $state<{ url: string; apiKey: string }>();
 
 	/**
 	 * return setting values by type
@@ -73,6 +74,22 @@ export class settingState {
 		return defaultValue;
 	}
 
+	async makeDefaultJSONValue<T>(name: string, defaultValue: T) {
+		const { data, error } = await tryCatch<Setting, PError>(
+			pb.collection(settingCollection).create({
+				name: name,
+				jsonValue: defaultValue,
+				user: pb.authStore.record?.id
+			})
+		);
+
+		if (error || !data) {
+			throw new Error(`Error making default setting: ${name}`);
+		}
+
+		return defaultValue;
+	}
+
 	async changeSetting<T extends number | string | boolean>(name: string, newValue: T) {
 		const { data: settingRecord, error } = await tryCatch<Setting, PError>(
 			pb.collection(settingCollection).getFirstListItem(`name="${name}"`)
@@ -97,6 +114,46 @@ export class settingState {
 		}
 
 		return settingUpdate.value;
+	}
+
+	async changeJSONSetting<T>(name: string, newValue: T) {
+		const { data: settingRecord, error } = await tryCatch<Setting, PError>(
+			pb.collection(settingCollection).getFirstListItem(`name="${name}"`)
+		);
+
+		if (error || !settingRecord) {
+			console.error('Error getting setting: ', name, error.message);
+			return;
+		}
+
+		const { data: settingUpdate, error: errorUpdate } = await tryCatch<Setting, PError>(
+			pb.collection(settingCollection).update(settingRecord.id, {
+				jsonValue: newValue
+			})
+		);
+
+		if (errorUpdate || !settingUpdate) {
+			console.error('Error making setting: ', name, errorUpdate.message);
+			return;
+		}
+
+		console.log(settingUpdate.jsonValue);
+
+		return settingUpdate.jsonValue;
+	}
+
+	async getJsonSetting<T>(name: string, defaultValue: T) {
+		const { data, error } = await tryCatch<Setting, PError>(
+			pb.collection(settingCollection).getFirstListItem(`name="${name}"`)
+		);
+
+		if (error || !data) {
+			console.error('Error getting setting: ', name, error.message);
+			await this.makeDefaultJSONValue(name, defaultValue);
+			return defaultValue;
+		}
+
+		return data.jsonValue as T;
 	}
 
 	async getSetting<T extends string | number | boolean>(name: string, defaultValue: T) {
@@ -125,6 +182,7 @@ export class settingState {
 		this.scoreRefreshHour = await this.getSetting('scoreRefreshHour', 6);
 		this.youtubeAPIKey = await this.getSetting('youtubeAPIKey', '');
 		this.nsfwBlur = await this.getSetting('nsfwBlur', false);
+		this.karakeepData = await this.getJsonSetting('karakeep', { url: '', apiKey: '' });
 	}
 }
 

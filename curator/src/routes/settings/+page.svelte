@@ -3,7 +3,7 @@
 	import { KBD, DiscoverSetting, Version, NoteSetting } from './index';
 	import { Dock } from '$lib/components';
 	import User from './User.svelte';
-	import Youtube from './Youtube.svelte';
+	import APIs from './APIs.svelte';
 
 	let { data } = $props();
 </script>
@@ -23,7 +23,7 @@
 		<div class="divider"></div>
 		<NoteSetting />
 		<div class="divider"></div>
-		<Youtube />
+		<APIs />
 		<div class="divider"></div>
 		<Version />
 	</div>

@@ -103,6 +103,7 @@ export type Setting = {
 	id: string;
 	name: string;
 	value: string;
+	jsonValue?: string;
 };
 
 // ------ Frontend ------

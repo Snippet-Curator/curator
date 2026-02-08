@@ -7,6 +7,11 @@ const pkg = JSON.parse(json);
 
 export default defineConfig({
 	plugins: [sveltekit()],
+	server: {
+		fs: {
+			allow: ['..']
+		}
+	},
 	define: {
 		'import.meta.env.APP_VERSION': JSON.stringify(pkg.version)
 	}
