@@ -5,6 +5,7 @@ node_modules
 **/.svelte-kit
 *.woff2
 **/cleanPB.ts
+.turbo
 
 # Output
 .output

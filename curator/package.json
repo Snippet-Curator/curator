@@ -4,6 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
+		"docker": "docker build -t kangruixiang/curator:0.0.26 . && docker tag kangruixiang/curator:0.0.26 kangruixiang/curator:latest && docker push kangruixiang/curator:0.0.26 && docker push kangruixiang/curator:latest",
 		"build": "vite build",
 		"preview": "vite preview",
 		"start": "vite build && vite preview --host",
