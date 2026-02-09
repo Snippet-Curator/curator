@@ -328,11 +328,11 @@ export class NotebookState {
 	constructor() {
 		$effect(() => {
 			this.getAll();
-			pb.collection(notebooksCollection).subscribe('*', async () => {
-				this.getAll();
-				this.getInbox();
-				this.getAllCounts();
-			});
+			// pb.collection(notebooksCollection).subscribe('*', async () => {
+			// 	this.getAll();
+			// 	this.getInbox();
+			// 	this.getAllCounts();
+			// });
 			pb.collection(notesCollection).subscribe('*', async () => {
 				this.getAll();
 				this.getInbox();
@@ -428,6 +428,8 @@ export class NotebookState {
 		if (error) {
 			console.error('Error while creating new notebook: ', error.data, error.message);
 		}
+		await this.getAll();
+		await this.getAllCounts();
 	}
 
 	async getOneByName(notebookName: string) {
@@ -475,6 +477,8 @@ export class NotebookState {
 		if (error) {
 			console.error('Error while deleting notebook: ', error);
 		}
+		await this.getAll();
+		await this.getAllCounts();
 	}
 
 	async updateOnebyName(recordID: string, newName: string) {
@@ -486,7 +490,8 @@ export class NotebookState {
 		if (error) {
 			console.error('Error while updating notebook name: ', error);
 		}
-		// await this.getAll()
+		await this.getAll();
+		await this.getAllCounts();
 	}
 
 	async updateOnebyParent(recordID: string, parentNotebook: string) {
@@ -498,7 +503,8 @@ export class NotebookState {
 		if (error) {
 			console.error('Error while updating parent notebook: ', error);
 		}
-		// await this.getAll()
+		await this.getAll();
+		await this.getAllCounts();
 	}
 
 	async pin(recordID: string) {
@@ -510,6 +516,7 @@ export class NotebookState {
 		if (error) {
 			console.error('Error pinning notebook: ', error.data);
 		}
+		await this.getAll();
 	}
 
 	async unpin(recordID: string) {
@@ -521,6 +528,7 @@ export class NotebookState {
 		if (error) {
 			console.error('Error unpinning notebook: ', error.data);
 		}
+		await this.getAll();
 	}
 }
 
