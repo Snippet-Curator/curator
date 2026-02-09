@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SlidersHorizontal } from 'lucide-svelte';
+	import { SlidersHorizontal } from '@jis3r/icons';
 
 	type Props = {
 		isOpen: boolean;

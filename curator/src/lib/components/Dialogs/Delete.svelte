@@ -24,7 +24,6 @@
 			<Dialog.Description>Are you sure you want to delete {@render children()}?</Dialog.Description>
 		</Dialog.Header>
 		<div class="flex justify-end gap-x-2">
-			<button onclick={() => (isOpen = false)} class="btn">Close</button>
 			<button
 				onclick={() => {
 					action();
@@ -32,6 +31,7 @@
 				}}
 				class="btn btn-error">Delete</button
 			>
+			<button onclick={() => (isOpen = false)} class="btn">Close</button>
 		</div>
 	</Dialog.Content>
 </Dialog.Root>

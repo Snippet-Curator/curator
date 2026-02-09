@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Pencil } from 'lucide-svelte';
+	import { Pencil } from '@jis3r/icons';
 	import { onDestroy, onMount } from 'svelte';
 
 	type Props = {

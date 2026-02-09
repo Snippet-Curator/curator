@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Inbox, Trash2 } from 'lucide-svelte';
+	import { Inbox } from 'lucide-svelte';
+	import { Trash2 } from '@jis3r/icons';
 	import { onDestroy, onMount } from 'svelte';
 
 	type Props = {

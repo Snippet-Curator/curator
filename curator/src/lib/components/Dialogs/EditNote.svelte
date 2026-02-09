@@ -188,8 +188,8 @@
 		</div>
 
 		<div class="flex justify-end gap-x-2">
-			<button onclick={() => (isOpen = false)} class="btn">Close</button>
 			<button onclick={save} class="btn btn-primary">Save</button>
+			<button onclick={() => (isOpen = false)} class="btn">Close</button>
 		</div>
 	</Dialog.Content>
 </Dialog.Root>

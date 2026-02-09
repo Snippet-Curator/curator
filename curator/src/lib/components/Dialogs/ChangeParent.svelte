@@ -41,16 +41,16 @@
 		<div class="grow"></div>
 		<button
 			onclick={() => {
-				isOpen = false;
-			}}
-			class="btn">Cancel</button
-		>
-		<button
-			onclick={() => {
 				clear();
 				isOpen = false;
 			}}
 			class="btn btn-primary">Clear Parent {type}</button
+		>
+		<button
+			onclick={() => {
+				isOpen = false;
+			}}
+			class="btn">Cancel</button
 		>
 	</div>
 </Command.Dialog>

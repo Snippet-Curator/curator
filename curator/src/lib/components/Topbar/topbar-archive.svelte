@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Archive, ArchiveRestore } from 'lucide-svelte';
+	import { ArchiveRestore } from 'lucide-svelte';
+	import { Archive } from '@jis3r/icons';
 	import { onDestroy, onMount } from 'svelte';
 
 	type Props = {

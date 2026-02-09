@@ -48,7 +48,6 @@
 			<input type="text" class="ring-0" bind:value={newName} />
 		</label>
 		<div class="flex justify-end gap-x-2">
-			<button onclick={() => (isOpen = false)} class="btn">Close</button>
 			<button
 				disabled={newName === ''}
 				onclick={() => {
@@ -58,6 +57,7 @@
 				}}
 				class="btn btn-primary">Create</button
 			>
+			<button onclick={() => (isOpen = false)} class="btn">Close</button>
 		</div>
 	</Dialog.Content>
 </Dialog.Root>
