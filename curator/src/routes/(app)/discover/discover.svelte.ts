@@ -4,7 +4,7 @@ import { getContext, setContext } from 'svelte';
 
 import type { Notebook, Tag } from '$lib/types';
 import { tryCatch } from '$lib/utils.svelte';
-import pb from '$lib/db.svelte';
+import { pb } from '$lib/pocketbase';
 import { viewNotebooksCollection, viewTagsCollectionName } from '$lib/const';
 
 export class SearchState {
