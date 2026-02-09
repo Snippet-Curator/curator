@@ -1,4 +1,4 @@
-import pb from '$lib/db.svelte';
+import { pb } from '$lib/pocketbase';
 import { tryCatch } from '$lib/utils.svelte';
 import { type PError, type Setting } from '$lib/types';
 import { settingCollection } from '$lib/const';

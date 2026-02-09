@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Command from '$lib/components/ui/command/index.js';
 	import { onMount } from 'svelte';
-	import pb from '$lib/db.svelte';
+	import { pb } from '$lib/pocketbase';
 	import type { Notebook } from '$lib/types';
 
 	type Props = {

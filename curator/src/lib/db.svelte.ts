@@ -1254,7 +1254,7 @@ export class NoteState {
 	}
 }
 
-export default pb;
+// export default pb;
 
 const TAG_KEY = Symbol('TAG');
 const NOTEBOOK_KEY = Symbol('NOTEBOOK');
