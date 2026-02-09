@@ -1,9 +1,7 @@
 <script lang="ts">
 	import * as Topbar from '$lib/components/Topbar/index';
-	import { KBD, DiscoverSetting, Version, NoteSetting } from './index';
+	import { KBD, DiscoverSetting, Version, NoteSetting, User, APIs } from './index';
 	import { Dock } from '$lib/components';
-	import User from './User.svelte';
-	import APIs from './APIs.svelte';
 
 	let { data, form } = $props();
 </script>

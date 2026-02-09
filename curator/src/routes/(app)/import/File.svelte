@@ -1,5 +1,5 @@
 <script lang="ts">
-	import pb from '$lib/db.svelte';
+	import { pb } from '$lib/pocketbase';
 	import { getMouseState } from '$lib/utils.svelte';
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getImportState } from './import.svelte';

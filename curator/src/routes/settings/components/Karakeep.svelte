@@ -76,11 +76,13 @@
 			{/if}
 
 			{#if form?.error}
-				<div class="alert alert-soft alert-error mt-2">Error! {form.error}</div>
+				<div class="alert alert-soft alert-error my-2">Error! {form.error}.</div>
 			{/if}
 
 			{#if form?.success}
-				<div class="alert alert-soft alert-success mt-2">Success! Username: {form.user.name}</div>
+				<div class="alert alert-soft alert-success my-2">
+					Success! Logged in as {form.user.name}.
+				</div>
 			{/if}
 
 			<div class="place-self-end">

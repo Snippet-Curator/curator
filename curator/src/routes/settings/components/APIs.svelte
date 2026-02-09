@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Karakeep from './components/Karakeep.svelte';
-	import Youtube from './components/Youtube.svelte';
+	import Karakeep from './Karakeep.svelte';
+	import Youtube from './Youtube.svelte';
 
 	let { form } = $props();
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import pb from '$lib/db.svelte';
+	import { pb } from '$lib/pocketbase';
 	import { tryCatch } from '$lib/utils.svelte';
 	import SparkMD5 from 'spark-md5';
 
