@@ -45,7 +45,7 @@
 </script>
 
 {#snippet renderArchived(status: string, Icon, action: () => void)}
-	<div class="tooltip tooltip-bottom z-30" data-tip={status}>
+	<div class="tooltip tooltip-bottom text-base-content/70 z-30" data-tip={status}>
 		<button onclick={() => action()} class="btn btn-ghost"><Icon size={18} /></button>
 	</div>
 {/snippet}

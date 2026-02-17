@@ -67,13 +67,18 @@
 				{note.description}
 			</p>
 		{/if}
-		<div class="gap-golden-sm flex flex-wrap items-center">
+		<div class="group gap-golden-sm flex flex-wrap items-center">
 			{#if note.expand?.notebook}
-				<span class="badge badge-soft rounded-sm">{note.expand?.notebook.name}</span>
+				<span class="badge badge-soft text-base-content/50 rounded-sm"
+					>{note.expand?.notebook.name}</span
+				>
 			{/if}
 			{#if note.expand?.tags}
 				{#each note.expand?.tags as tag}
-					<span class="badge text-nowrap">#{tag.name}</span>
+					<span
+						class="badge text-base-content/50 group-hover:text-base-content/70 text-nowrap transition-colors duration-200"
+						>#{tag.name}</span
+					>
 				{/each}
 			{/if}
 		</div>

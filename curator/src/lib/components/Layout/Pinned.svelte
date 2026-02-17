@@ -39,7 +39,7 @@
 {#snippet renderTag(tag: Tag)}
 	<ContextMenu.Root>
 		<ContextMenu.Trigger
-			class="motion-translate-y-in-50 motion-duration-200 flex cursor-auto items-center justify-between p-0 pr-1"
+			class="motion-translate-y-in-50 motion-duration-200 group flex cursor-auto items-center justify-between p-0 pr-1"
 		>
 			<a
 				href="/tags/{tag.id}"
@@ -47,9 +47,12 @@
 					? 'badge-neutral'
 					: ''} badge hover:badge-neutral mx-0 my-1 flex items-center gap-x-2 text-nowrap transition-colors"
 			>
-				<TagIcon size={15} />{tag.name}
+				<span class="group-hover:text-base-content/90 text-base-content/70"
+					><TagIcon size={15} /></span
+				>
+				{tag.name}
 			</a>
-			<Pin size={15} />
+			<span class="hover:text-base-content/70 text-base-content/50"><Pin size={15} /></span>
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>
 			<ContextMenu.Item

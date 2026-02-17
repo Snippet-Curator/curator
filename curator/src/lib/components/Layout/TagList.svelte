@@ -28,17 +28,22 @@
 
 {#snippet renderTag(tag: Tag)}
 	<ContextMenu.Root>
-		<ContextMenu.Trigger class="flex cursor-auto items-center justify-between p-0 pr-2">
+		<ContextMenu.Trigger class="group flex cursor-auto items-center justify-between p-0 pr-2">
 			<a
 				href="/tags/{tag.id}"
 				class="{page.url.pathname == `/tags/${tag.id}`
 					? 'badge-neutral'
 					: ''} badge hover:badge-neutral mx-2 my-2 flex items-center gap-x-2 text-nowrap transition-colors"
 			>
-				<TagIcon size={15} />{tag.name}
+				<span class="group-hover:text-base-content/90 text-base-content/70"
+					><TagIcon size={15} /></span
+				>
+				{tag.name}
 			</a>
 
-			<span class="text-base-content/80 text-right">{tag.note_count}</span>
+			<span class="text-base-content/50 group-hover:text-base-content/70 text-right"
+				>{tag.note_count}</span
+			>
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>
 			<ContextMenu.Item

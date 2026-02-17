@@ -40,7 +40,7 @@
 	});
 </script>
 
-<div class="tooltip tooltip-bottom z-30" data-tip="Change Notebook">
+<div class="tooltip text-base-content/70 tooltip-bottom z-30" data-tip="Change Notebook">
 	<button onclick={() => (isOpen = true)} class="btn btn-ghost flex items-center gap-x-2">
 		<NotebookIcon class="md:hidden" size={18} />
 		<span class="hidden md:inline">{notebook.name}</span></button

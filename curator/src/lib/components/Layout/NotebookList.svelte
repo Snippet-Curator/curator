@@ -26,14 +26,16 @@
 </script>
 
 {#snippet renderNotebook(notebook: Notebook)}
-	<div class=" flex w-full items-center justify-between">
+	<div class="group flex w-full items-center justify-between">
 		<a
 			href="/notebook/{notebook.id}"
 			class="w-full items-center gap-x-2 px-3 py-1 font-[450] text-nowrap"
 		>
 			{notebook.name}
 		</a>
-		<span class="text-right">{notebook.note_count}</span>
+		<span class="text-base-content/50 group-hover:text-base-content/70 text-right"
+			>{notebook.note_count}</span
+		>
 	</div>
 {/snippet}
 

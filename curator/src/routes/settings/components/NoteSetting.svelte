@@ -6,12 +6,16 @@
 
 <div class="card mb-20">
 	<div class="card-body">
-		<div class="card-title text-xl">Note List Setting</div>
+		<div class="card-title text-base-content/70 mb-golden-lg text-xl tracking-widest uppercase">
+			Note List
+		</div>
 
 		<div class="gap-x-golden-md grid grid-cols-12 items-center">
 			<div class="col-span-10">
 				<legend class="fieldset-legend">Blur NSFW Notes</legend>
-				Notes tagged with 'nsfw' will have blurred thumbnails.
+				<span class="text-base-content/70">
+					Notes tagged with 'nsfw' will have blurred thumbnails.</span
+				>
 			</div>
 			<input
 				type="checkbox"

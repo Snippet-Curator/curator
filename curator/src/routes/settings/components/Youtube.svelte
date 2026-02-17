@@ -9,7 +9,7 @@
 <div class="gap-x-golden-md grid grid-cols-12 items-center">
 	<div class="col-span-12 md:col-span-4">
 		<legend class="fieldset-legend">Youtube API Key</legend>
-		Used to add youtube videos.
+		<span class="text-base-content/70"> Used to add youtube videos.</span>
 	</div>
 
 	<div class="col-span-12 md:col-span-8">

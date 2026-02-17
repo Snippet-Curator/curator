@@ -3,12 +3,12 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
-	import { Import, Notebook as NotebookIcon, Settings, Tags, WalletCards } from 'lucide-svelte';
+	import { Import, Notebook as NotebookIcon, Settings, WalletCards } from 'lucide-svelte';
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 
 	import { getNotebookState, getTagState, setNotebookState, setTagState } from '$lib/db.svelte';
 	import { pb } from '$lib/pocketbase';
-	import { getSettingState, setSettingState } from '$lib/setting.svelte';
+	import { getSettingState } from '$lib/setting.svelte';
 	import { getMobileState, getMouseState, setMobileState, setMouseState } from '$lib/utils.svelte';
 
 	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
@@ -118,19 +118,25 @@
 				<a
 					class="{page.url.pathname == '/' || !page.url.pathname
 						? 'menu-active'
-						: ''} flex w-full justify-between"
+						: ''} group flex w-full justify-between"
 					href="/"
 				>
-					<span>Search</span> {notebookState.totalNoteCount}</a
+					<span>Search</span>
+					<span class="group-hover:text-base-content/70 text-base-content/50"
+						>{notebookState.totalNoteCount}</span
+					></a
 				>
 			</li>
 			{#await defaultNotebooks then}
 				<li>
 					<a
 						class="{page.url.pathname == `/notebook/${notebookState.inboxID}` &&
-							'menu-active'} flex w-full justify-between"
+							'menu-active'} group flex w-full justify-between"
 						href="/notebook/{notebookState.inboxID}"
-						><span>Inbox</span> {notebookState.inboxCount}</a
+						><span>Inbox</span>
+						<span class="group-hover:text-base-content/70 text-base-content/50"
+							>{notebookState.inboxCount}</span
+						></a
 					>
 				</li>
 			{/await}
@@ -140,13 +146,16 @@
 			<div class="h-10 grow overflow-y-auto">
 				<Pinned />
 
-				<span class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto"
-					><NotebookIcon size={18} />Notebooks</span
+				<span
+					class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto text-xs tracking-widest uppercase"
+					>Notebooks</span
 				>
 
 				<NotebookList notebooks={notebookState.notebooks} />
 
-				<span class="menu-title flex items-center gap-2"><Tags size={18} /> Tags</span>
+				<span class="menu-title flex items-center gap-2 text-xs tracking-widest uppercase">
+					Tags</span
+				>
 
 				<TagList tags={tagState.tags} />
 			</div>
@@ -155,7 +164,10 @@
 				{@const Icon = icon}
 				<li>
 					<a class={page.url.pathname == url ? 'menu-active' : ''} href={url}>
-						<Icon size={18} />
+						<span class="group-hover:text-base-content/70 text-base-content/50"
+							><Icon size={18} /></span
+						>
+
 						{name}</a
 					>
 				</li>

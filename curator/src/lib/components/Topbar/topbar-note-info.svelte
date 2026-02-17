@@ -31,7 +31,13 @@
 </script>
 
 <Popover.Root>
-	<Popover.Trigger><div class="btn btn-ghost"><Info size={18} /></div></Popover.Trigger>
+	<Popover.Trigger
+		><div
+			class="btn btn-ghost text-base-content/70 hover:text-base-content/90 transition-colors duration-200"
+		>
+			<Info size={18} />
+		</div></Popover.Trigger
+	>
 	<Popover.Content>
 		<div class="gap-golden-md grid grid-cols-3">
 			<div>Last Opened</div>

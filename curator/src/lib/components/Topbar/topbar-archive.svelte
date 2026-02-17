@@ -38,7 +38,7 @@
 </script>
 
 {#snippet renderArchived(archived: string, Icon, archiveAction: () => void)}
-	<div class="tooltip tooltip-bottom z-30" data-tip={archived}>
+	<div class="tooltip text-base-content/70 tooltip-bottom z-30" data-tip={archived}>
 		<button
 			onclick={() => {
 				archiveAction();

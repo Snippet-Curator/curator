@@ -94,7 +94,7 @@
 
 {#snippet renderKBD(kbds: KBD[], title: string)}
 	<div class="gap-golden-md flex flex-col">
-		<span class="text-lg">{title}</span>
+		<span class="text-lg font-semibold">{title}</span>
 		{#each kbds as kbd}
 			<div class="grid grid-cols-2">
 				{kbd.description}
@@ -110,7 +110,9 @@
 
 <div class="card">
 	<div class="card-body">
-		<div class="card-title text-xl">Keyboard Shortcuts</div>
+		<div class="card-title text-base-content/70 mb-golden-lg text-xl tracking-widest uppercase">
+			Keyboard Shortcuts
+		</div>
 		<div class="gap-golden-md grid md:grid-cols-2">
 			{@render renderKBD(navigations, 'Navigation')}
 			<div class="row-span-2">

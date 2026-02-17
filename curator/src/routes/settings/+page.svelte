@@ -14,15 +14,15 @@
 <div class="h-[calc(100vh-60px)] overflow-y-auto">
 	<div class="p-golden-xl mx-auto mb-10 max-w-5xl">
 		<User user={data.user} />
-		<div class="divider"></div>
+		<div class="divider mb-0"></div>
 		<KBD />
-		<div class="divider"></div>
+		<div class="divider mb-0"></div>
 		<DiscoverSetting />
-		<div class="divider"></div>
+		<div class="divider mb-0"></div>
 		<NoteSetting />
-		<div class="divider"></div>
+		<div class="divider mb-0"></div>
 		<APIs {form} />
-		<div class="divider"></div>
+		<div class="divider mb-0"></div>
 		<Version />
 	</div>
 </div>

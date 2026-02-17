@@ -14,7 +14,7 @@
 )}
 	<div class="gap-x-golden-md grid grid-cols-12 content-start">
 		<legend class="fieldset-legend col-span-12">{title}</legend>
-		<div class="col-span-11">
+		<div class="text-base-content/70 col-span-11">
 			<p>{description}</p>
 		</div>
 		<div class="space-x-golden-lg mt-golden-md col-span-11 flex">
@@ -51,7 +51,7 @@
 )}
 	<div class="gap-x-golden-md grid grid-cols-12 content-start">
 		<legend class="fieldset-legend col-span-12">{title}</legend>
-		<div class="col-span-9">
+		<div class="text-base-content/70 col-span-9">
 			<p>{description}</p>
 		</div>
 		<input
@@ -76,8 +76,9 @@
 
 <div class="card">
 	<div class="card-body">
-		<div class="card-title text-xl">Discover Settings</div>
-		<p>Settings are updated on restart.</p>
+		<div class="card-title text-base-content/70 mb-golden-lg text-xl tracking-widest uppercase">
+			Discover
+		</div>
 
 		<div class="gap-x-golden-md space-y-golden-lg grid grid-cols-1 md:grid-cols-2">
 			{@render renderSliderSetting(

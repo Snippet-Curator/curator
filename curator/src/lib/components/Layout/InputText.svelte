@@ -28,7 +28,7 @@
 		</div>
 	</div>
 {:else}
-	<div class="space-x-golden-lg flex items-center justify-end">
+	<div class="space-x-golden-lg text-base-content/70 flex items-center justify-end">
 		<span class="truncate">{textInput}</span>
 		<button onclick={() => (isEdit = true)} class="btn">Edit</button>
 	</div>

@@ -65,13 +65,13 @@
 				<div class="place-self-end">
 					<label for="url" class="label">Server URL</label>
 					<input type="hidden" name="server" bind:value={url} />
-					<span> {url}</span>
+					<span class="text-base-content/70"> {url}</span>
 				</div>
 
 				<div class="place-self-end">
 					<label for="apiKey" class="label">API Key</label>
 					<input type="hidden" name="apiKey" bind:value={apiKey} />
-					<span class="truncate text-clip">{apiKey}</span>
+					<span class="text-base-content/70 truncate text-clip">{apiKey}</span>
 				</div>
 			{/if}
 

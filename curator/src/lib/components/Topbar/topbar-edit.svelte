@@ -40,7 +40,7 @@
 	});
 </script>
 
-<div class="tooltip tooltip-bottom z-30" data-tip="Edit Note">
+<div class="tooltip text-base-content/70 tooltip-bottom z-30" data-tip="Edit Note">
 	<button onclick={() => (isOpen = true)} class="btn btn-ghost flex items-center gap-x-2">
 		<Pencil size={18} />
 	</button>

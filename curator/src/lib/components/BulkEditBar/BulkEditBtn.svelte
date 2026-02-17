@@ -33,7 +33,7 @@
 	});
 </script>
 
-<div class="tooltip tooltip-bottom z-30" data-tip="Bulk Edit">
+<div class="tooltip text-base-content/70 tooltip-bottom z-30" data-tip="Bulk Edit">
 	<button
 		class="{isBulkEdit ? 'btn-primary' : 'btn-ghost'} btn"
 		onclick={() => {
