@@ -46,7 +46,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		`connect-src 'self' http://127.0.0.1:8090 ${pbUrl} ${pbUrlPublic} http://localhost:8090 https://www.googleapis.com https://i.ytimg.com https://www.youtube.com`,
 		`img-src 'self' https://i.ytimg.com data: http://127.0.0.1:8090 http://localhost:8090 ${pbUrl} blob:${pbUrl} ${pbUrlPublic} blob:${pbUrlPublic}`,
 		`media-src 'self' data: http://127.0.0.1:8090 http://pocketbase:8090 http://localhost:8090 ${pbUrl} ${pbUrlPublic}`,
-		"script-src 'self' 'unsafe-inline'", // Svelte needs inline scripts for hydration
+		"script-src 'self'  'unsafe-inline' https://www.googleapis.com", // Svelte needs inline scripts for hydration
 		"style-src 'self' 'unsafe-inline' http://127.0.0.1:8090 https://fonts.googleapis.com/ http://localhost:8090",
 		`font-src 'self' data: http://127.0.0.1:8090  https://fonts.googleapis.com https://fonts.gstatic.com http://localhost:8090 ${pbUrl} ${pbUrlPublic}`,
 		"object-src 'none'",
