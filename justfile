@@ -25,9 +25,9 @@ docker-curator:
   docker push kangruixiang/curator:latest
 
 docker-pocketbase:
-  docker build -t kangruixiang/pocketbase:0.4.0 ./pocketbase
-  docker tag kangruixiang/pocketbase:0.4.0 kangruixiang/pocketbase:latest
-  docker push kangruixiang/pocketbase:0.4.0
+  docker build -t kangruixiang/pocketbase:0.6.0 ./pocketbase
+  docker tag kangruixiang/pocketbase:0.6.0 kangruixiang/pocketbase:latest
+  docker push kangruixiang/pocketbase:0.6.0
   docker push kangruixiang/pocketbase:latest
 
 

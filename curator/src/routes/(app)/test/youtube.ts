@@ -4,6 +4,7 @@ export async function fetchYoutubePlaylist(apiKey: string, playlistID: string) {
 	);
 
 	if (!response.ok) {
+		console.log(response);
 		throw new Error(`Fetch Youtube error: ${response.status}`);
 	}
 
