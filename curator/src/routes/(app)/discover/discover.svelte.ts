@@ -14,7 +14,7 @@ export class SearchState {
 	selectedExcludeTagIdArray = $state<string[]>([]);
 	searchedTagID = $state<string>('');
 	searchNotebookID = $state<string>('');
-	customFilter = $state(`(status="active" || status="archived")`);
+	customFilter = $state(`(status="active")`);
 	tagFilter = $state('');
 	query = PocketbaseQuery.getInstance<{
 		title: string;
@@ -25,7 +25,7 @@ export class SearchState {
 	}>();
 
 	resetCustomFilter() {
-		this.customFilter = `(status="active" || status="archived")`;
+		this.customFilter = `(status="active")`;
 	}
 
 	getTagFilter(selectedTagIdArray: string[]) {
