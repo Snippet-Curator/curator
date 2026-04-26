@@ -1,5 +1,5 @@
 function normalizeRating(val, min, max) {
-  if (val === 0) return 0.5
+  if (val === 0) return 0.8
   return Math.max(0, Math.min(1, (val - min) / (max - min)))
 }
 
