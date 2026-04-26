@@ -88,7 +88,7 @@
 			e.preventDefault();
 			isOpen = false;
 		}}
-		class="scrollbar-thin max-h-full max-w-5xl overflow-y-auto"
+		class="mx-auto max-h-full max-w-5xl overflow-y-auto"
 	>
 		<Dialog.Header>
 			<Dialog.Title>Edit Note</Dialog.Title>
@@ -144,7 +144,7 @@
 
 		<div>
 			<legend class="fieldset-legend">Change Thumbnail</legend>
-			<div class="card border-base-content/20 max-h-[350px] overflow-y-hidden border">
+			<div class="card border-base-content/20 max-h-[350px] overflow-y-scroll border">
 				<div class="gap-y-golden-xl m-golden-xl grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 					{#if note && note.resources}
 						{#each note.resources as resource}
@@ -194,10 +194,10 @@
 	</Dialog.Content>
 </Dialog.Root>
 
-<style>
+<!-- <style>
 	:global(.scrollbar-thin::-webkit-scrollbar-button) {
 		display: none;
 		height: 0;
 		width: 0;
 	}
-</style>
+</style> -->
