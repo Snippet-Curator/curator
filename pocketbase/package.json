@@ -10,7 +10,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "pocketbase serve",
-    "docker": "docker build -t kangruixiang/pocketbase:0.6.0 . && docker tag kangruixiang/pocketbase:0.6.0 kangruixiang/pocketbase:latest && docker push kangruixiang/pocketbase:0.6.0 && docker push kangruixiang/pocketbase:latest"
+    "docker": "docker build -t kangruixiang/pocketbase:0.6.0 . && docker tag kangruixiang/pocketbase:0.6.0 kangruixiang/pocketbase:latest && docker push kangruixiang/pocketbase:0.6.0 && docker push kangruixiang/pocketbase:latest",
+    "update": "pnpm up"
   },
   "dependencies": {}
 }

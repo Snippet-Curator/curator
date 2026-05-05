@@ -17,6 +17,9 @@ importers:
       '@emresandikci/pocketbase-query':
         specifier: ^0.4.1
         version: 0.4.1
+      '@jis3r/icons':
+        specifier: ^2.4.0
+        version: 2.7.0(svelte@5.50.0)
       '@sveltejs/adapter-static':
         specifier: ^3.0.10
         version: 3.0.10(@sveltejs/kit@2.50.2(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.50.0)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))(svelte@5.50.0)(typescript@5.9.3)(vite@6.4.1(jiti@2.6.1)(lightningcss@1.30.2)))
@@ -386,6 +389,11 @@ packages:
 
   '@internationalized/date@3.11.0':
     resolution: {integrity: sha512-BOx5huLAWhicM9/ZFs84CzP+V3gBW6vlpM02yzsdYC7TGlZJX1OJiEEHcSayF00Z+3jLlm4w79amvSt6RqKN3Q==}
+
+  '@jis3r/icons@2.7.0':
+    resolution: {integrity: sha512-RXee+W1AoWFHtFliLZ7SQxVopAezmCH0xU45HKTvvpDQ+6Y3g6tUHvKOK16J52TM8YsN4WDnsiOmcwau+bHmwg==}
+    peerDependencies:
+      svelte: ^5.0.0
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -1986,6 +1994,10 @@ snapshots:
   '@internationalized/date@3.11.0':
     dependencies:
       '@swc/helpers': 0.5.18
+
+  '@jis3r/icons@2.7.0(svelte@5.50.0)':
+    dependencies:
+      svelte: 5.50.0
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:

@@ -9,7 +9,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "turbo run dev",
-    "docker": "turbo run docker"
+    "docker": "turbo run docker",
+    "update": "turbo run update"
   },
   "devDependencies": {
     "turbo": "^2.8.3"
