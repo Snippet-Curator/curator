@@ -1,38 +1,22 @@
-# === Builder stage ===
-FROM golang:1.24-alpine AS builder
-
-# Install dependencies
-RUN apk add --no-cache \
-    git \
-    build-base \
-    ca-certificates
-
-# Set working directory
-WORKDIR /app
-# COPY xpb.json .
-
-# Install XPB
-RUN go install github.com/pocketbuilds/xpb/cmd/xpb@latest
-
-# Build Pocketbase
-RUN xpb build --with github.com/pocketbuilds/fts@latest
-
-
 # === Runner stage ===
-FROM alpine:latest
-RUN apk add --no-cache ca-certificates
-WORKDIR /app/db
+FROM alpine:3.19
+WORKDIR /app
+
+# Download Pocketbase
+ARG PB_VERSION=0.38.0
+RUN apk add --no-cache \
+    unzip \
+    ca-certificates
+ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip /tmp/pb.zip
+RUN unzip /tmp/pb.zip -d ./db
+RUN chmod +x /app/db/pocketbase
 
 # Copy migration and hooks folders
-COPY pb_migrations ./pb_migrations
-COPY pb_hooks ./pb_hooks
-COPY --from=builder /app/pocketbase ./pocketbase
-
-# Make binary executable
-RUN chmod +x ./pocketbase
+COPY pb_migrations ./db/pb_migrations
+COPY pb_hooks ./db/pb_hooks
 
 # Expose app port
 EXPOSE 8090
 
-CMD ["./pocketbase", "serve", "--http=0.0.0.0:8090"]
+CMD ["./db/pocketbase", "serve", "--http=0.0.0.0:8090"]
 
