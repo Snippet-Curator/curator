@@ -668,6 +668,7 @@ export class NotelistState {
 	}
 
 	async getByFilter(customFilters: string, page: number) {
+		console.log('custom filter: ', customFilters);
 		const start = performance.now();
 		const { data, error } = await tryCatch(
 			pb.collection(notesCollection).getList(page, 24, {

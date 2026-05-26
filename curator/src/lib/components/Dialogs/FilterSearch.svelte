@@ -48,7 +48,7 @@
 			e.preventDefault();
 			isOpen = false;
 		}}
-		class="scrollbar-thin max-h-full max-w-4xl overflow-y-auto"
+		class="max-h-full max-w-4xl scrollbar-thin overflow-y-auto"
 	>
 		<Dialog.Header>
 			<Dialog.Title>Filter Search</Dialog.Title>
@@ -56,7 +56,7 @@
 
 		<div class="gap-x-golden-md grid grid-cols-12 items-center">
 			<div class="col-span-3">
-				<legend class="fieldset-legend">Search Term</legend>
+				<legend class="fieldset-legend">Full Text Search</legend>
 			</div>
 
 			<input

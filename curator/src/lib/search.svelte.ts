@@ -20,6 +20,7 @@ export class SearchState {
 		title: string;
 		content: string;
 		tags: Tag;
+		description: string;
 		notebook: Notebook;
 		status: 'active' | 'archived' | 'deleted';
 	}>();
@@ -75,6 +76,26 @@ export class SearchState {
 	}
 
 	makeSearchQuery(searchInput: string) {
+		this.customFilter = this.query
+			.openBracket()
+			.like('title', this.searchInput)
+			.or()
+			.like('description', searchInput)
+			.or()
+			.like('tags', this.searchedTagID)
+			.or()
+			.equal('notebook', this.searchNotebookID)
+			.closeBracket()
+			.and()
+			.openBracket()
+			.equal('status', 'active')
+			.or()
+			.equal('status', 'archived')
+			.closeBracket()
+			.build();
+	}
+
+	makeFullSearchQuery(searchInput: string) {
 		this.customFilter = this.query
 			.openBracket()
 			.like('title', this.searchInput)
