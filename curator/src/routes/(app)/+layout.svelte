@@ -10,6 +10,7 @@
 	import { pb } from '$lib/pocketbase';
 	import { getSettingState } from '$lib/setting.svelte';
 	import { getMobileState, getMouseState, setMobileState, setMouseState } from '$lib/utils.svelte';
+	import { setSavedSearch } from '$lib/search.svelte';
 
 	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
 
@@ -23,6 +24,7 @@
 	setNotebookState();
 	setMobileState();
 	setMouseState();
+	setSavedSearch();
 
 	const tagState = getTagState();
 	const notebookState = getNotebookState();

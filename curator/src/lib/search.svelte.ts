@@ -8,7 +8,6 @@ import { pb } from '$lib/pocketbase';
 import { notesCollection, viewNotebooksCollection, viewTagsCollectionName } from './const';
 
 export class SearchState {
-	searchTerm = $state('');
 	searchInput = $state('');
 	selectedTagIdArray = $state<string[]>([]);
 	selectedExcludeTagIdArray = $state<string[]>([]);
@@ -140,12 +139,25 @@ export class SearchState {
 	}
 }
 
+export class SavedSearch {
+	term = $state('');
+	customFilter = $state('');
+}
+
 export function setSearchState() {
 	return setContext('search', new SearchState());
 }
 
 export function getSearchState() {
 	return getContext<ReturnType<typeof setSearchState>>('search');
+}
+
+export function setSavedSearch() {
+	return setContext('savedSearch', new SavedSearch());
+}
+
+export function getSavedSearch() {
+	return getContext<ReturnType<typeof setSavedSearch>>('savedSearch');
 }
 
 export async function fullTextSearch() {

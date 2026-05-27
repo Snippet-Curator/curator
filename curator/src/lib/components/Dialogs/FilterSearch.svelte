@@ -5,7 +5,12 @@
 
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getNotebookState, getTagState } from '$lib/db.svelte';
-	import { getSearchState, type SearchState } from '$lib/search.svelte';
+	import {
+		getSearchState,
+		SavedSearch,
+		type SearchState,
+		getSavedSearch
+	} from '$lib/search.svelte';
 
 	type Props = {
 		isOpen: boolean;
@@ -15,6 +20,7 @@
 	let { isOpen = $bindable(), search }: Props = $props();
 
 	let searchState = $state<SearchState>();
+	let savedSearch = $state<SavedSearch>();
 
 	const notebookState = getNotebookState();
 	const tagState = getTagState();
@@ -27,18 +33,20 @@
 	let filterExcludeTagIdArray = $state<string[]>([]);
 
 	function submitForm() {
-		if (!searchState) return;
-		searchState.searchTerm = searchState.searchInput;
+		if (!searchState || !savedSearch) return;
+		savedSearch.term = searchState.searchInput;
 		searchState.searchNotebookID = filterNotebookID;
 		searchState.selectedTagIdArray = filterTagIdArray;
 		searchState.selectedExcludeTagIdArray = filterExcludeTagIdArray;
 		searchState.makeFilterQuery(searchState.searchInput);
 		search(searchState.customFilter);
+		savedSearch.customFilter = searchState.customFilter;
 		isOpen = false;
 	}
 
 	onMount(() => {
 		searchState = getSearchState();
+		savedSearch = getSavedSearch();
 	});
 </script>
 

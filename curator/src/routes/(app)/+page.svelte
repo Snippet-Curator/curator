@@ -14,8 +14,14 @@
 		FilterSearch
 	} from '$lib/components/';
 	import * as Topbar from '$lib/components/Topbar/index';
-	import { getMouseState, saveCurrentPage, signalPageState } from '$lib/utils.svelte';
-	import { getSearchState, setSearchState, type SearchState } from '$lib/search.svelte';
+	import { getMouseState, saveCurrentPage, signalPageState, debounce } from '$lib/utils.svelte';
+	import {
+		getSearchState,
+		setSearchState,
+		type SearchState,
+		type SavedSearch,
+		getSavedSearch
+	} from '$lib/search.svelte';
 	import type { NoteType } from '$lib/types';
 	import { ScrollState } from 'runed';
 
@@ -25,6 +31,7 @@
 	let selectedNotesID = $state<string[]>([]);
 	let isFilterSearch = $state(false);
 	let searchState = $state<SearchState>();
+	let savedSearch = $state<SavedSearch>();
 	let scrollEl = $state<HTMLElement>();
 
 	let initialLoading = $state();
@@ -45,13 +52,17 @@
 		element: () => scrollEl
 	});
 
+	const debouncedSearch = debounce(() => {
+		updatePage(1);
+	}, 300);
+
 	const updatePage = async (newPage: number) => {
 		scroll.scrollToTop();
 
 		// saves current clicked page number
 		saveCurrentPage(newPage);
 		notelistState.clickedPage = newPage;
-		if (!searchState) return;
+		if (!searchState || !savedSearch) return;
 
 		// get default page if no filters
 		mouseState.isBusy = true;
@@ -60,15 +71,16 @@
 			!searchState.searchNotebookID &&
 			searchState.selectedTagIdArray.length == 0
 		) {
-			searchState.searchTerm = '';
+			savedSearch.term = '';
 			searchState.resetCustomFilter();
+			savedSearch.customFilter = '';
 			await notelistState.getByPage(newPage);
 			mouseState.isBusy = false;
 			return;
 		}
 
 		// run same filter if search term is same
-		if (searchState.searchTerm === searchState.searchInput) {
+		if (savedSearch.term === searchState.searchInput) {
 			await notelistState.getByFilter(searchState.customFilter, newPage);
 			mouseState.isBusy = false;
 			return;
@@ -79,16 +91,21 @@
 		await searchState.getSearchNotebook(searchInput.trim());
 		searchState.makeSearchQuery(searchState.searchInput);
 		await notelistState.getByFilter(searchState.customFilter, newPage);
-		searchState.searchTerm = searchState.searchInput;
+		savedSearch.term = searchState.searchInput;
+		savedSearch.customFilter = searchState.customFilter;
 		mouseState.isBusy = false;
 	};
 
 	onMount(async () => {
 		searchState = getSearchState();
+		savedSearch = getSavedSearch();
 
-		if (searchState.searchTerm) {
-			searchState.searchInput = searchState.searchTerm;
+		if (savedSearch.term) {
+			searchState.searchInput = savedSearch.term;
+
+			searchState.customFilter = savedSearch.customFilter;
 		}
+
 		initialLoading = updatePage(savedPage);
 	});
 </script>
@@ -98,9 +115,10 @@
 	{#if searchState}
 		<Search
 			bind:searchInput={searchState.searchInput}
-			searchNotes={() => updatePage(1)}
+			searchNotes={() => debouncedSearch()}
 			clearNote={() => {
-				searchState.searchTerm = '';
+				savedSearch.term = '';
+				savedSearch.customFilter = '';
 				searchState.resetCustomFilter();
 				updatePage(1);
 			}}
