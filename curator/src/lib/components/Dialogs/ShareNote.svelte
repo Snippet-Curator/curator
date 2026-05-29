@@ -14,6 +14,21 @@
 		unshare();
 		isOpen = false;
 	}
+
+	async function copyURL() {
+		const URL = `${window.location.origin}/share/${note?.share_token}`;
+
+		if (navigator.clipboard) {
+			await navigator.clipboard.writeText(URL);
+		} else {
+			const input = document.createElement('input');
+			input.value = URL;
+			document.body.appendChild(input);
+			input.select();
+			document.execCommand('copy');
+			input.remove();
+		}
+	}
 </script>
 
 <Dialog.Root open={isOpen}>
@@ -35,13 +50,7 @@
 		</div>
 
 		<div class="flex justify-end gap-x-2">
-			<button
-				onclick={async () =>
-					await navigator.clipboard.writeText(
-						`${window.location.origin}/share/${note?.share_token}`
-					)}
-				class="btn btn-primary">Copy URL</button
-			>
+			<button onclick={copyURL} class="btn btn-primary">Copy URL</button>
 			<button onclick={unshareNote} class="btn">Unshare</button>
 			<button onclick={() => (isOpen = false)} class="btn">Close</button>
 		</div>
