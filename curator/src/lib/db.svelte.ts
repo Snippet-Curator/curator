@@ -1263,7 +1263,13 @@ export class NoteState {
 	}
 
 	generateShareToken(length = 20) {
-		return crypto.randomUUID().replace(/-/g, '').slice(0, length);
+		const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+		const array = new Uint8Array(length);
+
+		window.crypto.getRandomValues(array);
+
+		return Array.from(array, (byte) => chars[byte % chars.length]).join('');
 	}
 
 	async shareNote() {
