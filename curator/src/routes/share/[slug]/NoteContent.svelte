@@ -185,6 +185,13 @@
 			{@attach loadHeight}
 			{@attach changeFontSize}
 		></iframe>
+		<div class="mt-10 flex justify-end gap-x-2">
+			<ul>
+				{#each note.sources as source}
+					<li>- <a class="link" href={source.source_url}>{source.source}</a></li>
+				{/each}
+			</ul>
+		</div>
 	</div>
 </div>
 
