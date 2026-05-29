@@ -31,3 +31,4 @@ export { default as EditTags } from './Dialogs/EditTags.svelte';
 export { default as EditBulkTags } from './Dialogs/EditBulkTags.svelte';
 export { default as EditNote } from './Dialogs/EditNote.svelte';
 export { default as FilterSearch } from './Dialogs/FilterSearch.svelte';
+export { default as ShareNote } from './Dialogs/ShareNote.svelte';

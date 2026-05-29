@@ -1261,6 +1261,52 @@ export class NoteState {
 		}
 		this.note = data;
 	}
+
+	generateShareToken(length = 20) {
+		return crypto.randomUUID().replace(/-/g, '').slice(0, length);
+	}
+
+	async shareNote() {
+		const sharedToken = this.generateShareToken();
+
+		const { data: record, error: recordError } = await tryCatch(
+			pb.collection(notesCollection).update(this.noteID, {
+				is_shared: true,
+				share_token: sharedToken
+			})
+		);
+
+		if (recordError) {
+			console.error('Error sharing note: ', recordError.message);
+			return;
+		}
+
+		this.note = record;
+		return sharedToken;
+	}
+
+	async unshareNote() {
+		const sharedToken = this.generateShareToken();
+
+		const { data: record, error: recordError } = await tryCatch(
+			pb.collection(notesCollection).update(this.noteID, {
+				is_shared: false,
+				share_token: null
+			})
+		);
+
+		if (recordError) {
+			console.error('Error un-sharing note: ', recordError.message);
+			return;
+		}
+
+		this.note = record;
+		return sharedToken;
+	}
+
+	getShareURL() {
+		return `${window.location.origin}/share/${this.note.share_token}`;
+	}
 }
 
 // export default pb;

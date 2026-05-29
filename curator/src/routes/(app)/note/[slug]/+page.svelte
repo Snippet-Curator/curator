@@ -6,7 +6,8 @@
 		EditNotebook,
 		EditTags,
 		NoteLoading,
-		EditNote
+		EditNote,
+		ShareNote
 	} from '$lib/components/';
 	import { NoteState } from '$lib/db.svelte';
 	import * as Topbar from '$lib/components/Topbar/index';
@@ -22,6 +23,7 @@
 	let isEditNotebookOpen = $state(false);
 	let isEditNoteOpen = $state(false);
 	let isPermaDeleteNoteOpen = $state(false);
+	let isShareNoteOpen = $state(false);
 
 	const initialLoading = noteState.getNote();
 	noteState.updateLastOpened();
@@ -55,6 +57,12 @@
 		{/if}
 
 		<Topbar.Edit bind:isOpen={isEditNoteOpen} />
+
+		<Topbar.Share
+			share={async () => await noteState.shareNote()}
+			bind:isOpen={isShareNoteOpen}
+			isShared={noteState.note?.is_shared}
+		/>
 
 		<Topbar.Archive
 			noteStatus={noteState.note.status}
@@ -124,4 +132,10 @@
 			await noteState.getNote();
 		}}
 	></EditNote>
+
+	<ShareNote
+		{note}
+		unshare={async () => await noteState.unshareNote()}
+		bind:isOpen={isShareNoteOpen}
+	></ShareNote>
 {/await}

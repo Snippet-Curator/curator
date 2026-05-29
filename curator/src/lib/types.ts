@@ -65,6 +65,8 @@ export type Note = {
 		source_url: string;
 	}[];
 	resources?: Resource[];
+	is_shared?: boolean;
+	share_token?: string;
 };
 
 export type NoteRecord = {
