@@ -30,8 +30,9 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const isLoginPath = event.url.pathname === '/login';
 	const isSignupPath = event.url.pathname.startsWith('/signup');
+	const isSharePath = event.url.pathname.startsWith('/share');
 
-	if (!event.locals.user && !isLoginPath && !isSignupPath) {
+	if (!event.locals.user && !isLoginPath && !isSignupPath && !isSharePath) {
 		throw redirect(303, '/login');
 	}
 
