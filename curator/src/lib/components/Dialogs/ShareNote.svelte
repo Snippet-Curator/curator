@@ -35,7 +35,14 @@
 		</div>
 
 		<div class="flex justify-end gap-x-2">
-			<button onclick={unshareNote} class="btn btn-primary">Unshare</button>
+			<button
+				onclick={async () =>
+					await navigator.clipboard.writeText(
+						`${window.location.origin}/share/${note?.share_token}`
+					)}
+				class="btn btn-primary">Copy URL</button
+			>
+			<button onclick={unshareNote} class="btn">Unshare</button>
 			<button onclick={() => (isOpen = false)} class="btn">Close</button>
 		</div>
 	</Dialog.Content>

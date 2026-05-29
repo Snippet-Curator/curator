@@ -140,15 +140,16 @@
 
 	function changeFontSize(el) {
 		const doc = el.contentDocument;
-		const styleTag = doc.createElement('style');
-		styleTag.setAttribute('id', 'custom-style');
-		styleTag.textContent = customStyles;
-		doc.head.appendChild(styleTag);
-	}
 
-	$effect(() => {
-		textContent = '';
-	});
+		let styleTag = doc.getElementById('custom-style');
+
+		if (!styleTag) {
+			styleTag = doc.createElement('style');
+			styleTag.id = 'custom-style';
+			doc.head.appendChild(styleTag);
+		}
+		styleTag.textContent = customStyles;
+	}
 </script>
 
 <div class="bg-base-100/90 p-golden-sm md:p-golden-md z-20 flex w-full px-4 md:sticky md:top-0">
