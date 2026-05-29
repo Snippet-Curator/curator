@@ -182,7 +182,7 @@
 
 		<Resizable.Handle />
 		<Resizable.Pane>
-			{@render children()}
+			<div class="bg-base-100">{@render children()}</div>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
 
