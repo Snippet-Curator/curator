@@ -876,11 +876,7 @@ export class NotelistState {
 		}
 
 		await Promise.all(
-			selectedNotes.slice(1).map((n) =>
-				pb.collection(notesCollection).update(n.id, {
-					status: 'deleted'
-				})
-			)
+			selectedNotes.slice(1).map((n) => pb.collection(notesCollection).delete(n.id))
 		);
 	}
 }
