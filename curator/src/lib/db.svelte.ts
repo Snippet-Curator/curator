@@ -875,6 +875,7 @@ export class NotelistState {
 			}
 		}
 
+		// delete old notes
 		await Promise.all(
 			selectedNotes.slice(1).map((n) => pb.collection(notesCollection).delete(n.id))
 		);
