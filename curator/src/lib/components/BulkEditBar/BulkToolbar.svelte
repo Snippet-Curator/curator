@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
-	import type { NotelistState } from '$lib/db.svelte';
+	import { pb } from '$lib/pocketbase';
+	import { type NotelistState, getNotebookState, getTagState } from '$lib/db.svelte';
 	import { Delete, EditNotebook, EditBulkTags } from '$lib/components/';
 
 	import BulkNotebook from './bulk-notebook.svelte';
@@ -34,6 +35,8 @@
 	let isEditTagsOpen = $state(false);
 	let isSelectAll = $state(false);
 	const mouseState = getMouseState();
+	const notebookState = getNotebookState();
+	const tagState = getTagState();
 
 	const currentTagID = $derived(notelistState.noteType == 'tags' ? page.params.slug : '');
 
@@ -73,10 +76,27 @@
 				{selectedNotesID}
 				merge={async () => {
 					mouseState.isBusy = true;
+					// avoid updating tags and notebook errors
+					await pb.collection('notes').unsubscribe();
+
 					await notelistState.mergeNotes(selectedNotesID);
 					updatePage();
 					selectedNotesID = [];
 					isBulkEdit = false;
+
+					// get initial counts again
+					await tagState.getAll();
+					await notebookState.getAll();
+					await notebookState.getInbox();
+					await notebookState.getAllCounts();
+
+					// resubscribe
+					await pb.collection('notes').subscribe('*', async () => {
+						notebookState.getAll();
+						notebookState.getInbox();
+						notebookState.getAllCounts();
+						tagState.getAll();
+					});
 					mouseState.isBusy = false;
 				}}
 			></BulkMerge>
