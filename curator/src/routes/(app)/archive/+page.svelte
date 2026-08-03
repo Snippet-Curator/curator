@@ -1,8 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { onMount } from 'svelte';
 	import { ScrollState } from 'runed';
 
-	import { getMouseState, saveCurrentPage, signalPageState } from '$lib/utils.svelte';
+	import {
+		getMouseState,
+		saveCurrentPage,
+		signalPageState,
+		saveScrollPosition
+	} from '$lib/utils.svelte';
 	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
 	import { Pagination, NoteList, BulkToolbar, BulkEditBtn } from '$lib/components/';
 	import type { NoteType } from '$lib/types';
@@ -10,7 +16,7 @@
 
 	let isBulkEdit = $state(false);
 	let selectedNotesID = $state<string[]>([]);
-	let initialLoading = $state<Promise<void>>();
+	let initialLoading = $state();
 	let scrollEl = $state<HTMLElement>();
 
 	const noteType: NoteType = {
@@ -22,14 +28,17 @@
 	const notelistState = getNotelistState('archived');
 	const mouseState = getMouseState();
 
+	const savedPage = $derived(signalPageState.savedPages.get(page.url.pathname) ?? 1);
+	// gets saved scroll position from signal
+	const scrollPosition = $derived<number>(
+		signalPageState.scrollPositions.get(page.url.pathname) ?? 0
+	);
+
 	const scroll = new ScrollState({
 		element: () => scrollEl
 	});
 
-	const savedPage = $derived(signalPageState.savedPages.get(page.url.pathname) ?? 1);
-
 	const updatePage = async (newPage: number) => {
-		scroll.scrollToTop();
 		mouseState.isBusy = true;
 		await notelistState.getArchived(newPage);
 		saveCurrentPage(newPage);
@@ -37,10 +46,16 @@
 		mouseState.isBusy = false;
 	};
 
-	$effect(() => {
+	onMount(async () => {
 		// console.log('Slug changed:', page.params.slug);
 		// notelistState.notebookID = notebookID;
-		initialLoading = updatePage(savedPage);
+		initialLoading = await updatePage(savedPage);
+		scroll.scrollTo(0, scrollPosition);
+	});
+
+	$effect(() => {
+		if (scroll.y === 0) return;
+		saveScrollPosition(scroll.y);
 	});
 </script>
 
@@ -58,9 +73,10 @@
 		<Pagination
 			currentPage={notelistState.notes.page}
 			totalPages={notelistState.notes.totalPages}
-			changePage={(newPage: number) => {
+			changePage={async (newPage: number) => {
 				if (mouseState.isBusy) return;
-				updatePage(newPage);
+				await updatePage(newPage);
+				scroll.scrollToTop();
 			}}
 		/>
 		{#if isBulkEdit}

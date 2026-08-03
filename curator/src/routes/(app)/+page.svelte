@@ -14,7 +14,13 @@
 		FilterSearch
 	} from '$lib/components/';
 	import * as Topbar from '$lib/components/Topbar/index';
-	import { getMouseState, saveCurrentPage, signalPageState, debounce } from '$lib/utils.svelte';
+	import {
+		getMouseState,
+		saveCurrentPage,
+		saveScrollPosition,
+		signalPageState,
+		debounce
+	} from '$lib/utils.svelte';
 	import {
 		getSearchState,
 		setSearchState,
@@ -46,7 +52,12 @@
 	const notelistState = getNotelistState(notebookID);
 	const mouseState = getMouseState();
 
+	// gets saved page number from signal
 	const savedPage = $derived<number>(signalPageState.savedPages.get(page.url.pathname) ?? 1);
+	// gets saved scroll position from signal
+	const scrollPosition = $derived<number>(
+		signalPageState.scrollPositions.get(page.url.pathname) ?? 0
+	);
 
 	const scroll = new ScrollState({
 		element: () => scrollEl
@@ -57,8 +68,6 @@
 	}, 300);
 
 	const updatePage = async (newPage: number) => {
-		scroll.scrollToTop();
-
 		// saves current clicked page number
 		saveCurrentPage(newPage);
 		notelistState.clickedPage = newPage;
@@ -66,6 +75,7 @@
 
 		// get default page if no filters
 		mouseState.isBusy = true;
+		scroll.scrollTo(0, scrollPosition);
 		if (
 			!searchState.searchInput &&
 			!searchState.searchNotebookID &&
@@ -106,7 +116,13 @@
 			searchState.customFilter = savedSearch.customFilter;
 		}
 
-		initialLoading = updatePage(savedPage);
+		initialLoading = await updatePage(savedPage);
+		scroll.scrollTo(0, scrollPosition);
+	});
+
+	$effect(() => {
+		if (scroll.y === 0) return;
+		saveScrollPosition(scroll.y);
 	});
 </script>
 
@@ -120,6 +136,7 @@
 				savedSearch.term = '';
 				savedSearch.customFilter = '';
 				searchState.resetCustomFilter();
+				scroll.scrollToTop();
 				updatePage(1);
 			}}
 		/>
@@ -135,16 +152,19 @@
 		<Pagination
 			currentPage={notelistState.notes.page}
 			totalPages={notelistState.notes.totalPages}
-			changePage={(newPage: number) => {
+			changePage={async (newPage: number) => {
 				if (mouseState.isBusy) return;
-				updatePage(newPage);
+				await updatePage(newPage);
+				scroll.scrollToTop();
 			}}
 		/>
 
 		{#if notelistState.notes && notelistState.notes.totalItems > 0}
 			<NoteList
 				{isBulkEdit}
-				update={() => updatePage(notelistState.clickedPage)}
+				update={() => {
+					updatePage(notelistState.clickedPage);
+				}}
 				bind:selectedNotesID
 				notes={notelistState.notes}
 			/>
