@@ -72,6 +72,7 @@
 	{notelistState}
 	{mouseState}
 	{updatePage}
+	scrollToTop={scroll.scrollToTop}
 	{isBulkEdit}
 	{selectedNotesID}
 >

@@ -70,6 +70,7 @@
 	bind:scrollEl
 	{notelistState}
 	{mouseState}
+	scrollToTop={scroll.scrollToTop}
 	{updatePage}
 	{isBulkEdit}
 	{selectedNotesID}

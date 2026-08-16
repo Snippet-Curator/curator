@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Pagination, NoteList, BulkToolbar } from '$lib/components/';
+	import type { Snippet } from 'svelte';
 	import { type NotelistState } from '$lib/db.svelte';
 	import { type MouseState } from '$lib/utils.svelte';
 
@@ -7,9 +8,10 @@
 		scrollEl: HTMLElement;
 		notelistState: NotelistState;
 		mouseState: MouseState;
-		updatePage: (newPage: number) => void;
+		scrollToTop: () => void;
+		updatePage: (newPage: number) => Promise<void>;
 		isBulkEdit: boolean;
-		bulkToolbar: HTMLDivElement;
+		bulkToolbar: Snippet;
 		selectedNotesID: string[];
 	};
 
@@ -17,6 +19,7 @@
 		scrollEl = $bindable(),
 		notelistState,
 		mouseState,
+		scrollToTop,
 		updatePage,
 		bulkToolbar,
 		isBulkEdit = false,
@@ -28,9 +31,10 @@
 	<Pagination
 		currentPage={notelistState.notes.page}
 		totalPages={notelistState.notes.totalPages}
-		changePage={(newPage: number) => {
+		changePage={async (newPage: number) => {
 			if (mouseState.isBusy) return;
-			updatePage(newPage);
+			await updatePage(newPage);
+			scrollToTop();
 		}}
 	/>
 

@@ -11,13 +11,7 @@
 	} from '$lib/utils.svelte';
 	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
 	import type { NoteType } from '$lib/types';
-	import {
-		Pagination,
-		NoteList,
-		BulkToolbar,
-		BulkEditBtn,
-		NoteListContainer
-	} from '$lib/components/';
+	import { BulkToolbar, BulkEditBtn, NoteListContainer } from '$lib/components/';
 	import * as Topbar from '$lib/components/Topbar/index';
 
 	let initialLoading = $state();
@@ -45,7 +39,6 @@
 	);
 
 	const updatePage = async (newPage: number) => {
-		scroll.scrollToTop();
 		mouseState.isBusy = true;
 		await notelistState.getByTag(tagID, newPage);
 		saveCurrentPage(newPage);
@@ -77,6 +70,7 @@
 	bind:scrollEl
 	{notelistState}
 	{mouseState}
+	scrollToTop={scroll.scrollToTop}
 	{updatePage}
 	{isBulkEdit}
 	{selectedNotesID}

@@ -4,13 +4,10 @@
 
 	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
 	import {
-		Pagination,
-		NoteList,
+		NoteListContainer,
 		Search,
 		BulkToolbar,
 		BulkEditBtn,
-		Blank,
-		NoteLoading,
 		FilterSearch
 	} from '$lib/components/';
 	import * as Topbar from '$lib/components/Topbar/index';
@@ -145,43 +142,27 @@
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
 
-<div bind:this={scrollEl} class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto">
-	<Pagination
-		currentPage={notelistState.notes.page}
-		totalPages={notelistState.notes.totalPages}
-		changePage={async (newPage: number) => {
-			if (mouseState.isBusy) return;
-			await updatePage(newPage);
-			scroll.scrollToTop();
-		}}
-	/>
-	{#if !notelistState.notes.totalItems && !searchState?.searchInput}
-		<NoteLoading />
-	{:else if notelistState.notes.totalItems > 0}
-		<NoteList
-			{isBulkEdit}
-			update={() => {
-				updatePage(notelistState.clickedPage);
-			}}
-			bind:selectedNotesID
-			notes={notelistState.notes}
-		/>
-	{:else if searchState?.searchInput || searchState?.searchNotebookID || searchState?.selectedTagIdArray.length > 0}
-		<div class="grid h-full place-items-center">No Notes Found.</div>
-	{:else}
-		<Blank />
-	{/if}
-	{#if isBulkEdit}
+<NoteListContainer
+	bind:scrollEl
+	{notelistState}
+	scrollToTop={scroll.scrollToTop}
+	{mouseState}
+	{updatePage}
+	{isBulkEdit}
+	{selectedNotesID}
+>
+	{#snippet bulkToolbar()}
 		<BulkToolbar
 			updatePage={() => {
 				updatePage(notelistState.clickedPage);
 			}}
+			isArchive
 			bind:isBulkEdit
 			bind:selectedNotesID
 			{notelistState}
 		/>
-	{/if}
-</div>
+	{/snippet}
+</NoteListContainer>
 
 <FilterSearch
 	bind:isOpen={isFilterSearch}
