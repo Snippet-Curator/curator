@@ -45,43 +45,73 @@
 		{#if note.expand?.notebook}
 			<Topbar.Notebook bind:isOpen={isEditNotebookOpen} notebook={note.expand.notebook} />
 		{/if}
+		<Topbar.Rating
+			rating={note.rating}
+			action={async (newRating) => {
+				await noteState.changeRating(newRating);
+			}}
+		/>
 
-		{#if !mobileState.isMobile}
-			<Topbar.Rating
-				rating={note.rating}
-				action={async (newRating) => {
-					await noteState.changeRating(newRating);
+		{#if mobileState.isMobile}
+			<Topbar.More>
+				{#snippet renderMore()}
+					<Topbar.Edit bind:isOpen={isEditNoteOpen} />
+
+					<Topbar.Share
+						share={async () => await noteState.shareNote()}
+						bind:isOpen={isShareNoteOpen}
+						isShared={noteState.note?.is_shared}
+					/>
+
+					<Topbar.Archive
+						noteStatus={noteState.note.status}
+						archive={async () => {
+							await noteState.archiveNote();
+							window.history.back();
+						}}
+						unarchive={async () => {
+							await noteState.restoreNote();
+							window.history.back();
+						}}
+					/>
+					<Topbar.Delete
+						noteStatus={noteState.note.status}
+						bind:isOpen={isDeleteOpen}
+						restore={async () => await noteState.restoreNote()}
+						bind:isPermaDeleteNoteOpen
+					/>
+					<Topbar.Info {note} />
+				{/snippet}
+			</Topbar.More>
+		{:else}
+			<div class="divider divider-horizontal"></div>
+			<Topbar.Edit bind:isOpen={isEditNoteOpen} />
+
+			<Topbar.Share
+				share={async () => await noteState.shareNote()}
+				bind:isOpen={isShareNoteOpen}
+				isShared={noteState.note?.is_shared}
+			/>
+
+			<Topbar.Archive
+				noteStatus={noteState.note.status}
+				archive={async () => {
+					await noteState.archiveNote();
+					window.history.back();
+				}}
+				unarchive={async () => {
+					await noteState.restoreNote();
+					window.history.back();
 				}}
 			/>
-			<div class="divider divider-horizontal"></div>
+			<Topbar.Delete
+				noteStatus={noteState.note.status}
+				bind:isOpen={isDeleteOpen}
+				restore={async () => await noteState.restoreNote()}
+				bind:isPermaDeleteNoteOpen
+			/>
+			<Topbar.Info {note} />
 		{/if}
-
-		<Topbar.Edit bind:isOpen={isEditNoteOpen} />
-
-		<Topbar.Share
-			share={async () => await noteState.shareNote()}
-			bind:isOpen={isShareNoteOpen}
-			isShared={noteState.note?.is_shared}
-		/>
-
-		<Topbar.Archive
-			noteStatus={noteState.note.status}
-			archive={async () => {
-				await noteState.archiveNote();
-				window.history.back();
-			}}
-			unarchive={async () => {
-				await noteState.restoreNote();
-				window.history.back();
-			}}
-		/>
-		<Topbar.Delete
-			noteStatus={noteState.note.status}
-			bind:isOpen={isDeleteOpen}
-			restore={async () => await noteState.restoreNote()}
-			bind:isPermaDeleteNoteOpen
-		/>
-		<Topbar.Info {note} />
 	</Topbar.Root>
 	<div class="h-[calc(100vh-60px)]">
 		<NoteContent {noteState} />
