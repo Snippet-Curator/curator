@@ -17,6 +17,7 @@ export { default as InputText } from './Layout/InputText.svelte';
 export { default as Pagination } from './Layout/Pagination.svelte';
 export { default as NoteContent } from './Layout/NoteContent.svelte';
 export { default as NoteList } from './Layout/NoteList.svelte';
+export { default as NoteListContainer } from './Layout/NoteListContainer.svelte';
 export { default as TagList } from './Layout/TagList.svelte';
 export { default as NotebookList } from './Layout/NotebookList.svelte';
 export { default as NoteLoading } from './Layout/NoteLoading.svelte';

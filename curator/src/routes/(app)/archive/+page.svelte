@@ -10,7 +10,7 @@
 		saveScrollPosition
 	} from '$lib/utils.svelte';
 	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
-	import { Pagination, NoteList, BulkToolbar, BulkEditBtn } from '$lib/components/';
+	import { BulkToolbar, BulkEditBtn, NoteListContainer } from '$lib/components/';
 	import type { NoteType } from '$lib/types';
 	import * as Topbar from '$lib/components/Topbar/index';
 
@@ -66,39 +66,23 @@
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
 
-<div bind:this={scrollEl} class="mb-20 h-[calc(100vh-60px)] overflow-y-auto">
-	{#await initialLoading}
-		<br />
-	{:then}
-		<Pagination
-			currentPage={notelistState.notes.page}
-			totalPages={notelistState.notes.totalPages}
-			changePage={async (newPage: number) => {
-				if (mouseState.isBusy) return;
-				await updatePage(newPage);
-				scroll.scrollToTop();
+<NoteListContainer
+	bind:scrollEl
+	{notelistState}
+	{mouseState}
+	{updatePage}
+	{isBulkEdit}
+	{selectedNotesID}
+>
+	{#snippet bulkToolbar()}
+		<BulkToolbar
+			updatePage={() => {
+				updatePage(notelistState.clickedPage);
 			}}
+			isArchive
+			bind:isBulkEdit
+			bind:selectedNotesID
+			{notelistState}
 		/>
-		{#if isBulkEdit}
-			<BulkToolbar
-				updatePage={() => {
-					updatePage(notelistState.clickedPage);
-				}}
-				isArchive
-				bind:isBulkEdit
-				bind:selectedNotesID
-				{notelistState}
-			/>
-		{/if}
-		{#if notelistState.notes.totalItems > 0}
-			<NoteList
-				update={() => updatePage(notelistState.clickedPage)}
-				{isBulkEdit}
-				bind:selectedNotesID
-				notes={notelistState.notes}
-			/>
-		{:else}
-			<br />
-		{/if}
-	{/await}
-</div>
+	{/snippet}
+</NoteListContainer>

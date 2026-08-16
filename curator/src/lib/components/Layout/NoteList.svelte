@@ -87,7 +87,7 @@
 
 <svelte:boundary>
 	<div
-		class="p-golden-md md:p-golden-lg lg:p-golden-xl gap-golden-lg space-y-golden-lg lg:gap-golden-xl lg:space-y-golden-xl relative mb-80 columns-1 md:mb-64 md:columns-2 lg:mb-32 lg:columns-3 2xl:columns-4"
+		class="p-golden-md md:p-golden-lg lg:p-golden-xl gap-golden-lg space-y-golden-lg lg:gap-golden-xl lg:space-y-golden-xl relative mb-80 h-full columns-1 md:mb-64 md:columns-2 lg:mb-32 lg:columns-3 2xl:columns-4"
 	>
 		{#if notes.items.length > 0}
 			{#each notes.items as note}

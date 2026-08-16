@@ -54,12 +54,12 @@ function signalSavePage() {
 	};
 }
 
-class mobileState {
+class MobileState {
 	isMobile = $state(false);
 	isSidebarOpen = $state(true);
 }
 
-class mouseState {
+export class MouseState {
 	isBusy = $state(false);
 }
 
@@ -98,7 +98,7 @@ export function debounce<T extends (...args: any[]) => void>(fn: T, delay: numbe
 // export const searchState = changeSearchTerm()
 export const signalPageState = signalSavePage();
 export function setMobileState() {
-	return setContext('mobile', new mobileState());
+	return setContext('mobile', new MobileState());
 }
 export function getMobileState() {
 	return getContext<ReturnType<typeof setMobileState>>('mobile');
@@ -110,7 +110,7 @@ export const saveScrollPosition = (scrollY: number) =>
 	signalPageState.updateScrollPosition(page.url.pathname, scrollY);
 
 export function setMouseState() {
-	return setContext('mouse', new mouseState());
+	return setContext('mouse', new MouseState());
 }
 export function getMouseState() {
 	return getContext<ReturnType<typeof setMouseState>>('mouse');

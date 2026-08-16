@@ -1,18 +1,24 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { onMount } from 'svelte';
 	import { ScrollState } from 'runed';
 
-	import { getMouseState, saveCurrentPage, signalPageState } from '$lib/utils.svelte';
+	import {
+		getMouseState,
+		saveCurrentPage,
+		signalPageState,
+		saveScrollPosition
+	} from '$lib/utils.svelte';
 	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
-	import { Pagination, NoteList, BulkToolbar, BulkEditBtn, Delete } from '$lib/components/';
+	import { BulkToolbar, BulkEditBtn, Delete, NoteListContainer } from '$lib/components/';
 	import * as Topbar from '$lib/components/Topbar/index';
 	import type { NoteType } from '$lib/types';
 
 	let isBulkEdit = $state(false);
-	let isEmptyTrashOpen = $state(false);
 	let selectedNotesID = $state<string[]>([]);
+	let isEmptyTrashOpen = $state(false);
+	let initialLoading = $state();
 	let scrollEl = $state<HTMLElement>();
-	let initialLoading = $state<Promise<void>>();
 
 	const noteType: NoteType = {
 		type: 'trash',
@@ -23,14 +29,16 @@
 	const notelistState = getNotelistState('deleted');
 	const mouseState = getMouseState();
 
+	const savedPage = $derived(signalPageState.savedPages.get(page.url.pathname) ?? 1);
+	const scrollPosition = $derived<number>(
+		signalPageState.scrollPositions.get(page.url.pathname) ?? 0
+	);
+
 	const scroll = new ScrollState({
 		element: () => scrollEl
 	});
 
-	const savedPage = $derived(signalPageState.savedPages.get(page.url.pathname) ?? 1);
-
 	const updatePage = async (newPage: number) => {
-		scroll.scrollToTop();
 		mouseState.isBusy = true;
 		await notelistState.getDeleted(newPage);
 		saveCurrentPage(newPage);
@@ -38,8 +46,16 @@
 		mouseState.isBusy = false;
 	};
 
+	onMount(async () => {
+		// console.log('Slug changed:', page.params.slug);
+		// notelistState.notebookID = notebookID;
+		initialLoading = await updatePage(savedPage);
+		scroll.scrollTo(0, scrollPosition);
+	});
+
 	$effect(() => {
-		initialLoading = updatePage(savedPage);
+		if (scroll.y === 0) return;
+		saveScrollPosition(scroll.y);
 	});
 </script>
 
@@ -51,41 +67,26 @@
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
 
-<div bind:this={scrollEl} class="mb-20 h-[calc(100vh-60px)] overflow-y-auto">
-	{#await initialLoading}
-		<br />
-	{:then}
-		<Pagination
-			currentPage={notelistState.notes.page}
-			totalPages={notelistState.notes.totalPages}
-			changePage={(newPage: number) => {
-				if (mouseState.isBusy) return;
-				updatePage(newPage);
+<NoteListContainer
+	bind:scrollEl
+	{notelistState}
+	{mouseState}
+	{updatePage}
+	{isBulkEdit}
+	{selectedNotesID}
+>
+	{#snippet bulkToolbar()}
+		<BulkToolbar
+			updatePage={() => {
+				updatePage(notelistState.clickedPage);
 			}}
+			isTrash
+			bind:isBulkEdit
+			bind:selectedNotesID
+			{notelistState}
 		/>
-		{#if isBulkEdit}
-			<BulkToolbar
-				updatePage={() => {
-					updatePage(notelistState.clickedPage);
-				}}
-				isTrash
-				bind:isBulkEdit
-				bind:selectedNotesID
-				{notelistState}
-			/>
-		{/if}
-		{#if notelistState.notes.totalItems > 0}
-			<NoteList
-				update={() => updatePage(notelistState.clickedPage)}
-				{isBulkEdit}
-				bind:selectedNotesID
-				notes={notelistState.notes}
-			/>
-		{:else}
-			<br />
-		{/if}
-	{/await}
-</div>
+	{/snippet}
+</NoteListContainer>
 
 <Delete
 	bind:isOpen={isEmptyTrashOpen}

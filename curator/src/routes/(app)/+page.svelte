@@ -146,45 +146,41 @@
 </Topbar.Root>
 
 <div bind:this={scrollEl} class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto">
-	{#await initialLoading}
+	<Pagination
+		currentPage={notelistState.notes.page}
+		totalPages={notelistState.notes.totalPages}
+		changePage={async (newPage: number) => {
+			if (mouseState.isBusy) return;
+			await updatePage(newPage);
+			scroll.scrollToTop();
+		}}
+	/>
+	{#if !notelistState.notes.totalItems && !searchState?.searchInput}
 		<NoteLoading />
-	{:then}
-		<Pagination
-			currentPage={notelistState.notes.page}
-			totalPages={notelistState.notes.totalPages}
-			changePage={async (newPage: number) => {
-				if (mouseState.isBusy) return;
-				await updatePage(newPage);
-				scroll.scrollToTop();
+	{:else if notelistState.notes.totalItems > 0}
+		<NoteList
+			{isBulkEdit}
+			update={() => {
+				updatePage(notelistState.clickedPage);
 			}}
+			bind:selectedNotesID
+			notes={notelistState.notes}
 		/>
-
-		{#if notelistState.notes && notelistState.notes.totalItems > 0}
-			<NoteList
-				{isBulkEdit}
-				update={() => {
-					updatePage(notelistState.clickedPage);
-				}}
-				bind:selectedNotesID
-				notes={notelistState.notes}
-			/>
-		{:else if searchState?.searchInput || searchState?.searchNotebookID || searchState?.selectedTagIdArray.length > 0}
-			<div class="grid h-full place-items-center">No Notes Found.</div>
-		{:else}
-			<Blank />
-			<!-- <NoteLoading /> -->
-		{/if}
-		{#if isBulkEdit}
-			<BulkToolbar
-				updatePage={() => {
-					updatePage(notelistState.clickedPage);
-				}}
-				bind:isBulkEdit
-				bind:selectedNotesID
-				{notelistState}
-			/>
-		{/if}
-	{/await}
+	{:else if searchState?.searchInput || searchState?.searchNotebookID || searchState?.selectedTagIdArray.length > 0}
+		<div class="grid h-full place-items-center">No Notes Found.</div>
+	{:else}
+		<Blank />
+	{/if}
+	{#if isBulkEdit}
+		<BulkToolbar
+			updatePage={() => {
+				updatePage(notelistState.clickedPage);
+			}}
+			bind:isBulkEdit
+			bind:selectedNotesID
+			{notelistState}
+		/>
+	{/if}
 </div>
 
 <FilterSearch
