@@ -3,7 +3,7 @@ FROM alpine:3.19
 WORKDIR /app
 
 # Download Pocketbase
-ARG PB_VERSION=0.39.10
+ARG PB_VERSION=0.39.11
 RUN apk add --no-cache \
     unzip \
     ca-certificates
