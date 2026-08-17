@@ -42,7 +42,7 @@
 			</a>
 
 			<span class="text-base-content/50 group-hover:text-base-content/70 text-right"
-				>{tag.note_count}</span
+				>{tag.note_count > 0 ? tag.note_count : ''}</span
 			>
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>
