@@ -13,7 +13,7 @@
     "update": "turbo run update"
   },
   "devDependencies": {
-    "turbo": "^2.9.9"
+    "turbo": "^2.10.11"
   },
   "packageManager": "pnpm@10.28.1"
 }

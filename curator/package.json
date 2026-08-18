@@ -1,5 +1,5 @@
 {
-	"name": "svelte-app",
+	"name": "curator-app",
 	"version": "0.0.45",
 	"type": "module",
 	"scripts": {
