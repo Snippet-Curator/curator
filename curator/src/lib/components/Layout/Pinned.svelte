@@ -38,9 +38,7 @@
 
 {#snippet renderTag(tag: Tag)}
 	<ContextMenu.Root>
-		<ContextMenu.Trigger
-			class="motion-translate-y-in-50 motion-duration-200 group flex cursor-auto items-center justify-between p-0 pr-1"
-		>
+		<ContextMenu.Trigger class="group flex cursor-auto items-center justify-between p-0 pr-1">
 			<a
 				href="/tags/{tag.id}"
 				class="{page.url.pathname == `/tags/${tag.id}`
@@ -65,12 +63,10 @@
 {/snippet}
 
 {#if notebooks.length > 0 || tags.length > 0}
-	<div
-		class="bg-base-300/40 p-golden-sm px-golden-md motion-scale-in-50 motion-opacity-in-0 motion-duration-200 motion-ease-spring-bouncier mr-4 rounded-md"
-	>
+	<div class="bg-base-300/40 p-golden-sm px-golden-md mr-4 rounded-md">
 		<ul class="">
 			{#each notebooks as notebook}
-				<li class="motion-translate-y-in-50 motion-duration-200">
+				<li>
 					{@render renderNotebook(notebook)}
 				</li>
 			{/each}

@@ -30,7 +30,7 @@
 		<File {notebookState} {tagState} />
 		<Youtube {notebooks} {tags} />
 		<div class="divider"></div>
-		<Instagram {form} />
+		<!-- <Instagram {form} /> -->
 		<Status />
 	</div>
 </div>

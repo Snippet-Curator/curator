@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { onMount } from 'svelte';
 	import { ScrollState } from 'runed';
 
 	import {
@@ -46,9 +45,10 @@
 		mouseState.isBusy = false;
 	};
 
-	onMount(async () => {
+	$effect(async () => {
 		// console.log('Slug changed:', page.params.slug);
 		// notelistState.notebookID = notebookID;
+		notelistState.tagID = page.params.slug;
 		initialLoading = await updatePage(savedPage);
 		scroll.scrollTo(0, scrollPosition);
 	});
