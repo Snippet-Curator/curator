@@ -198,7 +198,7 @@
 	});
 </script>
 
-<div class="bg-base-100/90 p-golden-sm md:p-golden-md z-20 flex w-full px-4 md:sticky md:top-0">
+<!-- <div class="bg-base-100/90 p-golden-sm md:p-golden-md z-20 flex w-full px-4">
 	<div class="flex w-full">
 		<input
 			class="card-title focus:ring-base-content/40 bg-base-100/90 mr-2 grow truncate rounded-md border-0"
@@ -222,9 +222,34 @@
 			<CaseSensitive size={32} />
 		</div>
 	</div>
-</div>
+</div> -->
 
 <div class="mb-20 h-full overflow-y-auto">
+	<div
+		class="bg-base-200/50 p-golden-sm md:p-golden-md border-base-content/5 flex w-full border-y px-4"
+	>
+		<input
+			class="card-title focus:ring-base-content/40 mr-2 grow truncate rounded-md border-0"
+			bind:value={noteTitle}
+			onchange={async () => {
+				await noteState.changeTitle(noteTitle);
+				await noteState.getNote();
+			}}
+		/>
+		<div
+			class="text-base-content/20 hover:text-base-content hidden items-center gap-x-4 transition-colors duration-300 md:flex"
+		>
+			<input
+				type="range"
+				class="range range-xs"
+				min="0.96"
+				max="1.1"
+				step="0.01"
+				bind:value={noteState.fontScale}
+			/>
+			<CaseSensitive size={32} />
+		</div>
+	</div>
 	<div class="card mx-auto mt-10 max-w-3xl px-2 pb-40 md:px-10 lg:max-w-5xl">
 		<iframe
 			title="content"
