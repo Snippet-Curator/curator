@@ -87,7 +87,6 @@
 					onLeft={getPreviousNote}
 					onRight={getNextNote}
 				></Topbar.NavBtns>
-				<Topbar.Weight onUp={upvote} onDown={downvote}></Topbar.Weight>
 			{/if}
 			<Topbar.Filter bind:isOpen={isFilterSearch} />
 			<!-- {note.score.toFixed(2)} -->
@@ -136,7 +135,6 @@
 
 		<Navbar class="p-golden-md bg-base-100 flex flex-col items-end gap-y-2 rounded-md">
 			<div class="flex flex-row gap-x-2">
-				<Topbar.Weight onUp={upvote} onDown={downvote}></Topbar.Weight>
 				<Topbar.NavBtns
 					{currentIndex}
 					{currentPage}
