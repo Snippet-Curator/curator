@@ -82,7 +82,6 @@
 	let inboxID = $derived(inbox?.id);
 
 	onMount(async () => {
-		updateScreenWidth();
 		await settingState.getDefaultSettings();
 	});
 
@@ -99,9 +98,9 @@
 		class="{mouseState.isBusy ? 'cursor-progress' : ''} max-h-screen min-h-screen w-full"
 	>
 		<Resizable.Pane
-			class="{mobileState.isSidebarOpen
-				? '-motion-translate-x-in-100 motion-duration-200'
-				: 'hidden'} menu bg-base-200 border-base-content/10 space-y-2 border-r"
+			class={`${
+				mobileState.isSidebarOpen ? '-motion-translate-x-in-100 motion-duration-200' : 'hidden'
+			} menu bg-base-200 border-base-content/10 space-y-2 border-r`}
 			defaultSize={16}
 			minSize={10}
 			maxSize={30}
@@ -179,7 +178,7 @@
 		</Resizable.Pane>
 
 		<Resizable.Handle />
-		<Resizable.Pane>
+		<Resizable.Pane defaultSize={84}>
 			<div class="bg-base-100">{@render children()}</div>
 		</Resizable.Pane>
 	</Resizable.PaneGroup>
