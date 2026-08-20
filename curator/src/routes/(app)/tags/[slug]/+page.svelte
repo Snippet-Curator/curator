@@ -1,88 +1,87 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import { ScrollState } from 'runed';
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
+
+	import { getNotes } from '$lib/api/note.remote';
 
 	import {
-		getMouseState,
-		saveCurrentPage,
-		signalPageState,
-		saveScrollPosition
-	} from '$lib/utils.svelte';
-	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
-	import type { NoteType } from '$lib/types';
-	import { BulkToolbar, BulkEditBtn, NoteListContainer } from '$lib/components/';
+		Pagination,
+		BulkEditBtn,
+		NoteList,
+		BulkToolbar2,
+		Search,
+		FilterSearch
+	} from '$lib/components';
 	import * as Topbar from '$lib/components/Topbar/index';
-
-	let initialLoading = $state();
-	let tagID = $derived(page.params.slug);
-	let isBulkEdit = $state(false);
-	let selectedNotesID = $state<string[]>([]);
-	let scrollEl = $state<HTMLElement>();
-
-	const noteType: NoteType = {
-		type: 'tags',
-		id: page.params.slug
-	};
-
-	setNotelistState(tagID, noteType);
-	const notelistState = getNotelistState(tagID);
-	const mouseState = getMouseState();
+	import { debouncedSearch, getQueryFromURL } from '$lib/utils.svelte';
 
 	const scroll = new ScrollState({
 		element: () => scrollEl
 	});
 
-	const savedPage = $derived(signalPageState.savedPages.get(page.url.pathname));
-	const scrollPosition = $derived<number>(
-		signalPageState.scrollPositions.get(page.url.pathname) ?? 0
+	let query = $derived(getQueryFromURL(page.url));
+
+	let result = $derived(
+		await getNotes({
+			page: query.page ?? 1,
+			search: query.search ?? '',
+			notebookID: query.notebookID ?? '',
+			tagIDs: [page.params.slug ?? ''],
+			excludedTagIDs: query.excludedTagIDs ?? [],
+			status: query.status ?? 'active'
+		})
 	);
 
-	const updatePage = async (newPage: number) => {
-		mouseState.isBusy = true;
-		await notelistState.getByTag(tagID, newPage);
-		saveCurrentPage(newPage);
-		notelistState.clickedPage = newPage;
-		mouseState.isBusy = false;
-	};
+	let totalPages = $derived(result?.totalPages ?? 0);
+	let totalItems = $derived(result?.totalItems ?? 0);
+	let searchInput = $state<string>(query.search ?? '');
 
-	$effect(async () => {
-		// console.log('Slug changed:', page.params.slug);
-		// notelistState.notebookID = notebookID;
-		notelistState.tagID = page.params.slug;
-		initialLoading = await updatePage(savedPage);
-		scroll.scrollTo(0, scrollPosition);
-	});
-
-	$effect(() => {
-		if (scroll.y === 0) return;
-		saveScrollPosition(scroll.y);
-	});
+	let scrollEl = $state<HTMLElement>();
+	let isBulkEdit = $state(false);
+	let isFilterSearch = $state(false);
+	let selectedNotesID = $state<string[]>([]);
 </script>
 
 <Topbar.Root>
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
-	<Topbar.Back />
-	<div class="grow"></div>
+
+	<Search
+		bind:searchInput
+		searchNotes={() => debouncedSearch(searchInput)}
+		clearNote={async () => {
+			await goto(`?page=1`, {
+				keepFocus: true
+			});
+		}}
+	/>
+
+	<Topbar.Filter bind:isOpen={isFilterSearch} />
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
 
-<NoteListContainer
-	bind:scrollEl
-	{notelistState}
-	{mouseState}
-	scrollToTop={scroll.scrollToTop}
-	{updatePage}
-	{isBulkEdit}
-	{selectedNotesID}
->
-	{#snippet bulkToolbar()}
-		<BulkToolbar
-			updatePage={() => {
-				updatePage(notelistState.clickedPage);
-			}}
-			bind:isBulkEdit
-			bind:selectedNotesID
-			{notelistState}
-		/>
-	{/snippet}
-</NoteListContainer>
+<div bind:this={scrollEl} class="relative mb-20 h-[calc(100vh-60px)] overflow-y-auto">
+	<Pagination currentPage={query.page ?? 0} {totalPages} scrollToTop={() => scroll.scrollToTop()} />
+
+	{#if totalItems && totalItems > 0}
+		<NoteList update={() => {}} {isBulkEdit} bind:selectedNotesID notes={result} />
+	{:else}
+		<br />
+	{/if}
+
+	{#if isBulkEdit}
+		<BulkToolbar2 bind:isBulkEdit bind:selectedNotesID />
+	{/if}
+</div>
+
+<FilterSearch
+	bind:isOpen={isFilterSearch}
+	query={{
+		page: query.page ?? 1,
+		search: query.search ?? '',
+		notebookID: query.notebookID ?? '',
+		tagIDs: [page.params.slug ?? ''],
+		excludedTagIDs: query.excludedTagIDs ?? [],
+		status: query.status ?? 'active'
+	}}
+/>

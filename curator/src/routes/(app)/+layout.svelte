@@ -6,16 +6,19 @@
 	import { Import, Notebook as NotebookIcon, Settings, WalletCards } from 'lucide-svelte';
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 
-	import { getNotebookState, getTagState, setNotebookState, setTagState } from '$lib/db.svelte';
+	import { setNotebookState, setTagState } from '$lib/db.svelte';
+	import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
 	import { pb } from '$lib/pocketbase';
 	import { getSettingState } from '$lib/setting.svelte';
 	import { getMobileState, getMouseState, setMobileState, setMouseState } from '$lib/utils.svelte';
 	import { setSavedSearch } from '$lib/search.svelte';
 
 	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
+	import { getAllTags } from '$lib/api/tag.remote';
 
 	let { children } = $props();
 
+	// not sure what this does
 	if (typeof document !== 'undefined') {
 		pb.authStore.loadFromCookie(document.cookie);
 	}
@@ -26,18 +29,11 @@
 	setMouseState();
 	setSavedSearch();
 
-	const tagState = getTagState();
-	const notebookState = getNotebookState();
 	const mobileState = getMobileState();
 	const settingState = getSettingState();
 	const mouseState = getMouseState();
 
 	let screenWidth = 100;
-
-	async function getDefaultNotebooks() {
-		await notebookState.getInbox();
-		await notebookState.getAllCounts();
-	}
 
 	const updateScreenWidth = () => {
 		screenWidth = window.innerWidth;
@@ -77,11 +73,16 @@
 		// }
 	];
 
-	let defaultNotebooks = $state();
+	let allNotebooks = $derived(await getAllNotebooks());
+	let notebooks = $derived(allNotebooks?.rootNotebooks);
+	let allTags = $derived(await getAllTags());
+	let tags = $derived(allTags?.rootTags);
+	let inbox = $derived(await getInbox());
+	let inboxCount = $derived(inbox?.count ?? 0);
+	let inboxID = $derived(inbox?.id);
 
 	onMount(async () => {
 		updateScreenWidth();
-		defaultNotebooks = getDefaultNotebooks();
 		await settingState.getDefaultSettings();
 	});
 
@@ -125,23 +126,20 @@
 				>
 					<span>Search</span>
 					<span class="group-hover:text-base-content/70 text-base-content/50"
-						>{notebookState.totalNoteCount}</span
+						>{await getTotalNotecount()}</span
 					></a
 				>
 			</li>
-			{#await defaultNotebooks then}
-				<li>
-					<a
-						class="{page.url.pathname == `/notebook/${notebookState.inboxID}` &&
-							'menu-active'} group flex w-full justify-between"
-						href="/notebook/{notebookState.inboxID}"
-						><span>Inbox</span>
-						<span class="group-hover:text-base-content/70 text-base-content/50"
-							>{notebookState.inboxCount}</span
-						></a
-					>
-				</li>
-			{/await}
+
+			<li>
+				<a
+					class="{page.url.pathname == `/notebook/${inboxID}` &&
+						'menu-active'} group flex w-full justify-between"
+					href="/notebook/{inboxID}"
+					><span>Inbox</span>
+					<span class="group-hover:text-base-content/70 text-base-content/50">{inboxCount}</span></a
+				>
+			</li>
 
 			<div class="divider my-0 py-0"></div>
 
@@ -153,13 +151,13 @@
 					>Notebooks</span
 				>
 
-				<NotebookList notebooks={notebookState.notebooks} />
+				<NotebookList {notebooks} />
 
 				<span class="menu-title flex items-center gap-2 text-xs tracking-widest uppercase">
 					Tags</span
 				>
 
-				<TagList tags={tagState.tags} />
+				<TagList {tags} />
 			</div>
 
 			{#snippet renderBottomPages(name: string, url: string, icon: any)}

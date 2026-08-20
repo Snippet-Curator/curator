@@ -83,6 +83,7 @@ export type Notebook = {
 	children?: Notebook[];
 	parent?: string;
 	note_count: number;
+	status: 'pinned' | undefined;
 };
 
 export type Tag = {
@@ -119,6 +120,16 @@ export interface Props {
 		tags?: Tag[];
 	};
 }
+
+export type NoteQuery = {
+	page: number;
+	search?: string;
+	tagIDs?: string[];
+	excludedTagIDs?: string[];
+	notebookID: string;
+	starred?: boolean;
+	status: 'active' | 'archived' | 'deleted';
+};
 
 // ------ Parser ------
 

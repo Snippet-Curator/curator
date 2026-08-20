@@ -1,0 +1,170 @@
+<script lang="ts">
+	import { page } from '$app/state';
+	import { onMount } from 'svelte';
+
+	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
+	import {
+		NoteListContainer,
+		Search,
+		BulkToolbar,
+		BulkEditBtn,
+		FilterSearch
+	} from '$lib/components/';
+	import * as Topbar from '$lib/components/Topbar/index';
+	import {
+		getMouseState,
+		saveCurrentPage,
+		saveScrollPosition,
+		signalPageState,
+		debounce
+	} from '$lib/utils.svelte';
+	import {
+		getSearchState,
+		setSearchState,
+		type SearchState,
+		type SavedSearch,
+		getSavedSearch
+	} from '$lib/search.svelte';
+	import type { NoteType } from '$lib/types';
+	import { ScrollState } from 'runed';
+
+	let notebookID = 'homepage';
+	let searchInput = $state('');
+	let isBulkEdit = $state(false);
+	let selectedNotesID = $state<string[]>([]);
+	let isFilterSearch = $state(false);
+	let searchState = $state<SearchState>();
+	let savedSearch = $state<SavedSearch>();
+	let scrollEl = $state<HTMLElement>();
+
+	let initialLoading = $state();
+
+	const noteType: NoteType = {
+		type: 'default'
+	};
+
+	setNotelistState(notebookID, noteType);
+	setSearchState();
+
+	const notelistState = getNotelistState(notebookID);
+	const mouseState = getMouseState();
+
+	// gets saved page number from signal
+	const savedPage = $derived<number>(signalPageState.savedPages.get(page.url.pathname) ?? 1);
+	// gets saved scroll position from signal
+	const scrollPosition = $derived<number>(
+		signalPageState.scrollPositions.get(page.url.pathname) ?? 0
+	);
+
+	const scroll = new ScrollState({
+		element: () => scrollEl
+	});
+
+	const debouncedSearch = debounce(() => {
+		updatePage(1);
+	}, 300);
+
+	const updatePage = async (newPage: number) => {
+		// saves current clicked page number
+		saveCurrentPage(newPage);
+		notelistState.clickedPage = newPage;
+		if (!searchState || !savedSearch) return;
+
+		// get default page if no filters
+		mouseState.isBusy = true;
+		scroll.scrollTo(0, scrollPosition);
+		if (
+			!searchState.searchInput &&
+			!searchState.searchNotebookID &&
+			searchState.selectedTagIdArray.length == 0
+		) {
+			savedSearch.term = '';
+			searchState.resetCustomFilter();
+			savedSearch.customFilter = '';
+			await notelistState.getByPage(newPage);
+			mouseState.isBusy = false;
+			return;
+		}
+
+		// run same filter if search term is same
+		if (savedSearch.term === searchState.searchInput) {
+			await notelistState.getByFilter(searchState.customFilter, newPage);
+			mouseState.isBusy = false;
+			return;
+		}
+
+		// uses new search filter
+		await searchState.getSearchTags(searchInput.trim());
+		await searchState.getSearchNotebook(searchInput.trim());
+		searchState.makeSearchQuery(searchState.searchInput);
+		await notelistState.getByFilter(searchState.customFilter, newPage);
+		savedSearch.term = searchState.searchInput;
+		savedSearch.customFilter = searchState.customFilter;
+		mouseState.isBusy = false;
+	};
+
+	onMount(async () => {
+		searchState = getSearchState();
+		savedSearch = getSavedSearch();
+
+		if (savedSearch.term) {
+			searchState.searchInput = savedSearch.term;
+
+			searchState.customFilter = savedSearch.customFilter;
+		}
+
+		initialLoading = await updatePage(savedPage);
+		scroll.scrollTo(0, scrollPosition);
+	});
+
+	$effect(() => {
+		if (scroll.y === 0) return;
+		saveScrollPosition(scroll.y);
+	});
+</script>
+
+<Topbar.Root>
+	<Topbar.SidebarIcon></Topbar.SidebarIcon>
+	{#if searchState}
+		<Search
+			bind:searchInput={searchState.searchInput}
+			searchNotes={() => debouncedSearch()}
+			clearNote={() => {
+				savedSearch.term = '';
+				savedSearch.customFilter = '';
+				searchState.resetCustomFilter();
+				scroll.scrollToTop();
+				updatePage(1);
+			}}
+		/>
+	{:else}{/if}
+	<Topbar.Filter bind:isOpen={isFilterSearch} />
+	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
+</Topbar.Root>
+
+<NoteListContainer
+	bind:scrollEl
+	{notelistState}
+	scrollToTop={scroll.scrollToTop}
+	{mouseState}
+	{updatePage}
+	{isBulkEdit}
+	{selectedNotesID}
+>
+	{#snippet bulkToolbar()}
+		<BulkToolbar
+			updatePage={() => {
+				updatePage(notelistState.clickedPage);
+			}}
+			isArchive
+			bind:isBulkEdit
+			bind:selectedNotesID
+			{notelistState}
+		/>
+	{/snippet}
+</NoteListContainer>
+
+<FilterSearch
+	bind:isOpen={isFilterSearch}
+	search={async (customFilters) => await notelistState.getByFilter(customFilters, 1)}
+/>

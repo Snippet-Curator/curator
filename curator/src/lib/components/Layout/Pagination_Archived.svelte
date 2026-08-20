@@ -1,19 +1,15 @@
 <script lang="ts">
+	import { getMobileState } from '$lib/utils.svelte';
 	import { ChevronLeft, ChevronsLeft, ChevronsRight, ChevronRight } from 'lucide-svelte';
-
-	import { goto } from '$app/navigation';
-	import { page as pageState } from '$app/state';
 	import { onDestroy, onMount } from 'svelte';
 
-	import { getMobileState } from '$lib/utils.svelte';
-
 	type Props = {
+		changePage: (newPage: number) => void;
 		currentPage: number;
 		totalPages: number;
-		scrollToTop: () => void;
 	};
 
-	let { currentPage = 1, totalPages = 1, scrollToTop }: Props = $props();
+	let { changePage, currentPage = 1, totalPages = 1 }: Props = $props();
 
 	const mobileState = getMobileState();
 	const maxVisiblePages = 5;
@@ -26,13 +22,6 @@
 		}
 		return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 	});
-
-	async function changePage(page: number) {
-		const url = new URL(pageState.url);
-		url.searchParams.set('page', String(page));
-		await goto(url);
-		scrollToTop();
-	}
 
 	function handler(event: KeyboardEvent) {
 		const target = event.target as HTMLElement;

@@ -1,5 +1,7 @@
 import { page } from '$app/state';
 import { getContext, setContext } from 'svelte';
+import { type NoteQuery } from '$lib/types';
+import { goto } from '$app/navigation';
 
 export function categorizeMediabyType(content: string) {
 	const mediaMatch =
@@ -92,6 +94,28 @@ export function debounce<T extends (...args: any[]) => void>(fn: T, delay: numbe
 	return (...args: Parameters<T>) => {
 		clearTimeout(timeout);
 		timeout = setTimeout(() => fn(...args), delay);
+	};
+}
+
+// debounced search
+export const debouncedSearch = debounce(async (searchInput: string) => {
+	await goto(`?search=${encodeURIComponent(searchInput)}&page=1`, {
+		replaceState: true,
+		keepFocus: true,
+		noScroll: true
+	});
+}, 300);
+
+type Status = 'active' | 'archived' | 'deleted';
+// getSearchQuery
+export function getQueryFromURL(url: URL): NoteQuery {
+	return {
+		page: Number(url.searchParams.get('page') ?? 1),
+		search: url.searchParams.get('search') ?? '',
+		tagIDs: url.searchParams.getAll('tagIDs'),
+		excludedTagIDs: url.searchParams.getAll('excludedTagIDs'),
+		notebookID: url.searchParams.get('notebookID') ?? '',
+		status: (url.searchParams.get('status') ?? 'active') as Status
 	};
 }
 
