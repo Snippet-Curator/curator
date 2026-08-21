@@ -1,20 +1,21 @@
 <script lang="ts">
+	import { pb } from '$lib/pocketbase';
 	import { page } from '$app/state';
 	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
-
-	import { Import, Notebook as NotebookIcon, Settings, WalletCards } from 'lucide-svelte';
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 
-	import { setNotebookState, setTagState } from '$lib/db.svelte';
-	import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
-	import { pb } from '$lib/pocketbase';
-	import { getSettingState } from '$lib/setting.svelte';
-	import { getMobileState, getMouseState, setMobileState, setMouseState } from '$lib/utils.svelte';
+	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
+
 	import { setSavedSearch } from '$lib/search.svelte';
 
-	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
+	import { setNotebookState, setTagState } from '$lib/db.svelte';
+	import { getMobileState, getMouseState, setMobileState, setMouseState } from '$lib/utils.svelte';
+
+	import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
 	import { getAllTags } from '$lib/api/tag.remote';
+	import { getDefaultSettings } from '$lib/api/setting.remote';
+
+	import { bottomPages } from './links';
 
 	let { children } = $props();
 
@@ -30,7 +31,6 @@
 	setSavedSearch();
 
 	const mobileState = getMobileState();
-	const settingState = getSettingState();
 	const mouseState = getMouseState();
 
 	let screenWidth = 100;
@@ -44,46 +44,14 @@
 		}
 	};
 
-	type LayoutPage = {
-		name: string;
-		icon: any;
-		url: string;
-	};
-
-	const bottomPages: LayoutPage[] = [
-		{
-			name: 'Organize',
-			icon: WalletCards,
-			url: '/organize'
-		},
-		{
-			name: 'Import',
-			icon: Import,
-			url: '/import'
-		},
-		{
-			name: 'Settings',
-			icon: Settings,
-			url: '/settings'
-		}
-		// {
-		// 	name: 'Test',
-		// 	icon: Settings,
-		// 	url: '/test'
-		// }
-	];
-
+	await getDefaultSettings();
 	let allNotebooks = $derived(await getAllNotebooks());
-	let notebooks = $derived(allNotebooks?.rootNotebooks);
+	let notebooks = $derived(allNotebooks?.rootNotebooks ?? []);
 	let allTags = $derived(await getAllTags());
-	let tags = $derived(allTags?.rootTags);
+	let tags = $derived(allTags?.rootTags ?? []);
 	let inbox = $derived(await getInbox());
 	let inboxCount = $derived(inbox?.count ?? 0);
 	let inboxID = $derived(inbox?.id);
-
-	onMount(async () => {
-		await settingState.getDefaultSettings();
-	});
 
 	$effect(() => {
 		window.addEventListener('resize', updateScreenWidth);
@@ -143,7 +111,10 @@
 			<div class="divider my-0 py-0"></div>
 
 			<div class="h-10 grow overflow-y-auto">
-				<Pinned />
+				<Pinned
+					pinnedNotebooks={allNotebooks?.pinnedNotebooks ?? []}
+					pinnedTags={allTags?.pinnedTags ?? []}
+				/>
 
 				<span
 					class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto text-xs tracking-widest uppercase"

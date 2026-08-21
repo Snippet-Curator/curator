@@ -1,24 +1,28 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import * as ContextMenu from '$lib/components/ui/context-menu/index';
-	import { getNotebookState, getTagState } from '$lib/db.svelte';
-	import type { Tag, Notebook } from '$lib/types';
 
 	import { Tag as TagIcon, Pin } from 'lucide-svelte';
+	import * as ContextMenu from '$lib/components/ui/context-menu/index';
 
-	const tagState = getTagState();
-	const notebookState = getNotebookState();
+	import { unpinNotebook } from '$lib/api/notebook.remote';
+	import { unpinTags } from '$lib/api/tag.remote';
+	import type { Tag, Notebook } from '$lib/types';
 
-	const tags = $derived(tagState.pinnedTags);
-	const notebooks = $derived(notebookState.pinnedNotebooks);
+	type Props = {
+		pinnedTags: Tag[];
+		pinnedNotebooks: Notebook[];
+	};
+
+	let { pinnedTags, pinnedNotebooks }: Props = $props();
 </script>
 
 {#snippet renderNotebook(notebook: Notebook)}
 	<ContextMenu.Root>
-		<ContextMenu.Trigger>
-			class="{page.url.pathname == `/notebook/${notebook.id}`
-				? ' bg-neutral text-neutral-content'
-				: ''} my-1 flex cursor-auto items-center justify-between rounded-md p-0 pr-1" >
+		<ContextMenu.Trigger
+			class={`${
+				page.url.pathname == `/notebook/${notebook.id}` ? ' bg-neutral text-neutral-content' : ''
+			} my-1 flex cursor-auto items-center justify-between rounded-md p-0 pr-1`}
+		>
 			<div class=" flex w-full items-center justify-between">
 				<a href="/notebook/{notebook.id}" class="w-full px-3 py-1 text-nowrap">
 					{notebook.name}
@@ -28,8 +32,8 @@
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>
 			<ContextMenu.Item
-				onSelect={() => {
-					notebookState.unpin(notebook.id);
+				onSelect={async () => {
+					await unpinNotebook(notebook.id);
 				}}>Unpin</ContextMenu.Item
 			>
 		</ContextMenu.Content>
@@ -54,24 +58,24 @@
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>
 			<ContextMenu.Item
-				onSelect={() => {
-					tagState.unpin(tag.id);
+				onSelect={async () => {
+					await unpinTags(tag.id);
 				}}>Unpin</ContextMenu.Item
 			>
 		</ContextMenu.Content>
 	</ContextMenu.Root>
 {/snippet}
 
-{#if notebooks.length > 0 || tags.length > 0}
+{#if pinnedNotebooks.length > 0 || pinnedTags.length > 0}
 	<div class="bg-base-300/40 p-golden-sm px-golden-md mr-4 rounded-md">
 		<ul class="">
-			{#each notebooks as notebook}
+			{#each pinnedNotebooks as notebook}
 				<li>
 					{@render renderNotebook(notebook)}
 				</li>
 			{/each}
 
-			{#each tags as tag}
+			{#each pinnedTags as tag}
 				{@render renderTag(tag)}
 			{/each}
 		</ul>

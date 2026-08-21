@@ -1,15 +1,16 @@
 <script lang="ts">
-	import { getSettingState } from '$lib/setting.svelte';
 	import { getMouseState } from '$lib/utils.svelte';
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getImportState } from './import.svelte';
 
 	let { notebooks, tags } = $props();
 
-	const settingState = getSettingState();
 	const importState = getImportState();
-
 	const mouseState = getMouseState();
+
+	import { getSetting } from '$lib/api/setting.remote';
+
+	let youtubeAPIKey = $derived(await getSetting('youtubeAPIKey'));
 
 	let youtubeURLs = $state('');
 	let selectedYoutubeNotebookID = $state<string>('');
@@ -40,12 +41,12 @@
 				<SelectTags bind:selectedTagIdArray {tags} />
 
 				<button
-					disabled={!settingState.youtubeAPIKey}
+					disabled={!youtubeAPIKey}
 					onclick={async () => {
 						mouseState.isBusy = true;
 						importState.getSelectedNotebookID(selectedYoutubeNotebookID);
 						importState.selectedTagIdArray = selectedTagIdArray;
-						await importState.importYoutube(youtubeURLs, settingState.youtubeAPIKey);
+						await importState.importYoutube(youtubeURLs, youtubeAPIKey);
 						mouseState.isBusy = false;
 					}}
 					class="btn btn-neutral">Import</button

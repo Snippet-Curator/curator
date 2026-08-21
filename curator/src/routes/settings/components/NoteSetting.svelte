@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { getSettingState } from '$lib/setting.svelte';
+	import { getSetting, changeSetting } from '$lib/api/setting.remote';
 
-	const settingState = getSettingState();
+	let nsfwBlur = $derived(await getSetting('nsfwBlur'));
+	let toggleNsfwBlur = $state<boolean>(nsfwBlur);
 </script>
 
 <div class="card mb-20">
@@ -20,10 +21,14 @@
 			<input
 				type="checkbox"
 				class="toggle col-span-2 justify-self-end"
-				bind:checked={settingState.nsfwBlur}
+				bind:checked={toggleNsfwBlur}
 				onchange={async () => {
-					const newValue = await settingState.changeSetting('nsfwBlur', settingState.nsfwBlur);
-					console.log('Changed setting, nsfwBlur:', newValue);
+					await changeSetting({
+						name: 'nsfwBlur',
+						newValue: toggleNsfwBlur
+					});
+					await getSetting('nsfwBlur').refresh();
+					console.log('Changed setting, nsfwBlur:', toggleNsfwBlur);
 				}}
 			/>
 		</div>

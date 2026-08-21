@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Github, Globe } from 'lucide-svelte';
+	import { Globe } from 'lucide-svelte';
 </script>
 
 <div class="card">
@@ -16,7 +16,7 @@
 			<a
 				href="https://github.com/Snippet-Curator/curator"
 				class="text-base-content/70 hover:text-base-content/90 transition-colors duration-200"
-				><Github /></a
+				>Github</a
 			>
 		</div>
 	</div>

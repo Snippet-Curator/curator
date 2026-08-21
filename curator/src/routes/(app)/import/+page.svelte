@@ -6,17 +6,19 @@
 	import File from './File.svelte';
 	import Youtube from './Youtube.svelte';
 	import Status from './Status.svelte';
-	import Instagram from './Instagram.svelte';
 
-	import { getNotebookState, getTagState } from '$lib/db.svelte';
-	let { form } = $props();
+	import { getAllNotebooks } from '$lib/api/notebook.remote';
+	import { getAllTags } from '$lib/api/tag.remote';
 
-	const notebookState = getNotebookState();
-	const tagState = getTagState();
-	const notebooks = $derived(notebookState.flatNotebooks);
-	const tags = $derived(tagState.flatTags);
+	let { data } = $props();
+	let inboxID = $derived(data.inboxID ?? '');
 
-	setImportState(notebookState.inboxID);
+	setImportState(inboxID);
+
+	let allNotebooks = $derived(await getAllNotebooks());
+	let flatNotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
+	let allTags = $derived(await getAllTags());
+	let flatTags = $derived(allTags?.flatTags);
 </script>
 
 <Topbar.Root>
@@ -27,8 +29,8 @@
 
 <div class="h-[calc(100vh-60px)] overflow-y-auto">
 	<div class="mx-auto mb-20 max-w-5xl">
-		<File {notebookState} {tagState} />
-		<Youtube {notebooks} {tags} />
+		<File {flatNotebooks} {flatTags} />
+		<Youtube notebooks={flatNotebooks} tags={flatTags} />
 		<div class="divider"></div>
 		<!-- <Instagram {form} /> -->
 		<Status />

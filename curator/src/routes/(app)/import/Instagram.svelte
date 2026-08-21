@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { getSettingState } from '$lib/setting.svelte';
 	import { getMouseState } from '$lib/utils.svelte';
 	import { getImportState } from './import.svelte';
 
 	let { form } = $props();
 
-	const settingState = getSettingState();
 	const importState = getImportState();
 	const mouseState = getMouseState();
 </script>

@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { query } from '$app/server';
+import { command, query } from '$app/server';
 
 import * as db from '$lib/server/db/notes';
 import { getPB } from './utils';
@@ -22,27 +22,27 @@ export const getByPage = query(v.number(), async (page = 1) => {
 	return db.getByPage(getPB(), page);
 });
 
-export const archiveMultiple = query(v.array(v.string()), async (recordIDs: string[]) => {
+export const archiveMultiple = command(v.array(v.string()), async (recordIDs: string[]) => {
 	return db.archiveMultiple(getPB(), recordIDs);
 });
 
-export const unArchiveMultiple = query(v.array(v.string()), async (recordIDs: string[]) => {
+export const unArchiveMultiple = command(v.array(v.string()), async (recordIDs: string[]) => {
 	return db.unArchiveMultiple(getPB(), recordIDs);
 });
 
-export const softDeleteMultiple = query(v.array(v.string()), (recordIDs: string[]) => {
+export const softDeleteMultiple = command(v.array(v.string()), (recordIDs: string[]) => {
 	db.softDeleteMultiple(getPB(), recordIDs);
 });
 
-export const unSoftDeleteMultiple = query(v.array(v.string()), (recordIDs: string[]) => {
+export const unSoftDeleteMultiple = command(v.array(v.string()), (recordIDs: string[]) => {
 	db.unSoftDeleteMultiple(getPB(), recordIDs);
 });
 
-export const mergeNotes = query(v.array(v.string()), (selectedNotesID: string[]) => {
+export const mergeNotes = command(v.array(v.string()), (selectedNotesID: string[]) => {
 	db.mergeNotes(getPB(), selectedNotesID);
 });
 
-export const changeNotesNotebook = query(
+export const changeNotesNotebook = command(
 	v.object({
 		selectedNotesID: v.array(v.string()),
 		newNotebookID: v.string()
@@ -52,7 +52,7 @@ export const changeNotesNotebook = query(
 	}
 );
 
-export const addTagToNotes = query(
+export const addTagToNotes = command(
 	v.object({
 		selectedNotesID: v.array(v.string()),
 		selectedTagID: v.string()
@@ -62,7 +62,7 @@ export const addTagToNotes = query(
 	}
 );
 
-export const removeTagFromNotes = query(
+export const removeTagFromNotes = command(
 	v.object({
 		selectedNotesID: v.array(v.string()),
 		selectedTagID: v.string()
@@ -72,10 +72,10 @@ export const removeTagFromNotes = query(
 	}
 );
 
-export const clearTagsFromNotes = query(v.array(v.string()), (selectedNotesID) => {
+export const clearTagsFromNotes = command(v.array(v.string()), (selectedNotesID) => {
 	db.clearTagsFromNotes(getPB(), selectedNotesID);
 });
 
-export const emptyTrash = query(() => {
+export const emptyTrash = command(() => {
 	db.emptyTrash(getPB());
 });

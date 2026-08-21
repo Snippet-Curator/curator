@@ -196,7 +196,6 @@ export async function pinNotebook(pb: PocketBase, recordID: string) {
 	if (error) {
 		console.error('Error pinning notebook: ', error.data);
 	}
-	await this.getAll();
 }
 
 export async function unpinNotebook(pb: PocketBase, recordID: string) {
@@ -208,5 +207,4 @@ export async function unpinNotebook(pb: PocketBase, recordID: string) {
 	if (error) {
 		console.error('Error unpinning notebook: ', error.data);
 	}
-	await this.getAll();
 }

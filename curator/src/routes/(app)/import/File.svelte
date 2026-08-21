@@ -4,7 +4,7 @@
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getImportState } from './import.svelte';
 
-	let { notebookState, tagState } = $props();
+	let { flatNotebooks, flatTags } = $props();
 
 	const importState = getImportState();
 	const mouseState = getMouseState();
@@ -24,18 +24,18 @@
 		await importState.importFiles();
 
 		// get initial counts again
-		await tagState.getAll();
-		await notebookState.getAll();
-		await notebookState.getInbox();
-		await notebookState.getAllCounts();
+		// await tagState.getAll();
+		// await notebookState.getAll();
+		// await notebookState.getInbox();
+		// await notebookState.getAllCounts();
 
 		// resubscribe
-		await pb.collection('notes').subscribe('*', async () => {
-			notebookState.getAll();
-			notebookState.getInbox();
-			notebookState.getAllCounts();
-			tagState.getAll();
-		});
+		// await pb.collection('notes').subscribe('*', async () => {
+		// 	notebookState.getAll();
+		// 	notebookState.getInbox();
+		// 	notebookState.getAllCounts();
+		// 	tagState.getAll();
+		// });
 
 		// setting mouse state
 		mouseState.isBusy = false;
@@ -71,8 +71,8 @@
 						class="file-input w-full"
 					/>
 
-					<SelectNotebook bind:selectedNotebookID notebooks={notebookState.flatNotebooks} />
-					<SelectTags bind:selectedTagIdArray tags={tagState.flatTags} />
+					<SelectNotebook bind:selectedNotebookID notebooks={flatNotebooks} />
+					<SelectTags bind:selectedTagIdArray tags={flatTags} />
 
 					<!-- <label for="file" class="fieldset-label text-sm">Max size 5GB</label> -->
 

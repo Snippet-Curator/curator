@@ -121,7 +121,6 @@ export async function pinTag(pb: PocketBase, recordID: string) {
 	if (error) {
 		console.error('Error pinning tag: ', error.message, error.data);
 	}
-	await this.getAll();
 }
 
 export async function unpinTag(pb: PocketBase, recordID: string) {
@@ -133,5 +132,4 @@ export async function unpinTag(pb: PocketBase, recordID: string) {
 	if (error) {
 		console.error('Error unpin tag: ', error.message, error.data);
 	}
-	await this.getAll();
 }

@@ -1,6 +1,16 @@
 <script lang="ts">
-	import { getSettingState } from '$lib/setting.svelte';
-	const settingState = getSettingState();
+	import { changeSetting, getDefaultSettings } from '$lib/api/setting.remote';
+
+	let allSettings = $derived(await getDefaultSettings());
+	let recencyWeight = $derived(allSettings.recencyWeight);
+	let ratingWeight = $derived(allSettings.ratingWeight);
+	let weightWeight = $derived(allSettings.weightWeight);
+	let randomWeight = $derived(allSettings.randomWeight);
+	let maxDay = $derived(allSettings.maxDay);
+	let fullPenaltyWindow = $derived(allSettings.fullPenaltyWindow);
+	let decayWindow = $derived(allSettings.decayWindow);
+	let daysOld = $derived(allSettings.daysOld);
+	let scoreRefreshHour = $derived(allSettings.scoreRefreshHour);
 </script>
 
 {#snippet renderSliderSetting(
@@ -26,16 +36,16 @@
 				{max}
 				value={initialValue}
 				{step}
-				oninput={(event: Event) => {
+				oninput={async (event: Event) => {
 					const input = event.target as HTMLInputElement;
 					let newValue = input.valueAsNumber;
 					if (!newValue) newValue = 0;
-					settingState[name] = newValue;
+					await changeSetting({ name, newValue });
+					await getDefaultSettings().refresh();
 					console.log('Changed setting: ', name, newValue);
-					settingState.changeSetting(name, newValue);
 				}}
 			/>
-			<span>{settingState[name]}</span>
+			<span>{initialValue}</span>
 		</div>
 	</div>
 {/snippet}
@@ -62,13 +72,13 @@
 			{max}
 			value={initialValue}
 			{step}
-			onchange={(event: Event) => {
+			onchange={async (event: Event) => {
 				const input = event.target as HTMLInputElement;
 				let newValue = input.valueAsNumber;
 				if (!newValue) newValue = 0;
-				settingState[name] = newValue;
+				await changeSetting({ name, newValue });
+				await getDefaultSettings().refresh();
 				console.log('Changed setting: ', name, newValue);
-				settingState.changeSetting(name, newValue);
 			}}
 		/>
 	</div>
@@ -84,31 +94,31 @@
 			{@render renderSliderSetting(
 				'recencyWeight',
 				'Recency Weight',
-				settingState.recencyWeight,
+				recencyWeight,
 				'Weight of how recently a note was seen. Older notes will be ranked higher.'
 			)}
 			{@render renderSliderSetting(
 				'ratingWeight',
 				'Rating Weight',
-				settingState.ratingWeight,
+				ratingWeight,
 				'Weight of note rating in score calculation. Higher rated notes will be ranked higher.'
 			)}
 			{@render renderSliderSetting(
 				'weightWeight',
 				'Voting Weight',
-				settingState.weightWeight,
+				weightWeight,
 				'Weight of upvote vs downvote of a note. More upvoted notes will be ranked higher'
 			)}
 			{@render renderSliderSetting(
 				'randomWeight',
 				'Random Weight',
-				settingState.randomWeight,
+				randomWeight,
 				'Weight of random modifier. Higher weight means more randomness.'
 			)}
 			{@render renderDiscoverSetting(
 				'maxDay',
 				'Max Day Cutoff (Day)',
-				settingState.maxDay,
+				maxDay,
 				'Notes older than this cutoff will receive the maximum recency score.',
 				0,
 				365,
@@ -117,7 +127,7 @@
 			{@render renderDiscoverSetting(
 				'fullPenaltyWindow',
 				'Full Penalty Window (Hour)',
-				settingState.fullPenaltyWindow,
+				fullPenaltyWindow,
 				'Notes seen in this window will be penalized to be ranked less (default 1 hour).',
 				1,
 				24,
@@ -126,7 +136,7 @@
 			{@render renderDiscoverSetting(
 				'decayWindow',
 				'Penality Recovery Window (Hour)',
-				settingState.decayWindow,
+				decayWindow,
 				'Penalty will gradually reduce during this time period for penalized notes (default 12 hours).',
 				1,
 				1000,
@@ -135,7 +145,7 @@
 			{@render renderDiscoverSetting(
 				'daysOld',
 				'Refresh Score Cutoff (Day)',
-				settingState.daysOld,
+				daysOld,
 				'Notes with score older than this will get a score refresh on startup and every few hours to recalculate based on recency. Use 0 to refresh all notes (can increase load time).',
 				0,
 				365,
@@ -144,7 +154,7 @@
 			{@render renderDiscoverSetting(
 				'scoreRefreshHour',
 				'Score Refresh Frequency (Hour)',
-				settingState.scoreRefreshHour,
+				scoreRefreshHour,
 				'Curator will refresh scores in the background. Default refresh is every 6 hours. Changing it to 0 to stop refresh automatically.',
 				0,
 				24,

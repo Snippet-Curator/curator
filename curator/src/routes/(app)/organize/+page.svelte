@@ -3,12 +3,15 @@
 	import { Archive, Trash2 } from 'lucide-svelte';
 
 	import { New, NotebookList, TagList, Pinned } from '$lib/components';
-	import { getNotebookState, getTagState } from '$lib/db.svelte';
 	import type { Notebook } from '$lib/types';
 
-	const notebookState = getNotebookState();
-	const tagState = getTagState();
+	import { getAllNotebooks, createOneNotebookbyName } from '$lib/api/notebook.remote';
+	import { getAllTags, createOneTagbyName } from '$lib/api/tag.remote';
 
+	let allNotebooks = $derived(await getAllNotebooks());
+	let notebooks = $derived(allNotebooks?.rootNotebooks ?? []);
+	let allTags = $derived(await getAllTags());
+	let tags = $derived(allTags?.rootTags ?? []);
 	let isNewNotebookOpen = $state(false);
 	let isNewTagOpen = $state(false);
 </script>
@@ -37,7 +40,10 @@
 		</div>
 
 		<div class="card p-golden-md">
-			<Pinned />
+			<Pinned
+				pinnedNotebooks={allNotebooks?.pinnedNotebooks ?? []}
+				pinnedTags={allTags?.pinnedTags ?? []}
+			/>
 		</div>
 
 		<div class="divider"></div>
@@ -54,7 +60,7 @@
 
 		<div class="card">
 			<ul class="menu w-full">
-				<NotebookList allowEdit={true} notebooks={notebookState.notebooks} />
+				<NotebookList allowEdit={true} {notebooks} />
 
 				<li class="mr-4 ml-0 pl-0"><a href="/archive"><Archive size={18} />Archive</a></li>
 
@@ -75,7 +81,7 @@
 		</div>
 
 		<ul class="menu w-full">
-			<TagList allowEdit={true} tags={tagState.tags} />
+			<TagList allowEdit={true} {tags} />
 		</ul>
 	</div>
 </div>
@@ -84,11 +90,11 @@
 <New
 	bind:isOpen={isNewTagOpen}
 	newType="Tag"
-	action={(newTagName) => tagState.createOnebyName(newTagName)}
+	action={async (newTagName) => await createOneTagbyName({ newName: newTagName })}
 />
 
 <New
 	bind:isOpen={isNewNotebookOpen}
 	newType="Notebook"
-	action={(newNotebookName) => notebookState.createOnebyName(newNotebookName)}
+	action={async (newNotebookName) => await createOneNotebookbyName({ newName: newNotebookName })}
 />

@@ -1,5 +1,5 @@
 import { getKarakeepUser } from '$lib/server/karakeep';
-import { Server } from 'lucide-svelte';
+
 import type { PageServerLoad } from './$types';
 import { fail } from '@sveltejs/kit';
 import { tryCatch } from '$lib/utils.svelte';

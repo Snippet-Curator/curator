@@ -1,9 +1,9 @@
 <script lang="ts">
 	import InputText from '$lib/components/Layout/InputText.svelte';
 
-	import { getSettingState } from '$lib/setting.svelte';
+	import { getSetting, changeSetting } from '$lib/api/setting.remote';
 
-	const settingState = getSettingState();
+	let youtubeAPI = $derived(await getSetting('youtubeAPIKey'));
 </script>
 
 <div class="gap-x-golden-md grid grid-cols-12 items-center">
@@ -14,9 +14,10 @@
 
 	<div class="col-span-12 md:col-span-8">
 		<InputText
-			textInput={settingState.youtubeAPIKey ?? ''}
+			textInput={youtubeAPI}
 			action={async (newAPI) => {
-				await settingState.changeSetting('youtubeAPIKey', newAPI);
+				await changeSetting({ name: 'youtubeAPIKey', newValue: newAPI });
+				await getSetting('youtubeAPIKey').refresh();
 				console.log('Changed setting, youtube API:', newAPI);
 			}}
 		/>
