@@ -6,28 +6,31 @@
 
 	import { CaseSensitive, CircleX } from 'lucide-svelte';
 
-	import { NoteState, uploadFileToPocketbase } from '$lib/db.svelte';
+	import { uploadFileToPocketbase } from '$lib/db.svelte';
 	import {
 		addMediaToContent,
 		addResourcesToRecord,
 		addThumbnailToRecord,
+		getCustomStyles,
 		getFileHash,
 		getResourceforThumbGen,
 		makeResourceFromFile,
 		replacePbUrl
 	} from '$lib/utils';
+	import type { Note } from '$lib/types';
+	import { appendContent, changeTitle } from '$lib/api/note.remote';
 
 	type Props = {
-		noteState: NoteState;
+		note: Note;
 	};
 
-	let { noteState }: Props = $props();
+	let { note }: Props = $props();
 
-	let note = $derived(noteState.note);
-	let content = $derived(replacePbUrl(noteState.note?.content ?? ''));
-	let noteTitle = $state(noteState.note?.title ?? '');
+	let content = $derived(replacePbUrl(note?.content ?? ''));
+	let noteTitle = $state(note?.title ?? '');
 	let textContent = $state('');
 	let editor: Element;
+	let fontScale = $state(1);
 
 	let iframe = $state();
 
@@ -159,7 +162,7 @@
 
 		const styleTag = doc.createElement('style');
 		styleTag.setAttribute('id', 'custom-style');
-		styleTag.textContent = noteState.customStyles;
+		styleTag.textContent = getCustomStyles(fontScale);
 		doc.head.appendChild(styleTag);
 
 		doc.addEventListener('keydown', handler);
@@ -187,12 +190,12 @@
 		const doc = el.contentDocument;
 		const styleTag = doc.createElement('style');
 		styleTag.setAttribute('id', 'custom-style');
-		styleTag.textContent = noteState.customStyles;
+		styleTag.textContent = getCustomStyles(fontScale);
 		doc.head.appendChild(styleTag);
 	}
 
 	$effect(() => {
-		noteTitle = noteState.note.title;
+		noteTitle = note.title;
 		textContent = '';
 		isEditHTML = false;
 	});
@@ -232,8 +235,10 @@
 			class="card-title focus:ring-base-content/40 mr-2 grow truncate rounded-md border-0"
 			bind:value={noteTitle}
 			onchange={async () => {
-				await noteState.changeTitle(noteTitle);
-				await noteState.getNote();
+				await changeTitle({
+					noteID: note.id,
+					newTitle: noteTitle
+				});
 			}}
 		/>
 		<div
@@ -245,7 +250,7 @@
 				min="0.96"
 				max="1.1"
 				step="0.01"
-				bind:value={noteState.fontScale}
+				bind:value={fontScale}
 			/>
 			<CaseSensitive size={32} />
 		</div>
@@ -280,7 +285,10 @@
 				<button
 					class="btn btn-primary"
 					onclick={async () => {
-						await noteState.appendContent(textContent);
+						await appendContent({
+							noteID: note.id,
+							newContent: textContent
+						});
 						textContent = '';
 						isEditHTML = false;
 					}}>Save</button

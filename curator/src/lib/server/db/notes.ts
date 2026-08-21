@@ -4,6 +4,7 @@ import PocketBase from 'pocketbase';
 
 import { pbURL, notesCollection, viewNotesCollection, viewNotebooksCollection } from '$lib/const';
 import { type Note, type NoteQuery } from '$lib/types';
+import { mergeContents } from '$lib/utils';
 
 export function createPB(cookie: string) {
 	const pb = new PocketBase(pbURL);
@@ -377,58 +378,18 @@ export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
 
 // Single Note
 
-export function getCustomStyles(pb: PocketBase) {
-	return `
-			:root {
-				  --color-base-100: oklch(100% 0 0);
-				  --color-base-content: oklch(27.807% 0.029 256.847);
-			  }
-			  @media (prefers-color-scheme: dark) {
-				:root {
-					  --color-base-100: oklch(25.33% 0.016 252.42);
-					  --color-base-content: oklch(97.807% 0.029 256.847); 
-			   }
-			}
-			  html, body {
-				  margin: 0 !important;
-				  height: 100% !important;
-			  }
-			  * {
-				  font-size: ${this.fontScale * 100}% !important;
-				  line-height: 1.4 !important;
-			 }
-			  html, body, main, section, p, pre, div {
-				  background-color: var(--color-base-100) !important;
-				  background: var(--color-base-100) !important; 
-				  color: var(--color-base-content) !important;
-			  }
-			  img {
-				  max-width: 100% !important;
-				  height: auto !important;
-			  }
-			  .img-wrapper {
-				  display: flex;
-				  justify-content: center;
-				  margin-bottom: 1rem;
-			  }
-			  video {
-				  max-height: 800px; !important;
-			  }
-			  `;
-}
-
-export async function getNote(pb: PocketBase) {
+export async function getNote(pb: PocketBase, noteID: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).getOne(this.noteID, {
+		pb.collection(notesCollection).getOne<Note>(noteID, {
 			expand: 'notebook,tags'
 		})
 	);
 
 	if (error) {
-		console.error('Error getting note: ', this.noteID, error);
+		console.error('Error getting note: ', noteID, error);
 		return null;
 	}
-	this.note = data;
+
 	return data;
 }
 
@@ -487,9 +448,9 @@ export async function getDiscoverNote(pb: PocketBase, index = 0) {
 	// console.log(`Discover function  in ${end3 - start3} ms`);
 }
 
-export async function updateLastOpened(pb: PocketBase) {
+export async function updateLastOpened(pb: PocketBase, noteID: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			last_opened: new Date()
 		})
 	);
@@ -499,16 +460,16 @@ export async function updateLastOpened(pb: PocketBase) {
 	}
 }
 
-export async function deleteNote(pb: PocketBase) {
-	const { data, error } = await tryCatch(pb.collection(notesCollection).delete(this.noteID));
+export async function deleteNote(pb: PocketBase, noteID: string) {
+	const { data, error } = await tryCatch(pb.collection(notesCollection).delete(noteID));
 	if (error) {
-		console.error('Error deleting note: ', this.noteID, error);
+		console.error('Error deleting note: ', noteID, error);
 	}
 }
 
-export async function softDeleteNote(pb: PocketBase) {
+export async function softDeleteNote(pb: PocketBase, noteID: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			status: 'deleted'
 		})
 	);
@@ -518,102 +479,90 @@ export async function softDeleteNote(pb: PocketBase) {
 	}
 }
 
-export async function changeNoteNotebook(pb: PocketBase, newNotebookID: string) {
+export async function changeNoteNotebook(pb: PocketBase, noteID: string, newNotebookID: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			notebook: newNotebookID
 		})
 	);
 	if (error) {
-		console.error('Error changing notebook: ', this.noteID, error);
+		console.error('Error changing notebook: ', noteID, error);
 	}
-	await this.getNote();
-	return data;
 }
 
-export async function changeTags(pb: PocketBase, selectedTags: string[]) {
+export async function changeTags(pb: PocketBase, noteID: string, selectedTags: string[]) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			tags: selectedTags
 		})
 	);
 	if (error) {
-		console.error('Error changing tags: ', this.noteID, error);
+		console.error('Error changing tags: ', noteID, error);
 	}
-	await this.getNote();
-	// return data
 }
 
-export async function addTagToNote(pb: PocketBase, selectedTagID: string) {
+export async function addTagToNote(pb: PocketBase, noteID: string, selectedTagID: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			'tags+': selectedTagID
 		})
 	);
 	if (error) {
-		console.error('Error adding tag: ', this.noteID, error);
+		console.error('Error adding tag: ', noteID, error);
 	}
-	await this.getNote();
 }
 
-export async function removeTagFromNote(pb: PocketBase, selectedTagID: string) {
+export async function removeTagFromNote(pb: PocketBase, noteID: string, selectedTagID: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			'tags-': selectedTagID
 		})
 	);
 	if (error) {
-		console.error('Error removing tag: ', this.noteID, error);
+		console.error('Error removing tag: ', noteID, error);
 	}
-	await this.getNote();
 }
 
-export async function changeRating(pb: PocketBase, newRating: number) {
+export async function changeRating(pb: PocketBase, noteID: string, newRating: number) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			rating: newRating
 		})
 	);
 	if (error) {
-		console.error('Error changing rating: ', this.noteID, error.message);
+		console.error('Error changing rating: ', noteID, error.message);
 	}
-	await this.getNote();
-	return data;
 }
 
-export async function upvoteWeight(pb: PocketBase) {
-	const newWeight = this.note.weight + 1;
+export async function upvoteWeight(pb: PocketBase, noteID: string) {
+	const newWeight = note.weight + 1;
 
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			weight: newWeight
 		})
 	);
 	if (error) {
-		console.error('Error changing weight: ', this.noteID, error.message);
+		console.error('Error changing weight: ', noteID, error.message);
 	}
-	await this.getNote();
-	return data;
 }
 
-export async function downvoteWeight(pb: PocketBase) {
-	const newWeight = this.note.weight - 1;
+export async function downvoteWeight(pb: PocketBase, noteID: string) {
+	const newWeight = note.weight - 1;
 
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			weight: newWeight
 		})
 	);
 	if (error) {
-		console.error('Error changing weight: ', this.noteID, error.message);
+		console.error('Error changing weight: ', noteID, error.message);
 	}
-	await this.getNote();
-	return data;
 }
 
-export async function archiveNote(pb: PocketBase) {
+export async function archiveNote(pb: PocketBase, noteID: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			status: 'archived'
 		})
 	);
@@ -623,9 +572,9 @@ export async function archiveNote(pb: PocketBase) {
 	}
 }
 
-export async function restoreNote(pb: PocketBase) {
+export async function restoreNote(pb: PocketBase, noteID: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			status: 'active'
 		})
 	);
@@ -633,22 +582,19 @@ export async function restoreNote(pb: PocketBase) {
 	if (error) {
 		console.error('Error restoring note: ', error.message);
 	}
-
-	await this.getNote();
-	return data;
 }
 
-export async function permaDeleteNote(pb: PocketBase) {
-	const { data, error } = await tryCatch(pb.collection(notesCollection).delete(this.noteID));
+export async function permaDeleteNote(pb: PocketBase, noteID: string) {
+	const { data, error } = await tryCatch(pb.collection(notesCollection).delete(noteID));
 
 	if (error) {
 		console.error('Error deleting note: ', error.message);
 	}
 }
 
-export async function changeTitle(pb: PocketBase, newTitle: string) {
+export async function changeTitle(pb: PocketBase, noteID: string, newTitle: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			title: newTitle
 		})
 	);
@@ -658,9 +604,9 @@ export async function changeTitle(pb: PocketBase, newTitle: string) {
 	}
 }
 
-export async function changeDescription(pb: PocketBase, newDescription: string) {
+export async function changeDescription(pb: PocketBase, noteID: string, newDescription: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			description: newDescription
 		})
 	);
@@ -670,9 +616,13 @@ export async function changeDescription(pb: PocketBase, newDescription: string) 
 	}
 }
 
-export async function changeSources(pb: PocketBase, newSources: Note['sources'] | undefined) {
+export async function changeSources(
+	pb: PocketBase,
+	noteID: string,
+	newSources: Note['sources'] | undefined
+) {
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			sources: newSources,
 			expand: 'notebook,tags'
 		})
@@ -683,11 +633,11 @@ export async function changeSources(pb: PocketBase, newSources: Note['sources'] 
 	}
 }
 
-export async function changeThumbnail(pb: PocketBase, url: string) {
+export async function changeThumbnail(pb: PocketBase, noteID: string, url: string) {
 	const thumbURL = url ? `${url}?thumb=500x0` : '';
 
 	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			thumbnail: thumbURL
 		})
 	);
@@ -697,10 +647,10 @@ export async function changeThumbnail(pb: PocketBase, url: string) {
 	}
 }
 
-export async function updateContent(pb: PocketBase, newContent: string) {
+export async function updateContent(pb: PocketBase, noteID: string, newContent: string) {
 	const { data, error } = await tryCatch(
 		pb.collection(notesCollection).update(
-			this.noteID,
+			noteID,
 			{
 				content: newContent
 			},
@@ -713,13 +663,11 @@ export async function updateContent(pb: PocketBase, newContent: string) {
 	if (error) {
 		console.error('Error updating note content: ', error.message);
 	}
-
-	this.note = data;
 }
 
-export async function appendContent(pb: PocketBase, newContent: string) {
+export async function appendContent(pb: PocketBase, noteID: string, newContent: string) {
 	const { data: record, error: recordError } = await tryCatch(
-		pb.collection(notesCollection).getOne(this.noteID)
+		pb.collection(notesCollection).getOne(noteID)
 	);
 
 	if (recordError) {
@@ -732,7 +680,7 @@ export async function appendContent(pb: PocketBase, newContent: string) {
 
 	const { data, error } = await tryCatch(
 		pb.collection(notesCollection).update(
-			this.note.id,
+			noteID,
 			{
 				content: mergedContent
 			},
@@ -745,10 +693,9 @@ export async function appendContent(pb: PocketBase, newContent: string) {
 	if (error) {
 		console.error('Error updating note content: ', error.message);
 	}
-	this.note = data;
 }
 
-export function generateShareToken(pb: PocketBase, length = 20) {
+function generateShareToken(pb: PocketBase, length = 20) {
 	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 	const array = new Uint8Array(length);
@@ -758,11 +705,11 @@ export function generateShareToken(pb: PocketBase, length = 20) {
 	return Array.from(array, (byte) => chars[byte % chars.length]).join('');
 }
 
-export async function shareNote(pb: PocketBase) {
-	const sharedToken = this.generateShareToken();
+export async function shareNote(pb: PocketBase, noteID: string) {
+	const sharedToken = generateShareToken(pb);
 
 	const { data: record, error: recordError } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			is_shared: true,
 			share_token: sharedToken
 		})
@@ -772,16 +719,14 @@ export async function shareNote(pb: PocketBase) {
 		console.error('Error sharing note: ', recordError.message);
 		return;
 	}
-
-	this.note = record;
 	return sharedToken;
 }
 
-export async function unshareNote(pb: PocketBase) {
-	const sharedToken = this.generateShareToken();
+export async function unshareNote(pb: PocketBase, noteID: string) {
+	const sharedToken = generateShareToken(pb);
 
 	const { data: record, error: recordError } = await tryCatch(
-		pb.collection(notesCollection).update(this.noteID, {
+		pb.collection(notesCollection).update(noteID, {
 			is_shared: false,
 			share_token: null
 		})
@@ -791,11 +736,5 @@ export async function unshareNote(pb: PocketBase) {
 		console.error('Error un-sharing note: ', recordError.message);
 		return;
 	}
-
-	this.note = record;
 	return sharedToken;
-}
-
-export function getShareURL() {
-	return `${window.location.origin}/share/${this.note.share_token}`;
 }

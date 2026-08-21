@@ -14,12 +14,156 @@ const noteQuerySchema = v.object({
 	status: v.string()
 });
 
-export const getNotes = query(noteQuerySchema, async (query) => {
-	return db.getNotes(getPB(), query);
+export const getNote = query(v.string(), (noteID) => {
+	return db.getNote(getPB(), noteID);
 });
 
-export const getByPage = query(v.number(), async (page = 1) => {
-	return db.getByPage(getPB(), page);
+export const updateLastOpened = command(v.string(), (noteID) => {
+	db.updateLastOpened(getPB(), noteID);
+});
+
+export const deleteNote = command(v.string(), (noteID) => {
+	db.deleteNote(getPB(), noteID);
+});
+
+export const softDeleteNote = command(v.string(), (noteID) => {
+	db.softDeleteNote(getPB(), noteID);
+});
+
+export const changeNoteNotebook = command(
+	v.object({
+		noteID: v.string(),
+		newNotebookID: v.string()
+	}),
+	({ noteID, newNotebookID }) => {
+		db.changeNoteNotebook(getPB(), noteID, newNotebookID);
+	}
+);
+
+export const changeTags = command(
+	v.object({
+		noteID: v.string(),
+		selectedTags: v.array(v.string())
+	}),
+	({ noteID, selectedTags }) => {
+		db.changeTags(getPB(), noteID, selectedTags);
+	}
+);
+
+export const addTagToNote = command(
+	v.object({
+		noteID: v.string(),
+		selectedTagID: v.string()
+	}),
+	({ noteID, selectedTagID }) => {
+		db.addTagToNote(getPB(), noteID, selectedTagID);
+	}
+);
+
+export const removeTagFromNote = command(
+	v.object({
+		noteID: v.string(),
+		selectedTagID: v.string()
+	}),
+	({ noteID, selectedTagID }) => {
+		db.removeTagFromNote(getPB(), noteID, selectedTagID);
+	}
+);
+
+export const changeRating = command(
+	v.object({
+		noteID: v.string(),
+		newRating: v.number()
+	}),
+	({ newRating, noteID }) => {
+		db.changeRating(getPB(), noteID, newRating);
+	}
+);
+
+export const archiveNote = command(v.string(), (noteID) => {
+	db.archiveNote(getPB(), noteID);
+});
+
+export const restoreNote = command(v.string(), (noteID) => {
+	db.restoreNote(getPB(), noteID);
+});
+
+export const permaDeleteNote = command(v.string(), (noteID) => {
+	db.permaDeleteNote(getPB(), noteID);
+});
+
+export const changeTitle = command(
+	v.object({
+		noteID: v.string(),
+		newTitle: v.string()
+	}),
+	({ noteID, newTitle }) => {
+		db.changeTitle(getPB(), noteID, newTitle);
+	}
+);
+
+export const changeDescription = command(
+	v.object({
+		noteID: v.string(),
+		newDescription: v.string()
+	}),
+	({ noteID, newDescription }) => {
+		db.changeDescription(getPB(), noteID, newDescription);
+	}
+);
+
+export const changeSources = command(
+	v.object({
+		noteID: v.string(),
+		newSources: v.string()
+	}),
+	({ noteID, newSources }) => {
+		db.changeSources(getPB(), noteID, newSources);
+	}
+);
+
+export const changeThumbnail = command(
+	v.object({
+		noteID: v.string(),
+		url: v.string()
+	}),
+	({ noteID, url }) => {
+		db.changeThumbnail(getPB(), noteID, url);
+	}
+);
+
+export const updateContent = command(
+	v.object({
+		noteID: v.string(),
+		newContent: v.string()
+	}),
+	({ noteID, newContent }) => {
+		db.updateContent(getPB(), noteID, newContent);
+	}
+);
+
+export const appendContent = command(
+	v.object({
+		noteID: v.string(),
+		newContent: v.string()
+	}),
+	({ noteID, newContent }) => {
+		db.appendContent(getPB(), noteID, newContent);
+	}
+);
+
+export const shareNote = command(v.string(), (noteID) => {
+	return db.shareNote(getPB(), noteID);
+});
+
+export const unshareNote = command(v.string(), (noteID) => {
+	return db.unshareNote(getPB(), noteID);
+});
+
+// multiple notes
+
+export const getNotes = query(noteQuerySchema, async (query) => {
+	return db.getNotes(getPB(), query);
 });
 
 export const archiveMultiple = command(v.array(v.string()), async (recordIDs: string[]) => {

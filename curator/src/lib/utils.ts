@@ -713,208 +713,56 @@ export function mergeContents(contentList: string[]) {
 	return finalHTML;
 }
 
-// centerImage() {
-//   const matchPattern = /<div>\s*(<img[^>]*>)\s*<\/div>/g
-//   this.content = this.content.replace(matchPattern, (_match, imgTag) => `<div class='img-wrapper'>${imgTag}</div>`);
-// }
+// ─────────────────────────────
+//      Front End
+// ─────────────────────────────
 
-// async parseHTMLContent(parsedHTML: Document) {
-//   const bodyContent = parsedHTML.body.innerHTML
-//   const styleTags = [...parsedHTML.querySelectorAll('style')].map(style => style.outerHTML).join('\n')
-//   const htmlContent = `${styleTags} ${bodyContent}`
+/**
+ * creates custom styels for note content
+ */
+export function getCustomStyles(fontScale: number) {
+	return `
+			:root {
+				  --color-base-100: oklch(100% 0 0);
+				  --color-base-content: oklch(27.807% 0.029 256.847);
+			  }
+			  @media (prefers-color-scheme: dark) {
+				:root {
+					  --color-base-100: oklch(25.33% 0.016 252.42);
+					  --color-base-content: oklch(97.807% 0.029 256.847); 
+			   }
+			}
+			  html, body {
+				  margin: 0 !important;
+				  height: 100% !important;
+			  }
+			  * {
+				  font-size: ${fontScale * 100}% !important;
+				  line-height: 1.4 !important;
+			 }
+			  html, body, main, section, p, pre, div {
+				  background-color: var(--color-base-100) !important;
+				  background: var(--color-base-100) !important; 
+				  color: var(--color-base-content) !important;
+			  }
+			  img {
+				  max-width: 100% !important;
+				  height: auto !important;
+			  }
+			  .img-wrapper {
+				  display: flex;
+				  justify-content: center;
+				  margin-bottom: 1rem;
+			  }
+			  video {
+				  max-height: 800px; !important;
+			  }
+			  `;
+}
 
-//   return htmlContent
-// }
-
-// parseURL(parsedHTML: Document) {
-//   return parsedHTML.querySelector('meta[property="og:url"]')?.getAttribute('content') || ""
-// }
-
-// async uploadImg() {
-//   for (const [index, img] of this.parsedHTML.querySelectorAll('img').entries()) {
-
-//     if (!img.src.includes('data:image')) continue
-//     if (img.src.includes('data:image/svg+xml')) continue
-
-//     let base64Data = ''
-//     let mimeType = ''
-
-//     try {
-//       base64Data = img.src.split(',')[1]
-//       mimeType = img.src.split(';')[0].split(':')[1]
-//     } catch (e) {
-//       console.log(e)
-//       continue
-//     }
-
-//     // convert to file
-//     const imgFile = this.base64ToFile(base64Data, mimeType)
-
-//     // upload to database
-//     const { data: record, error } = await tryCatch(pb.collection(notesCollection).update(this.recordID, {
-//       'attachments+': [imgFile]
-//     }))
-
-//     if (error) {
-//       console.error('Error uploading image: ', error.message)
-//     }
-
-//     if (!record) return
-
-//     const defaultThumbURL = `${baseURL}/${notesCollection}/${this.recordID}/${record.attachments[0]}`
-
-//     // fill in thumbnail
-//     if (record.thumbnail == '') {
-//       let thumbnailURL = ''
-
-//       // make thumbnail based on type of resource file
-//       if (mimeType == 'image/gif') {
-//         thumbnailURL = defaultThumbURL
-//       } else {
-//         thumbnailURL = `${defaultThumbURL}?thumb=500x0`
-//       }
-
-//       // update thumbnail
-//       await pb.collection(notesCollection).update(this.recordID, {
-//         'thumbnail': thumbnailURL
-//       })
-//     }
-
-//     // get new filename and url
-//     const newName = record.attachments.at(-1)
-//     const newURL = `${baseURL}/${notesCollection}/${this.recordID}/${newName}`
-
-//     // replace img src
-//     if (newURL) {
-//       img.setAttribute('src', newURL)
-//     }
-//   }
-//   this.content = this.parseHTMLContent(this.parsedHTML)
-// }
-
-// export function sanitizeHTMLContent(content: string) {
-//   const cleanContent = sanitizeHTML(content, {
-//     parseStyleAttributes: false,
-//     // allowedTags: sanitizeHTML.defaults.allowedTags.concat([
-//     //   'img',
-//     //   'form',
-//     //   'code',
-//     //   'style',
-//     //   'video',
-//     //   'source',
-//     // ]),
-//     allowedTags: false,
-//     allowVulnerableTags: true,
-//     // allowedAttributes: {
-//     // '*': ['src', 'href', 'class', 'id'],
-//     // 'a': ['href', 'type', 'target'],
-//     // 'img': ['src', 'type'],
-//     // 'video': ['style', 'controls'],
-//     // 'audio': ['class', 'controls', 'style'],
-//     // 'iframe': ['src', 'style'],
-//     // 'source': ['src', 'type'],
-//     // 'p': ['*'],
-//     // 'div': ['*'],
-//     // 'h1': ['*'],
-//     // 'h2': ['*'],
-//     // 'h3': ['*'],
-//     // 'h4': ['*'],
-//     // 'h5': ['*'],
-//     // 'h6': ['*'],
-//     //   '*': ['style', 'id', 'class', 'src', 'href', 'type', 'controls']
-//     // },
-//     allowedSchemes: ['data', 'http', 'https'],
-//     transformTags: {
-//       a: function (tagName, attribs) {
-//         if (
-//           !attribs.href ||
-//           !attribs.href == undefined ||
-//           attribs['href'] == '#' ||
-//           attribs['href'].includes('javascript:')
-//         ) {
-//           return {
-//             tagName: 'span',
-//             attribs: attribs
-//           };
-//         }
-//         return {
-//           tagName: 'a',
-//           attribs: attribs
-//         };
-//       },
-//     },
-//     // exclusiveFilter: function (frame) {
-//     //   if (frame.tag == 'style') {
-//     //     if (frame.text.includes('base64')) {
-//     //       return true; // Exclude this <style> tag
-//     //     }
-//     //   }
-//     //   if (frame.tag == 'link' && frame.attribs.href.includes('data:image/svg+xm')) {
-//     //     return true;
-//     //   }
-//     //   return false;
-//     // }
-//   });
-//   return cleanContent
-// }
-
-// export function sanitizeContent(content: string) {
-//   const cleanContent = sanitizeHTML(content, {
-//     parseStyleAttributes: false,
-//     allowedTags: sanitizeHTML.defaults.allowedTags.concat([
-//       'img',
-//       'form',
-//       'svg',
-//       'code',
-//       'style',
-//       'video',
-//       'source',
-//       'iframe'
-//     ]),
-//     // allowedTags: false,
-//     allowVulnerableTags: true,
-//     allowedAttributes: {
-//       '*': ['style', 'id', 'class', 'src', 'href', 'type', 'controls']
-//     },
-//     allowedSchemes: ['data', 'http', 'https'],
-//     transformTags: {
-//       a: function (tagName, attribs) {
-//         if (
-//           !attribs.href ||
-//           !attribs.href == undefined ||
-//           attribs['href'] == '#' ||
-//           attribs['href'].includes('javascript:')
-//         ) {
-//           return {
-//             tagName: 'span',
-//             attribs: attribs
-//           };
-//         }
-//         return {
-//           tagName: 'a',
-//           attribs: attribs
-//         };
-//       },
-//     },
-
-//     // div: function (tagName, attribs) {
-//     //   let newStyle =
-//     //     'background-color: var(--color-base-100) !important; background: var(--color-base-100) !important; color: var(--color-base-content) !important;';
-//     //   attribs.style = attribs.style ? `${attribs.style};${newStyle}` : newStyle;
-//     //   return {
-//     //     tagName: 'div',
-//     //     attribs: attribs
-//     //   };
-//     // },
-//     // pre: sanitizeHTML.simpleTransform('pre', {
-//     //   style:
-//     //     'background-color: var(--color-base-100) !important; background: var(--color-base-100) !important; color: var(--color-base-content) !important;'
-//     // }),
-//     // p: sanitizeHTML.simpleTransform('p', {
-//     //   style:
-//     //     'background-color: var(--color-base-100) !important; background: var(--color-base-100) !important; color: var(--color-base-content) !important;'
-//     // })
-
-//   });
-//   return cleanContent
-// }
+/**
+ * gets share url token
+ */
+export function getShareURL(shareToken: string) {
+	return `${window.location.origin}/share/${shareToken}`;
+}
