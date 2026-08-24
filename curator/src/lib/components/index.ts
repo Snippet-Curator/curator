@@ -2,7 +2,6 @@
 export { default as Dock } from './Layout/Dock.svelte';
 export { default as Search } from './Layout/Search.svelte';
 export { default as BulkToolbar } from './BulkEditBar/BulkToolbar.svelte';
-export { default as BulkToolbar2 } from './BulkEditBar/BulkToolbar2.svelte';
 export { default as BulkEditBtn } from './BulkEditBar/BulkEditBtn.svelte';
 export { default as Background } from './Layout/Background.svelte';
 export { default as Icon } from './Layout/Icon.svelte';
@@ -15,11 +14,10 @@ export { default as SelectNotebook } from './Layout/SelectNotebook.svelte';
 export { default as InputText } from './Layout/InputText.svelte';
 
 // notes
-export { default as Pagination_Archived } from './Layout/Pagination_Archived.svelte';
 export { default as Pagination } from './Layout/Pagination.svelte';
 export { default as NoteContent } from './Layout/NoteContent.svelte';
 export { default as NoteList } from './Layout/NoteList.svelte';
-export { default as NoteListContainer } from './Layout/NoteListContainer.svelte';
+export { default as NoteListContainer } from '../archived/NoteListContainer.svelte';
 export { default as TagList } from './Layout/TagList.svelte';
 export { default as NotebookList } from './Layout/NotebookList.svelte';
 export { default as NoteLoading } from './Layout/NoteLoading.svelte';
@@ -33,6 +31,5 @@ export { default as EditNotebook } from './Dialogs/EditNotebook.svelte';
 export { default as EditTags } from './Dialogs/EditTags.svelte';
 export { default as EditBulkTags } from './Dialogs/EditBulkTags.svelte';
 export { default as EditNote } from './Dialogs/EditNote.svelte';
-export { default as FilterSearch_Archived } from './Dialogs/FilterSearch_Archived.svelte';
 export { default as FilterSearch } from './Dialogs/FilterSearch.svelte';
 export { default as ShareNote } from './Dialogs/ShareNote.svelte';

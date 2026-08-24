@@ -9,7 +9,7 @@
 		Pagination,
 		BulkEditBtn,
 		NoteList,
-		BulkToolbar2,
+		BulkToolbar,
 		Search,
 		FilterSearch
 	} from '$lib/components';
@@ -61,7 +61,7 @@
 	{/if}
 
 	{#if isBulkEdit}
-		<BulkToolbar2 bind:isBulkEdit bind:selectedNotesID />
+		<BulkToolbar bind:isBulkEdit bind:selectedNotesID />
 	{/if}
 </div>
 

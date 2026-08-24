@@ -1,39 +1,33 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { invalidateAll } from '$app/navigation';
 
-	import {
-		archiveMultiple,
-		unArchiveMultiple,
-		unSoftDeleteMultiple,
-		softDeleteMultiple,
-		mergeNotes,
-		changeNotesNotebook,
-		addTagToNotes,
-		removeTagFromNotes,
-		clearTagsFromNotes
-	} from '$lib/api/note.remote';
+	import { pb } from '$lib/pocketbase';
+	import { type NotelistState, getNotebookState, getTagState } from '$lib/db.svelte';
 	import { Delete, EditNotebook, EditBulkTags } from '$lib/components/';
 
-	import BulkNotebook from './bulk-notebook.svelte';
-	import BulkTags from './bulk-tags.svelte';
-	import BulkArchive from './bulk-archive.svelte';
-	import BulkDelete from './bulk-delete.svelte';
-	import BulkMerge from './bulk-merge.svelte';
+	import BulkNotebook from '../components/BulkEditBar/bulk-notebook.svelte';
+	import BulkTags from '../components/BulkEditBar/bulk-tags.svelte';
+	import BulkArchive from '../components/BulkEditBar/bulk-archive.svelte';
+	import BulkDelete from '../components/BulkEditBar/bulk-delete.svelte';
+	import BulkMerge from '../components/BulkEditBar/bulk-merge.svelte';
 	import { getMouseState } from '$lib/utils.svelte';
 
 	type Props = {
 		selectedNotesID: string[];
+		notelistState: NotelistState;
 		isBulkEdit: boolean;
 		isArchive?: boolean;
 		isTrash?: boolean;
+		updatePage: () => void;
 	};
 
 	let {
 		selectedNotesID = $bindable(),
+		notelistState,
 		isBulkEdit = $bindable(),
 		isArchive = false,
-		isTrash = false
+		isTrash = false,
+		updatePage
 	}: Props = $props();
 
 	let isDeleteOpen = $state(false);
@@ -41,8 +35,10 @@
 	let isEditTagsOpen = $state(false);
 	let isSelectAll = $state(false);
 	const mouseState = getMouseState();
+	const notebookState = getNotebookState();
+	const tagState = getTagState();
 
-	const currentTagID = $derived(page.route.id?.startsWith('/tags/') ? page.params.slug : '');
+	const currentTagID = $derived(notelistState.noteType == 'tags' ? page.params.slug : '');
 
 	function selectAll(e: Event) {
 		const target = e.target as HTMLInputElement;
@@ -51,14 +47,10 @@
 			target.blur();
 			return;
 		}
-		// notelistState.notes.items.forEach((item) => {
-		// 	selectedNotesID.push(item.id);
-		// });
+		notelistState.notes.items.forEach((item) => {
+			selectedNotesID.push(item.id);
+		});
 		target.blur();
-	}
-
-	function updatePage() {
-		invalidateAll();
 	}
 </script>
 
@@ -84,12 +76,27 @@
 				{selectedNotesID}
 				merge={async () => {
 					mouseState.isBusy = true;
+					// avoid updating tags and notebook errors
+					await pb.collection('notes').unsubscribe();
 
-					await mergeNotes(selectedNotesID);
+					await notelistState.mergeNotes(selectedNotesID);
 					updatePage();
 					selectedNotesID = [];
 					isBulkEdit = false;
 
+					// get initial counts again
+					await tagState.getAll();
+					await notebookState.getAll();
+					await notebookState.getInbox();
+					await notebookState.getAllCounts();
+
+					// resubscribe
+					await pb.collection('notes').subscribe('*', async () => {
+						notebookState.getAll();
+						notebookState.getInbox();
+						notebookState.getAllCounts();
+						tagState.getAll();
+					});
 					mouseState.isBusy = false;
 				}}
 			></BulkMerge>
@@ -98,12 +105,12 @@
 					{selectedNotesID}
 					{isArchive}
 					archive={async () => {
-						await archiveMultiple(selectedNotesID);
+						await notelistState.archiveMultiple(selectedNotesID);
 						updatePage();
 						isBulkEdit = false;
 					}}
 					unArchive={async () => {
-						await unArchiveMultiple(selectedNotesID);
+						await notelistState.unArchiveMultiple(selectedNotesID);
 						updatePage();
 						isBulkEdit = false;
 					}}
@@ -114,7 +121,7 @@
 				{isTrash}
 				trash={() => (isDeleteOpen = true)}
 				restore={async () => {
-					await unSoftDeleteMultiple(selectedNotesID);
+					await notelistState.unSoftDeleteMultiple(selectedNotesID);
 					updatePage();
 					isBulkEdit = false;
 				}}
@@ -130,7 +137,7 @@
 	bind:isOpen={isDeleteOpen}
 	name="Notes"
 	action={async () => {
-		await softDeleteMultiple(selectedNotesID);
+		await notelistState.softDeleteMultiple(selectedNotesID);
 		updatePage();
 		isBulkEdit = false;
 	}}>these notes?</Delete
@@ -139,7 +146,7 @@
 <EditNotebook
 	bind:isOpen={isEditNotebookOpen}
 	action={async (selectedNotebookID) => {
-		await changeNotesNotebook({ selectedNotesID, selectedNotebookID });
+		await notelistState.changeNotebook(selectedNotesID, selectedNotebookID);
 		updatePage();
 		isBulkEdit = false;
 	}}
@@ -149,15 +156,15 @@
 	bind:isOpen={isEditTagsOpen}
 	{currentTagID}
 	add={async (selectedTagID: string) => {
-		await addTagToNotes({ selectedNotesID, selectedTagID });
+		await notelistState.addTag(selectedNotesID, selectedTagID);
 		updatePage();
 	}}
 	remove={async (selectedTagID: string) => {
-		await removeTagFromNotes({ selectedNotesID, selectedTagID });
+		await notelistState.removeTag(selectedNotesID, selectedTagID);
 		updatePage();
 	}}
 	clearAll={async () => {
-		await clearTagsFromNotes(selectedNotesID);
+		await notelistState.clearTags(selectedNotesID);
 		updatePage();
 	}}
 />

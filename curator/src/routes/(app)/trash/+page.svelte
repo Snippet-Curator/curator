@@ -9,7 +9,7 @@
 		Pagination,
 		BulkEditBtn,
 		NoteList,
-		BulkToolbar2,
+		BulkToolbar,
 		Search,
 		FilterSearch,
 		Delete
@@ -74,7 +74,7 @@
 	{/if}
 
 	{#if isBulkEdit}
-		<BulkToolbar2 bind:isBulkEdit bind:selectedNotesID />
+		<BulkToolbar bind:isBulkEdit bind:selectedNotesID />
 	{/if}
 </div>
 
