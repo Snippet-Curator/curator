@@ -16,16 +16,17 @@
 
 	import * as Command from '$lib/components/ui/command/index.js';
 
-	import { getNotebookState, getTagState } from '$lib/db.svelte';
+	import type { Notebook, Tag } from '$lib/types';
 
-	const notebookState = getNotebookState();
-	const tagState = getTagState();
+	type Props = {
+		notebooks: Notebook[];
+		tags: Tag[];
+		inboxID: string;
+	};
 
-	const inboxID = $derived(notebookState.inboxID);
-	const notebooks = $derived(
-		notebookState.flatNotebooks.filter((notebook) => notebook.name != 'Inbox')
-	);
-	const tags = $derived(tagState.flatTags);
+	let { notebooks, tags, inboxID }: Props = $props();
+
+	const filteredNotebooks = $derived(notebooks.filter((notebook) => notebook.name != 'Inbox'));
 
 	let isOpen = $state(false);
 
@@ -112,7 +113,7 @@
 	<Command.List>
 		<Command.Empty>No notebook or tag found.</Command.Empty>
 		<Command.Group heading="Notebooks">
-			{#each notebooks as notebook}
+			{#each filteredNotebooks as notebook}
 				<Command.Item
 					class="motion-opacity-in-0 motion-duration-75"
 					onSelect={() => {

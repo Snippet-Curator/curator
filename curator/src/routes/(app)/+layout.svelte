@@ -58,7 +58,7 @@
 	});
 </script>
 
-<Command />
+<Command {inboxID} {notebooks} {tags} />
 
 {#if browser}
 	<Resizable.PaneGroup

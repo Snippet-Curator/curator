@@ -6,7 +6,14 @@
 	import type { Notebook } from '$lib/types';
 	import { ChangeParent, Delete, Rename, New } from '$lib/components/';
 	import NotebookList from './NotebookList.svelte';
-	import { getNotebookState } from '$lib/db.svelte';
+	import {
+		createOneNotebookbyName,
+		deleteNotebook,
+		getInbox,
+		pinNotebook,
+		updateOneNotebookByName,
+		updateOneNotebookByParent
+	} from '$lib/api/notebook.remote';
 
 	type Props = {
 		notebooks: Notebook[];
@@ -15,14 +22,13 @@
 
 	let { notebooks, allowEdit = false }: Props = $props();
 
-	const notebookState = getNotebookState();
-
 	let isEditOpen = $state(false);
 	let isDeleteOpen = $state(false);
 	let isChangeParentOpen = $state(false);
 	let isNewNotebookOpen = $state(false);
 	let selectedNotebook = $state<Notebook>();
-	let flatNotebooks = $derived(notebookState.flatNotebooks);
+	let inbox = $derived(await getInbox());
+	let inboxID = $derived(inbox?.id);
 </script>
 
 {#snippet renderNotebook(notebook: Notebook)}
@@ -51,7 +57,7 @@
 		<ContextMenu.Content>
 			<ContextMenu.Item
 				onSelect={() => {
-					notebookState.pin(notebook.id);
+					pinNotebook(notebook.id);
 				}}>Pin</ContextMenu.Item
 			>
 			<ContextMenu.Item
@@ -118,29 +124,32 @@
 		bind:isOpen={isEditOpen}
 		renameType="Notebook"
 		currentName={selectedNotebook.name}
-		action={(newName) => notebookState.updateOnebyName(selectedNotebook.id, newName)}
+		action={(newName) => updateOneNotebookByName({ recordID: selectedNotebook.id, newName })}
 	/>
 
 	<Delete
 		bind:isOpen={isDeleteOpen}
 		name="Notebook"
-		action={() => notebookState.delete(selectedNotebook.id)}>this notebook?</Delete
+		action={() => deleteNotebook({ recordID: selectedNotebook.id, inboxID })}>this notebook?</Delete
 	>
 
 	<ChangeParent
 		bind:isOpen={isChangeParentOpen}
 		type="notebook"
-		fullList={flatNotebooks}
+		fullList={notebooks}
 		currentItemID={selectedNotebook?.id}
-		clear={() => notebookState.updateOnebyParent(selectedNotebook?.id, '')}
-		action={(selectedParentNotebookID) =>
-			notebookState.updateOnebyParent(selectedNotebook?.id, selectedParentNotebookID)}
+		clear={() => updateOneNotebookByParent({ recordID: selectedNotebook?.id, parentID: '' })}
+		action={(parentID) =>
+			updateOneNotebookByParent({
+				recordID: selectedNotebook?.id,
+				parentID
+			})}
 	/>
 
 	<New
 		bind:isOpen={isNewNotebookOpen}
 		newType="Notebook"
-		action={(newNotebookName) =>
-			notebookState.createOnebyName(newNotebookName, selectedNotebook.id)}
+		action={(newName) =>
+			createOneNotebookbyName({ newName, parentNotebookID: selectedNotebook.id })}
 	/>
 {/if}

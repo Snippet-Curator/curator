@@ -119,7 +119,7 @@ export async function getOneNotebookByName(pb: PocketBase, notebookName: string)
 	return data;
 }
 
-export async function deleteNotebook(pb: PocketBase, recordID: string) {
+export async function deleteNotebook(pb: PocketBase, recordID: string, inboxID: string) {
 	const { data: recordsToMove, error: errorsToMove } = await tryCatch(
 		pb.collection(viewNotesCollection).getFullList({
 			filter: `notebook = '${recordID}'`
@@ -131,19 +131,15 @@ export async function deleteNotebook(pb: PocketBase, recordID: string) {
 		return;
 	}
 
-	if (!this.inbox) {
-		await this.getInbox();
-	}
-
 	for (const record of recordsToMove) {
 		const { data: recordToMove, error: errorToMove } = await tryCatch(
 			pb.collection(notesCollection).update(record.id, {
-				notebook: this.inboxID
+				notebook: inboxID
 			})
 		);
 
 		if (errorToMove) {
-			console.error('Error moving record: ', errorToMove.message);
+			console.error('Error moving record to inbox: ', errorToMove.message);
 			continue;
 		}
 	}
@@ -153,8 +149,6 @@ export async function deleteNotebook(pb: PocketBase, recordID: string) {
 	if (error) {
 		console.error('Error while deleting notebook: ', error);
 	}
-	await this.getAll();
-	await this.getAllCounts();
 }
 
 export async function updateOneNotebookByName(pb: PocketBase, recordID: string, newName: string) {
@@ -166,8 +160,6 @@ export async function updateOneNotebookByName(pb: PocketBase, recordID: string, 
 	if (error) {
 		console.error('Error while updating notebook name: ', error);
 	}
-	await this.getAll();
-	await this.getAllCounts();
 }
 
 export async function updateOneNotebookByParent(
@@ -183,8 +175,6 @@ export async function updateOneNotebookByParent(
 	if (error) {
 		console.error('Error while updating parent notebook: ', error);
 	}
-	await this.getAll();
-	await this.getAllCounts();
 }
 
 export async function pinNotebook(pb: PocketBase, recordID: string) {

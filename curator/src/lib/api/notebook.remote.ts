@@ -33,3 +33,33 @@ export const createOneNotebookbyName = command(
 		db.createOneNotebookbyName(getPB(), newName, parentNotebookID);
 	}
 );
+
+export const updateOneNotebookByName = command(
+	v.object({
+		recordID: v.string(),
+		newName: v.string()
+	}),
+	({ recordID, newName }) => {
+		db.updateOneNotebookByName(getPB(), recordID, newName);
+	}
+);
+
+export const deleteNotebook = command(
+	v.object({
+		recordID: v.string(),
+		inboxID: v.string()
+	}),
+	({ recordID, inboxID }) => {
+		db.deleteNotebook(getPB(), recordID, inboxID);
+	}
+);
+
+export const updateOneNotebookByParent = command(
+	v.object({
+		recordID: v.string(),
+		parentNotebook: v.string()
+	}),
+	({ recordID, parentNotebook }) => {
+		db.updateOneNotebookByParent(getPB(), recordID, parentNotebook);
+	}
+);

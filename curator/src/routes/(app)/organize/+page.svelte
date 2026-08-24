@@ -10,6 +10,7 @@
 
 	let allNotebooks = $derived(await getAllNotebooks());
 	let notebooks = $derived(allNotebooks?.rootNotebooks ?? []);
+	let flatnotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
 	let allTags = $derived(await getAllTags());
 	let tags = $derived(allTags?.rootTags ?? []);
 	let isNewNotebookOpen = $state(false);
