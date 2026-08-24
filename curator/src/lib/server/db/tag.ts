@@ -59,8 +59,6 @@ export async function deleteTag(pb: PocketBase, recordID: string) {
 	if (error) {
 		console.error('Error while deleting tag: ', error);
 	}
-
-	await this.getAll();
 }
 
 export async function getOneTag(pb: PocketBase, tagID: string) {
@@ -84,8 +82,6 @@ export async function createOneTagbyName(pb: PocketBase, newName: string, parent
 	if (error) {
 		console.error('Error while creating new tag: ', error.data);
 	}
-	await this.getAll();
-	return data;
 }
 
 export async function updateOneTagByName(pb: PocketBase, recordID: string, newName: string) {
@@ -97,7 +93,6 @@ export async function updateOneTagByName(pb: PocketBase, recordID: string, newNa
 	if (error) {
 		console.error('Error while updating tag name: ', error.message, error.data);
 	}
-	await this.getAll();
 }
 
 export async function updateOneTagByParent(pb: PocketBase, recordID: string, parentTagID: string) {
@@ -109,7 +104,6 @@ export async function updateOneTagByParent(pb: PocketBase, recordID: string, par
 	if (error) {
 		console.error('Error while updating parent tag: ', error.message);
 	}
-	await this.getAll();
 }
 
 export async function pinTag(pb: PocketBase, recordID: string) {

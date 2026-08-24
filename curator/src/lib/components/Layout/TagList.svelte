@@ -7,7 +7,14 @@
 
 	import type { Tag } from '$lib/types';
 	import { ChangeParent, Delete, Rename, TagList, New } from '$lib/components/';
-	import { getTagState } from '$lib/db.svelte';
+	import {
+		createOneTagbyName,
+		deleteTag,
+		getAllTags,
+		pinTag,
+		updateOneTagByName,
+		updateOneTagByParent
+	} from '$lib/api/tag.remote';
 
 	type Props = {
 		tags: Tag[];
@@ -16,14 +23,14 @@
 
 	let { tags, allowEdit = false }: Props = $props();
 
-	const tagState = getTagState();
+	const allTags = $derived(await getAllTags());
+	let flatTags = $derived(allTags?.flatTags);
 
 	let isEditOpen = $state(false);
 	let isDeleteOpen = $state(false);
 	let isChangeParentOpen = $state(false);
 	let isNewTagOpen = $state(false);
 	let selectedTag = $state<Tag>();
-	let flatTags = $derived(tagState.flatTags);
 </script>
 
 {#snippet renderTag(tag: Tag)}
@@ -48,7 +55,7 @@
 		<ContextMenu.Content>
 			<ContextMenu.Item
 				onSelect={() => {
-					tagState.pin(tag.id);
+					pinTag(tag.id);
 				}}>Pin</ContextMenu.Item
 			>
 			<ContextMenu.Item
@@ -113,10 +120,12 @@
 		bind:isOpen={isEditOpen}
 		renameType="Tag"
 		currentName={selectedTag.name}
-		action={(renameTagName) => tagState.updateOnebyName(selectedTag.id, renameTagName)}
+		action={(renameTagName) => {
+			updateOneTagByName({ tagID: selectedTag?.id, newName: renameTagName });
+		}}
 	/>
 
-	<Delete bind:isOpen={isDeleteOpen} name="Tag" action={() => tagState.delete(selectedTag.id)}
+	<Delete bind:isOpen={isDeleteOpen} name="Tag" action={() => deleteTag(selectedTag.id)}
 		>this tag?</Delete
 	>
 
@@ -125,14 +134,14 @@
 		type="tag"
 		fullList={flatTags}
 		currentItemID={selectedTag?.id}
-		clear={() => tagState.updateOnebyParent(selectedTag?.id, '')}
+		clear={() => updateOneTagByParent({ tagID: selectedTag?.id, parentTagID: '' })}
 		action={(selectedParentTagID) =>
-			tagState.updateOnebyParent(selectedTag?.id, selectedParentTagID)}
+			updateOneTagByParent({ tagID: selectedTag?.id, parentTagID: selectedParentTagID })}
 	/>
 
 	<New
 		bind:isOpen={isNewTagOpen}
 		newType="Tag"
-		action={(newTagName) => tagState.createOnebyName(newTagName, selectedTag.id)}
+		action={(newTagName) => createOneTagbyName({ name: newTagName, parentTagID: selectedTag.id })}
 	/>
 {/if}

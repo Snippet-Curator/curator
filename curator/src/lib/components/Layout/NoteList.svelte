@@ -2,13 +2,23 @@
 	import { goto } from '$app/navigation';
 
 	import * as ContextMenu from '$lib/components/ui/context-menu/index';
-
 	import { Delete, EditNotebook, EditTags, NoteLoading, EditNote } from '$lib/components/';
 
 	import type { NoteList, Note } from '$lib/types';
-	import { getNoteState, setNoteState } from '$lib/db.svelte';
+	import {
+		getNote,
+		archiveNote,
+		softDeleteNote,
+		addTagToNote,
+		removeTagFromNote,
+		changeNoteNotebook,
+		changeTitle,
+		changeDescription,
+		changeThumbnail,
+		changeSources
+	} from '$lib/api/note.remote';
 	import { replacePbUrl } from '$lib/utils';
-	import { getSettingState } from '$lib/setting.svelte';
+	import { getSetting } from '$lib/api/setting.remote';
 
 	type Props = {
 		isBulkEdit: boolean;
@@ -19,9 +29,9 @@
 
 	let { notes, isBulkEdit = false, selectedNotesID = $bindable(), update }: Props = $props();
 
-	setNoteState('');
-	const noteState = getNoteState('');
-	const settingState = getSettingState();
+	let isNsfwBlur = $derived(await getSetting('nsfwBlur'));
+	let selectedNote = $state<Note>();
+	let selectedNoteID = $state('');
 	let isDeleteOpen = $state(false);
 	let isEditTagsOpen = $state(false);
 	let isEditNotebookOpen = $state(false);
@@ -40,7 +50,7 @@
 	{#key note.thumbnail}
 		<figure class="motion-opacity-in-0 motion-duration-300 w-full">
 			<img
-				class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && settingState.nsfwBlur
+				class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && isNsfwBlur
 					? 'blur-2xl'
 					: ''} w-full"
 				src={replacePbUrl(note.thumbnail)}
@@ -51,7 +61,7 @@
 	<div id="card-body" class="card-body p-golden-lg w-full">
 		<div
 			id="card-title"
-			class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && settingState.nsfwBlur
+			class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && isNsfwBlur
 				? 'font-redacted hover:font-display'
 				: ''} card-title overflow-hidden text-left text-pretty break-words text-ellipsis"
 		>
@@ -60,7 +70,7 @@
 
 		{#if !note.thumbnail}
 			<p
-				class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && settingState.nsfwBlur
+				class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && isNsfwBlur
 					? 'font-redacted hover:font-display'
 					: ''} line-clamp-3 text-left text-pretty"
 			>
@@ -114,36 +124,35 @@
 						<ContextMenu.Content>
 							<ContextMenu.Item
 								onSelect={async () => {
-									noteState.noteID = note.id;
-									await noteState.getNote();
+									selectedNoteID = note.id;
+									selectedNote = await getNote(selectedNoteID);
 									isEditNoteOpen = true;
 								}}>Edit</ContextMenu.Item
 							>
 							<ContextMenu.Item
 								onSelect={async () => {
-									noteState.noteID = note.id;
-									await noteState.getNote();
+									selectedNoteID = note.id;
+									selectedNote = await getNote(selectedNoteID);
 									isEditNotebookOpen = true;
 								}}>Edit Notebook</ContextMenu.Item
 							>
 							<ContextMenu.Item
 								onSelect={async () => {
-									noteState.noteID = note.id;
-									await noteState.getNote();
+									selectedNoteID = note.id;
+									selectedNote = await getNote(selectedNoteID);
 									isEditTagsOpen = true;
 								}}>Edit Tags</ContextMenu.Item
 							>
 							<ContextMenu.Item
 								onSelect={async () => {
-									noteState.noteID = note.id;
-									await noteState.archiveNote();
+									await archiveNote(note.id);
 									update();
 								}}>Archive</ContextMenu.Item
 							>
 							<ContextMenu.Separator />
 							<ContextMenu.Item
-								onSelect={() => {
-									noteState.noteID = note.id;
+								onSelect={async () => {
+									selectedNoteID = note.id;
 									isDeleteOpen = true;
 								}}>Delete</ContextMenu.Item
 							>
@@ -162,54 +171,51 @@
 </svelte:boundary>
 
 <svelte:boundary>
-	<!-- {#await noteState} -->
-	<Delete
-		bind:isOpen={isDeleteOpen}
-		name="Note"
-		action={async () => {
-			await noteState.softDeleteNote();
-			update();
-		}}>this note</Delete
-	>
-	{#if noteState && noteState.note}
+	{#if selectedNoteID && selectedNote}
+		<Delete
+			bind:isOpen={isDeleteOpen}
+			name="Note"
+			action={async () => {
+				await softDeleteNote(selectedNoteID);
+			}}>this note</Delete
+		>
+
 		<EditTags
 			bind:isOpen={isEditTagsOpen}
-			currentTags={noteState.note.expand?.tags}
-			add={async (selectedTags) => {
-				await noteState.addTag(selectedTags);
-				update();
+			currentTags={selectedNote?.expand?.tags}
+			add={async (selectedTagID) => {
+				await addTagToNote({ selectedNoteID, selectedTagID });
+				await getNote(selectedNoteID).refresh();
 			}}
-			remove={async (selectedTags) => {
-				await noteState.removeTag(selectedTags);
-				update();
+			remove={async (selectedTagID) => {
+				await removeTagFromNote({ selectedNoteID, selectedTagID });
+				await getNote(selectedNoteID).refresh();
 			}}
 		/>
 
 		<EditNotebook
-			currentNotebookID={noteState.note.expand?.notebook.id}
+			currentNotebookID={selectedNote?.expand?.notebook?.id}
 			bind:isOpen={isEditNotebookOpen}
 			action={async (selectedNotebookID) => {
-				await noteState.changeNotebook(selectedNotebookID);
-				update();
+				await changeNoteNotebook({ selectedNoteID, newNotebookID: selectedNotebookID });
+				await getNote(selectedNoteID).refresh();
 			}}
 		></EditNotebook>
 
 		<EditNote
-			note={noteState.note}
-			thumbURL={noteState.note?.thumbnail}
+			note={selectedNote}
+			thumbURL={selectedNote?.thumbnail}
 			bind:isOpen={isEditNoteOpen}
-			action={async (title, description, sources, selectedThumbnailURL) => {
-				await noteState.changeTitle(title);
-				await noteState.changeDescription(description);
-				await noteState.changeSources(sources);
-				await noteState.changeThumbnail(selectedThumbnailURL);
-				await noteState.getNote();
-				update();
+			action={async (newTitle, newDescription, sources, selectedThumbnailURL) => {
+				await changeTitle({ selectedNoteID, newTitle });
+				await changeDescription({ selectedNoteID, newDescription });
+				await changeSources({ selectedNoteID, newSources: sources });
+				await changeThumbnail({ selectedNoteID, url: selectedThumbnailURL });
+				await getNote(selectedNoteID).refresh();
 			}}
 		></EditNote>
 	{/if}
-	<!-- {/await} -->
-	{#snippet failed()}
-		Dialogs Failed to Render
+	{#snippet failed(error)}
+		Dialogs Failed to Render: {error}
 	{/snippet}
 </svelte:boundary>

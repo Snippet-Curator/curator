@@ -25,3 +25,27 @@ export const createOneTagbyName = command(
 		db.createOneTagbyName(getPB(), newName, parentTagID);
 	}
 );
+
+export const updateOneTagByName = command(
+	v.object({
+		tagID: v.string(),
+		newName: v.string()
+	}),
+	({ tagID, newName }) => {
+		db.updateOneTagByName(getPB(), tagID, newName);
+	}
+);
+
+export const updateOneTagByParent = command(
+	v.object({
+		tagID: v.string(),
+		parentTagID: v.string()
+	}),
+	({ tagID, parentTagID }) => {
+		db.updateOneTagByParent(getPB(), tagID, parentTagID);
+	}
+);
+
+export const deleteTag = command(v.string(), (recordID) => {
+	db.deleteTag(getPB(), recordID);
+});

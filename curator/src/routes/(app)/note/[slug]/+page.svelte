@@ -42,8 +42,6 @@
 	let isPermaDeleteNoteOpen = $state(false);
 	let isShareNoteOpen = $state(false);
 
-	// const initialLoading = noteState.getNote();
-	// noteState.updateLastOpened();
 	updateLastOpened(page.params.slug ?? '');
 </script>
 
