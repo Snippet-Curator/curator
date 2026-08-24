@@ -82,6 +82,7 @@ export async function createOneTagbyName(pb: PocketBase, newName: string, parent
 	if (error) {
 		console.error('Error while creating new tag: ', error.data);
 	}
+	return data;
 }
 
 export async function updateOneTagByName(pb: PocketBase, recordID: string, newName: string) {

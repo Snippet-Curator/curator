@@ -16,10 +16,10 @@
 
 	let { isOpen = $bindable(), query }: Props = $props();
 
-	let allNotebooks = $derived(await getAllNotebooks());
-	let allTags = $derived(await getAllTags());
-	let flatNotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
-	let flatTags = $derived(allTags?.flatTags ?? []);
+	const allNotebooks = $derived(await getAllNotebooks());
+	const allTags = $derived(await getAllTags());
+	const flatNotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
+	const flatTags = $derived(allTags?.flatTags ?? []);
 
 	let searchInput = $state(query.search ?? '');
 	let selectedNotebookID = $state(query.notebookID ?? '');

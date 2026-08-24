@@ -22,7 +22,7 @@ export const createOneTagbyName = command(
 		parentTagID: v.optional(v.string())
 	}),
 	({ newName, parentTagID }) => {
-		db.createOneTagbyName(getPB(), newName, parentTagID);
+		return db.createOneTagbyName(getPB(), newName, parentTagID);
 	}
 );
 

@@ -55,6 +55,25 @@ export async function getAllNotebooks(pb: PocketBase) {
 	};
 }
 
+export async function getActiveNotebooks(pb: PocketBase) {
+	const { data: records, error } = await tryCatch(
+		pb.collection(viewNotebooksCollection).getFullList<Notebook>({
+			sort: 'name',
+			filter: 'name != "Archive" && name != "Trash"'
+		})
+	);
+
+	if (error) {
+		console.error('Error while get all notebooks: ', error.message);
+	}
+
+	if (!records) {
+		return;
+	}
+
+	return records;
+}
+
 export async function getInbox(pb: PocketBase) {
 	const { data: inbox, error } = await tryCatch(
 		pb.collection(viewNotebooksCollection).getFirstListItem(`name="Inbox"`)

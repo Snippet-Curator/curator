@@ -11,14 +11,14 @@
 	import { getAllTags } from '$lib/api/tag.remote';
 
 	let { data } = $props();
-	let inboxID = $derived(data.inboxID ?? '');
+	const inboxID = $derived(data.inboxID ?? '');
 
 	setImportState(inboxID);
 
-	let allNotebooks = $derived(await getAllNotebooks());
-	let flatNotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
-	let allTags = $derived(await getAllTags());
-	let flatTags = $derived(allTags?.flatTags);
+	const allNotebooks = $derived(await getAllNotebooks());
+	const flatNotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
+	const allTags = $derived(await getAllTags());
+	const flatTags = $derived(allTags?.flatTags);
 </script>
 
 <Topbar.Root>

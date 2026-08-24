@@ -8,6 +8,10 @@ export const getAllNotebooks = query(() => {
 	return db.getAllNotebooks(getPB());
 });
 
+export const getActiveNotebooks = query(() => {
+	return db.getActiveNotebooks(getPB());
+});
+
 export const getTotalNotecount = query(() => {
 	return db.getTotalNotecount(getPB());
 });

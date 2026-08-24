@@ -24,7 +24,7 @@
 	let { tags, allowEdit = false }: Props = $props();
 
 	const allTags = $derived(await getAllTags());
-	let flatTags = $derived(allTags?.flatTags);
+	const flatTags = $derived(allTags?.flatTags);
 
 	let isEditOpen = $state(false);
 	let isDeleteOpen = $state(false);

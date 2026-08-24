@@ -8,13 +8,13 @@
 	import { getAllNotebooks, createOneNotebookbyName } from '$lib/api/notebook.remote';
 	import { getAllTags, createOneTagbyName } from '$lib/api/tag.remote';
 
-	let allNotebooks = $derived(await getAllNotebooks());
-	let notebooks = $derived(allNotebooks?.rootNotebooks ?? []);
-	let flatnotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
-	let allTags = $derived(await getAllTags());
-	let tags = $derived(allTags?.rootTags ?? []);
-	let isNewNotebookOpen = $state(false);
-	let isNewTagOpen = $state(false);
+	const allNotebooks = $derived(await getAllNotebooks());
+	const notebooks = $derived(allNotebooks?.rootNotebooks ?? []);
+	const flatnotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
+	const allTags = $derived(await getAllTags());
+	const tags = $derived(allTags?.rootTags ?? []);
+	const isNewNotebookOpen = $state(false);
+	const isNewTagOpen = $state(false);
 </script>
 
 {#snippet renderNotebook(notebook: Notebook, NotebookIcon)}

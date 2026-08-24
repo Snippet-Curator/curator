@@ -45,13 +45,13 @@
 	};
 
 	await getDefaultSettings();
-	let allNotebooks = $derived(await getAllNotebooks());
-	let notebooks = $derived(allNotebooks?.rootNotebooks ?? []);
-	let allTags = $derived(await getAllTags());
-	let tags = $derived(allTags?.rootTags ?? []);
-	let inbox = $derived(await getInbox());
-	let inboxCount = $derived(inbox?.count ?? 0);
-	let inboxID = $derived(inbox?.id);
+	const allNotebooks = $derived(await getAllNotebooks());
+	const notebooks = $derived(allNotebooks?.rootNotebooks ?? []);
+	const allTags = $derived(await getAllTags());
+	const tags = $derived(allTags?.rootTags ?? []);
+	const inbox = $derived(await getInbox());
+	const inboxCount = $derived(inbox?.count ?? 0);
+	const inboxID = $derived(inbox?.id);
 
 	$effect(() => {
 		window.addEventListener('resize', updateScreenWidth);
