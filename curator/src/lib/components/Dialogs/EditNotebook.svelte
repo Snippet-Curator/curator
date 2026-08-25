@@ -9,18 +9,18 @@
 	};
 
 	let { isOpen = $bindable(), action }: Props = $props();
-	let notebooks = $derived(await getActiveNotebooks());
+	let notebooks = $derived(getActiveNotebooks());
 </script>
 
 <Command.Dialog bind:open={isOpen}>
 	<Command.Input placeholder="Search Notebooks..." />
 	<Command.List>
-		{#if notebooks.loading}
+		{#if notebooks?.loading}
 			<div class="p-golden-xl text-center text-xs font-semibold">Loading Notebooks...</div>
 		{:else}
 			<Command.Empty>No notebook found.</Command.Empty>
 			<Command.Group heading="">
-				{#each notebooks as notebook}
+				{#each await notebooks as notebook}
 					<Command.Item
 						onSelect={() => {
 							action(notebook.id);

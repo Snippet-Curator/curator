@@ -159,7 +159,6 @@
 	bind:isOpen={isEditTagsOpen}
 	currentTags={note?.expand?.tags}
 	update={async (selectedTags) => {
-		console.log('updatnig tags');
 		await changeTags({ noteID, selectedTags });
 		await getNote(noteID).refresh();
 	}}

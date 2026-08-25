@@ -7,17 +7,18 @@
 	type Props = {
 		isOpen: boolean;
 		currentTags: Tag[];
-		// add: (selectedTagID: string) => void;
-		// remove: (selectedTagID: string) => void;
 		update: (selectedTagIDs: string[]) => void;
 	};
 
 	let { isOpen = $bindable(), currentTags = [], update }: Props = $props();
 
 	let wasOpen = false;
-	let selectedTags = $state(currentTags ?? []);
+	let selectedTags = $state<Tag[]>(currentTags ?? []);
 	let searchText = $state('');
-	let selectedTagList = $derived(new Set(selectedTags.map((tag) => tag.id)));
+	let selectedTagList = $derived.by(() => {
+		if (selectedTags.length === 0) return new Set<string>();
+		return new Set(selectedTags.map((tag) => tag.id));
+	});
 
 	$effect(() => {
 		if (wasOpen && !isOpen) {
@@ -25,6 +26,7 @@
 		}
 
 		wasOpen = isOpen;
+		selectedTags = currentTags ?? [];
 	});
 </script>
 
@@ -63,7 +65,7 @@
 				>
 			</Command.Empty>
 			<Command.Group>
-				{#each allTags.flatTags.filter((tag) => !selectedTagList.has(tag.id)) as tag}
+				{#each allTags?.flatTags.filter((tag) => !selectedTagList.has(tag.id)) as tag}
 					<Command.Item
 						onSelect={() => {
 							selectedTags.push(tag);

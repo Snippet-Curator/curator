@@ -33,7 +33,7 @@
 	let selectedNote = $state<Note>();
 	let selectedNoteID = $state('');
 
-	const selectedNoteTags = $derived(selectedNote?.expand?.tags ?? '');
+	const selectedNoteTags = $derived(selectedNote?.expand?.tags ?? []);
 
 	let isDeleteOpen = $state(false);
 	let isEditTagsOpen = $state(false);
@@ -135,7 +135,6 @@
 							<ContextMenu.Item
 								onSelect={async () => {
 									selectedNoteID = note.id;
-
 									isEditNotebookOpen = true;
 								}}>Edit Notebook</ContextMenu.Item
 							>
@@ -173,17 +172,27 @@
 	{/snippet}
 </svelte:boundary>
 
-<svelte:boundary>
-	{#if selectedNoteID && selectedNote}
-		<Delete
-			bind:isOpen={isDeleteOpen}
-			name="Note"
-			action={async () => {
-				await softDeleteNote(selectedNoteID);
-				update();
-			}}>this note</Delete
-		>
+<!-- <svelte:boundary> -->
+{#if selectedNoteID}
+	<Delete
+		bind:isOpen={isDeleteOpen}
+		name="Note"
+		action={async () => {
+			await softDeleteNote(selectedNoteID);
+			update();
+		}}>this note</Delete
+	>
 
+	<EditNotebook
+		currentNotebookID={selectedNote?.expand?.notebook?.id}
+		bind:isOpen={isEditNotebookOpen}
+		action={async (selectedNotebookID) => {
+			await changeNoteNotebook({ noteID: selectedNoteID, newNotebookID: selectedNotebookID });
+			update();
+		}}
+	></EditNotebook>
+
+	{#if selectedNote}
 		<EditTags
 			bind:isOpen={isEditTagsOpen}
 			currentTags={selectedNoteTags}
@@ -192,15 +201,6 @@
 				update();
 			}}
 		/>
-
-		<EditNotebook
-			currentNotebookID={selectedNote?.expand?.notebook?.id}
-			bind:isOpen={isEditNotebookOpen}
-			action={async (selectedNotebookID) => {
-				await changeNoteNotebook({ noteID: selectedNoteID, newNotebookID: selectedNotebookID });
-				update();
-			}}
-		></EditNotebook>
 
 		<EditNote
 			note={selectedNote}
@@ -215,7 +215,8 @@
 			}}
 		></EditNote>
 	{/if}
-	{#snippet failed(error)}
+{/if}
+<!-- {#snippet failed(error)}
 		Dialogs Failed to Render: {error}
 	{/snippet}
-</svelte:boundary>
+</svelte:boundary> -->
