@@ -160,7 +160,7 @@
 	currentTags={note?.expand?.tags}
 	update={async (selectedTags) => {
 		await changeTags({ noteID, selectedTags });
-		await getNote(noteID).refresh();
+		getNote(noteID).refresh();
 	}}
 />
 

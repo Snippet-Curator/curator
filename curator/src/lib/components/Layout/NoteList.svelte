@@ -199,6 +199,7 @@
 			update={async (selectedTags) => {
 				await changeTags({ noteID: selectedNoteID, selectedTags });
 				update();
+				selectedNote = await getNote(selectedNoteID).refresh();
 			}}
 		/>
 
@@ -211,6 +212,7 @@
 				await changeDescription({ noteID: selectedNoteID, newDescription });
 				await changeSources({ ntoeID: selectedNoteID, newSources: sources });
 				await changeThumbnail({ noteID: selectedNoteID, url: selectedThumbnailURL });
+				selectedNote = await getNote(selectedNoteID).refresh();
 				update();
 			}}
 		></EditNote>
