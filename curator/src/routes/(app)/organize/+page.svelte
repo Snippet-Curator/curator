@@ -13,8 +13,9 @@
 	const flatnotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
 	const allTags = $derived(await getAllTags());
 	const tags = $derived(allTags?.rootTags ?? []);
-	const isNewNotebookOpen = $state(false);
-	const isNewTagOpen = $state(false);
+
+	let isNewNotebookOpen = $state(false);
+	let isNewTagOpen = $state(false);
 </script>
 
 {#snippet renderNotebook(notebook: Notebook, NotebookIcon)}

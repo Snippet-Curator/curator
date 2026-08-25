@@ -66,7 +66,12 @@
 	{/if}
 
 	{#if isBulkEdit}
-		<BulkToolbar bind:isBulkEdit bind:selectedNotesID />
+		<BulkToolbar
+			update={async () => await getNotes(query).refresh()}
+			notes={result}
+			bind:isBulkEdit
+			bind:selectedNotesID
+		/>
 	{/if}
 </div>
 

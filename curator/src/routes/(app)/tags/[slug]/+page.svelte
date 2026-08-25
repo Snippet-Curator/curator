@@ -70,7 +70,7 @@
 	{/if}
 
 	{#if isBulkEdit}
-		<BulkToolbar bind:isBulkEdit bind:selectedNotesID />
+		<BulkToolbar notes={result} bind:isBulkEdit bind:selectedNotesID />
 	{/if}
 </div>
 

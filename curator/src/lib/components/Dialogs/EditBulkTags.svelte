@@ -3,7 +3,6 @@
 
 	import * as Command from '$lib/components/ui/command/index.js';
 
-	// import { getTagState } from '$lib/db.svelte';
 	import type { Tag } from '$lib/types';
 	import { createOneTagbyName, getAllTags, getOneTag } from '$lib/api/tag.remote';
 
@@ -16,8 +15,6 @@
 	};
 
 	let { isOpen = $bindable(), add, remove, clearAll, currentTagID = '' }: Props = $props();
-
-	// const tagState = getTagState();
 
 	let searchText = $state('');
 	let selectedTags: Tag[] = $state([]);

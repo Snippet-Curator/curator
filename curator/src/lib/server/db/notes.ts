@@ -223,7 +223,6 @@ export async function unSoftDeleteMultiple(pb: PocketBase, recordIDs: string[]) 
 			}
 		})
 	);
-	// await this.getDefault(this.clickedPage)
 }
 
 export async function archiveMultiple(pb: PocketBase, recordIDs: string[]) {

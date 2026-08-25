@@ -22,17 +22,16 @@
 	});
 
 	let query = $derived(getQueryFromURL(page.url));
+	const newQuery = $derived({
+		page: query.page ?? 1,
+		search: query.search ?? '',
+		notebookID: query.notebookID ?? '',
+		tagIDs: [page.params.slug ?? ''],
+		excludedTagIDs: query.excludedTagIDs ?? [],
+		status: 'deleted'
+	});
 
-	let result = $derived(
-		await getNotes({
-			page: query.page ?? 1,
-			search: query.search ?? '',
-			notebookID: query.notebookID ?? '',
-			tagIDs: [page.params.slug ?? ''],
-			excludedTagIDs: query.excludedTagIDs ?? [],
-			status: 'deleted'
-		})
-	);
+	let result = $derived(await getNotes(newQuery));
 
 	let totalPages = $derived(result?.totalPages ?? 0);
 	let totalItems = $derived(result?.totalItems ?? 0);
@@ -68,13 +67,24 @@
 	<Pagination currentPage={query.page ?? 0} {totalPages} scrollToTop={() => scroll.scrollToTop()} />
 
 	{#if totalItems && totalItems > 0}
-		<NoteList update={() => {}} {isBulkEdit} bind:selectedNotesID notes={result} />
+		<NoteList
+			update={async () => await getNotes(newQuery).refresh()}
+			{isBulkEdit}
+			bind:selectedNotesID
+			notes={result}
+		/>
 	{:else}
 		<br />
 	{/if}
 
 	{#if isBulkEdit}
-		<BulkToolbar bind:isBulkEdit bind:selectedNotesID />
+		<BulkToolbar
+			update={async () => await getNotes(newQuery).refresh()}
+			notes={result}
+			isTrash
+			bind:isBulkEdit
+			bind:selectedNotesID
+		/>
 	{/if}
 </div>
 

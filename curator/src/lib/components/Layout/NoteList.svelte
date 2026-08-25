@@ -41,10 +41,12 @@
 	let isEditNoteOpen = $state(false);
 
 	function checkListNote(checkedNoteID: string) {
+		// remove note if already in the list
 		if (selectedNotesID.includes(checkedNoteID)) {
 			selectedNotesID = selectedNotesID.filter((noteID: string) => noteID != checkedNoteID);
 			return;
 		}
+		// add note to the list
 		selectedNotesID.push(checkedNoteID);
 	}
 </script>

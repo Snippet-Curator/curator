@@ -21,17 +21,16 @@
 	});
 
 	let query = $derived(getQueryFromURL(page.url));
+	const newQuery = $derived({
+		page: query.page ?? 1,
+		search: query.search ?? '',
+		notebookID: query.notebookID ?? '',
+		tagIDs: [page.params.slug ?? ''],
+		excludedTagIDs: query.excludedTagIDs ?? [],
+		status: 'archived'
+	});
 
-	let result = $derived(
-		await getNotes({
-			page: query.page ?? 1,
-			search: query.search ?? '',
-			notebookID: query.notebookID ?? '',
-			tagIDs: [page.params.slug ?? ''],
-			excludedTagIDs: query.excludedTagIDs ?? [],
-			status: 'archived'
-		})
-	);
+	let result = $derived(await getNotes(newQuery));
 
 	let totalPages = $derived(result?.totalPages ?? 0);
 	let totalItems = $derived(result?.totalItems ?? 0);
@@ -64,24 +63,25 @@
 	<Pagination currentPage={query.page ?? 0} {totalPages} scrollToTop={() => scroll.scrollToTop()} />
 
 	{#if totalItems && totalItems > 0}
-		<NoteList update={() => {}} {isBulkEdit} bind:selectedNotesID notes={result} />
+		<NoteList
+			update={async () => await getNotes(newQuery).refresh()}
+			notes={result}
+			{isBulkEdit}
+			bind:selectedNotesID
+		/>
 	{:else}
 		<br />
 	{/if}
 
 	{#if isBulkEdit}
-		<BulkToolbar bind:isBulkEdit bind:selectedNotesID />
+		<BulkToolbar
+			update={async () => await getNotes(newQuery).refresh()}
+			notes={result}
+			isArchive
+			bind:isBulkEdit
+			bind:selectedNotesID
+		/>
 	{/if}
 </div>
 
-<FilterSearch
-	bind:isOpen={isFilterSearch}
-	query={{
-		page: query.page ?? 1,
-		search: query.search ?? '',
-		notebookID: query.notebookID ?? '',
-		tagIDs: [page.params.slug ?? ''],
-		excludedTagIDs: query.excludedTagIDs ?? [],
-		status: 'archived'
-	}}
-/>
+<FilterSearch bind:isOpen={isFilterSearch} query={newQuery} />

@@ -22,8 +22,6 @@
 		restoreNote,
 		softDeleteNote,
 		permaDeleteNote,
-		addTagToNote,
-		removeTagFromNote,
 		changeNoteNotebook,
 		changeTitle,
 		changeDescription,
