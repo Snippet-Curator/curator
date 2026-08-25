@@ -9,16 +9,12 @@
 		getNote,
 		archiveNote,
 		softDeleteNote,
-		addTagToNote,
-		removeTagFromNote,
 		changeNoteNotebook,
 		changeTitle,
 		changeDescription,
 		changeThumbnail,
 		changeSources,
-
 		changeTags
-
 	} from '$lib/api/note.remote';
 	import { replacePbUrl } from '$lib/utils';
 	import { getSetting } from '$lib/api/setting.remote';
@@ -36,7 +32,6 @@
 
 	let selectedNote = $state<Note>();
 	let selectedNoteID = $state('');
-	// const selectedNote = $derived(selectedNoteID ? await getNote(selectedNoteID) : undefined);
 
 	const selectedNoteTags = $derived(selectedNote?.expand?.tags ?? '');
 
@@ -52,10 +47,6 @@
 		}
 		selectedNotesID.push(checkedNoteID);
 	}
-
-	$effect(() => {
-		console.log('outside current tags', selectedNoteTags);
-	});
 </script>
 
 {#snippet renderNotes(note: Note)}
@@ -196,19 +187,8 @@
 		<EditTags
 			bind:isOpen={isEditTagsOpen}
 			currentTags={selectedNoteTags}
-			// add={async (selectedTagID) => {
-			// 	await addTagToNote({ noteID: selectedNoteID, selectedTagID });
-			// 	selectedNote = await getNote(selectedNoteID);
-			// 	update();
-			// }}
-			// remove={async (selectedTagID) => {
-			// 	await removeTagFromNote({ noteID: selectedNoteID, selectedTagID });
-			// 	selectedNote = await getNote(selectedNoteID);
-			// 	console.log('removed', selectedNote?.expand.tags);
-			// 	update();
-			// }}
 			update={async (selectedTags) => {
-				await changeTags({noteID: selectedNoteID, selectedTags})
+				await changeTags({ noteID: selectedNoteID, selectedTags });
 				update();
 			}}
 		/>

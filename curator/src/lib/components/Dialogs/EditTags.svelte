@@ -13,10 +13,19 @@
 	};
 
 	let { isOpen = $bindable(), currentTags = [], update }: Props = $props();
-	let selectedTags = $state(currentTags ?? []);
 
+	let wasOpen = false;
+	let selectedTags = $state(currentTags ?? []);
 	let searchText = $state('');
 	let selectedTagList = $derived(new Set(selectedTags.map((tag) => tag.id)));
+
+	$effect(() => {
+		if (wasOpen && !isOpen) {
+			update([...selectedTagList]);
+		}
+
+		wasOpen = isOpen;
+	});
 </script>
 
 <Command.Dialog bind:open={isOpen}>
