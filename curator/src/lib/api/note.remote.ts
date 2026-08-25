@@ -220,6 +220,16 @@ export const clearTagsFromNotes = command(v.array(v.string()), (selectedNotesID)
 	db.clearTagsFromNotes(getPB(), selectedNotesID);
 });
 
+export const changeTagsFromNotes = command(
+	v.object({
+		selectedNotesID: v.array(v.string()),
+		selectedTagsID: v.array(v.string())
+	}),
+	({ selectedNotesID, selectedTagsID }) => {
+		db.changeTagsFromNotes(getPB(), selectedNotesID, selectedTagsID);
+	}
+);
+
 export const emptyTrash = command(() => {
 	db.emptyTrash(getPB());
 });

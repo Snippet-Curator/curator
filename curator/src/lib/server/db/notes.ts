@@ -327,7 +327,25 @@ export async function clearTagsFromNotes(pb: PocketBase, selectedNotesID: string
 			}
 		})
 	);
-	// await this.getDefault(this.clickedPage)
+}
+
+export async function changeTagsFromNotes(
+	pb: PocketBase,
+	selectedNotesID: string[],
+	selectedTagsID: string[]
+) {
+	await Promise.all(
+		selectedNotesID.map(async (noteID) => {
+			const { data, error } = await tryCatch(
+				pb.collection(notesCollection).update(noteID, {
+					tags: selectedTagsID
+				})
+			);
+			if (error) {
+				console.error('Error removing tag: ', noteID, error);
+			}
+		})
+	);
 }
 
 export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
