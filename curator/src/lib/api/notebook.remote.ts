@@ -4,6 +4,10 @@ import { command, query } from '$app/server';
 import * as db from '$lib/server/db/notebook';
 import { getPB } from './utils';
 
+export const makeDefaultNotebook = query(() => {
+	return db.makeDefaultNotebook(getPB());
+});
+
 export const getAllNotebooks = query(() => {
 	return db.getAllNotebooks(getPB());
 });

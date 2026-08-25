@@ -4,9 +4,28 @@ import {
 	notebooksCollection,
 	notesCollection,
 	viewNotesCollection,
-	viewNotebooksCollection
+	viewNotebooksCollection,
+	inboxNotebook
 } from '$lib/const';
 import { type Notebook } from '$lib/types';
+
+export async function makeDefaultNotebook(pb: PocketBase) {
+	const { data, error } = await tryCatch(
+		pb
+			.collection(notebooksCollection)
+			.create({ name: inboxNotebook, user: pb.authStore.record?.id })
+	);
+
+	if (error) {
+		if (error.data.data.name.code == 'validation_not_unique') {
+			console.log('Inbox already exists');
+		} else {
+			console.error('Error making Inbox: ', error.message);
+		}
+		console.log('Error making Inbox: ', error.message);
+		return;
+	}
+}
 
 export async function getAllNotebooks(pb: PocketBase) {
 	// const start = performance.now()

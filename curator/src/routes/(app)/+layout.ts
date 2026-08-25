@@ -1,10 +1,4 @@
-import {
-	makeDefaultNotebook,
-	addNotesToUser,
-	addSettingToUser,
-	addNotebooksToUser,
-	addTagsToUser
-} from '$lib/db.svelte';
+import { makeDefaultNotebook } from '$lib/api/notebook.remote';
 
 export async function load() {
 	await makeDefaultNotebook();
