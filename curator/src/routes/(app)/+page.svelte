@@ -55,7 +55,12 @@
 	<Pagination currentPage={query.page ?? 0} {totalPages} scrollToTop={() => scroll.scrollToTop()} />
 
 	{#if totalItems && totalItems > 0}
-		<NoteList update={() => {}} {isBulkEdit} bind:selectedNotesID notes={result} />
+		<NoteList
+			update={async () => await getNotes(query).refresh()}
+			{isBulkEdit}
+			bind:selectedNotesID
+			notes={result}
+		/>
 	{:else}
 		<br />
 	{/if}

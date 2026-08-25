@@ -8,6 +8,10 @@ export const getAllTags = query(() => {
 	return db.getAllTags(getPB());
 });
 
+export const getOneTag = query(v.string(), (tagID) => {
+	return db.getOneTag(getPB(), tagID);
+});
+
 export const pinTag = command(v.string(), (recordID) => {
 	db.pinTag(getPB(), recordID);
 });

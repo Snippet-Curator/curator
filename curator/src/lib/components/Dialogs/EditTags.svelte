@@ -7,24 +7,28 @@
 	type Props = {
 		isOpen: boolean;
 		currentTags: Tag[];
-		add: (selectedTagID: string) => void;
-		remove: (selectedTagID: string) => void;
+		// add: (selectedTagID: string) => void;
+		// remove: (selectedTagID: string) => void;
+		update: (selectedTagIDs: string[]) => void;
 	};
 
-	let { isOpen = $bindable(), add, remove, currentTags = [] }: Props = $props();
+	let { isOpen = $bindable(), currentTags = [], update }: Props = $props();
+	let selectedTags = $state(currentTags ?? []);
 
 	let searchText = $state('');
-	let currentTagList = $derived(new Set(currentTags.map((tag) => tag.id)));
+	let selectedTagList = $derived(new Set(selectedTags.map((tag) => tag.id)));
 </script>
 
 <Command.Dialog bind:open={isOpen}>
 	<Command.Input bind:value={searchText} placeholder="Search Tags..." />
-	{#if currentTags}
+	{#if selectedTags}
 		<div class="gap-golden-sm p-golden-md border-b-base-content/10 flex flex-wrap border-b">
-			{#each currentTags as currentTag}
+			{#each selectedTags as tag}
 				<button
-					onclick={() => remove(currentTag.id)}
-					class="badge badge-primary hover:badge-ghost text-nowrap">{currentTag.name}</button
+					onclick={() => {
+						selectedTags = selectedTags.filter((selectedTag) => selectedTag.id != tag.id);
+					}}
+					class="badge badge-primary hover:badge-ghost text-nowrap">{tag.name}</button
 				>
 			{/each}
 		</div>
@@ -43,17 +47,17 @@
 						if (!newTag) {
 							return;
 						}
-						add(newTag.id);
+						selectedTags.push(newTag);
 						searchText = '';
 					}}
 					class="bg-primary/30 mx-auto w-full rounded-md py-3">Click to create {searchText}</button
 				>
 			</Command.Empty>
 			<Command.Group>
-				{#each allTags.flatTags.filter((tag) => !currentTagList.has(tag.id)) as tag}
+				{#each allTags.flatTags.filter((tag) => !selectedTagList.has(tag.id)) as tag}
 					<Command.Item
 						onSelect={() => {
-							add(tag.id);
+							selectedTags.push(tag);
 							searchText = '';
 						}}
 						>{tag.name}

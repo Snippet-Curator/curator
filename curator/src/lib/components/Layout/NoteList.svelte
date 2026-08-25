@@ -15,7 +15,10 @@
 		changeTitle,
 		changeDescription,
 		changeThumbnail,
-		changeSources
+		changeSources,
+
+		changeTags
+
 	} from '$lib/api/note.remote';
 	import { replacePbUrl } from '$lib/utils';
 	import { getSetting } from '$lib/api/setting.remote';
@@ -24,14 +27,19 @@
 		isBulkEdit: boolean;
 		notes: NoteList[];
 		selectedNotesID: string[];
-		update: () => void;
+		update: () => Promise<void>;
 	};
 
 	let { notes, isBulkEdit = false, selectedNotesID = $bindable(), update }: Props = $props();
 
-	let isNsfwBlur = $derived(await getSetting('nsfwBlur'));
+	const isNsfwBlur = $derived(await getSetting('nsfwBlur'));
+
 	let selectedNote = $state<Note>();
 	let selectedNoteID = $state('');
+	// const selectedNote = $derived(selectedNoteID ? await getNote(selectedNoteID) : undefined);
+
+	const selectedNoteTags = $derived(selectedNote?.expand?.tags ?? '');
+
 	let isDeleteOpen = $state(false);
 	let isEditTagsOpen = $state(false);
 	let isEditNotebookOpen = $state(false);
@@ -44,6 +52,10 @@
 		}
 		selectedNotesID.push(checkedNoteID);
 	}
+
+	$effect(() => {
+		console.log('outside current tags', selectedNoteTags);
+	});
 </script>
 
 {#snippet renderNotes(note: Note)}
@@ -125,14 +137,14 @@
 							<ContextMenu.Item
 								onSelect={async () => {
 									selectedNoteID = note.id;
-									selectedNote = await getNote(selectedNoteID);
+
 									isEditNoteOpen = true;
 								}}>Edit</ContextMenu.Item
 							>
 							<ContextMenu.Item
 								onSelect={async () => {
 									selectedNoteID = note.id;
-									selectedNote = await getNote(selectedNoteID);
+
 									isEditNotebookOpen = true;
 								}}>Edit Notebook</ContextMenu.Item
 							>
@@ -177,19 +189,27 @@
 			name="Note"
 			action={async () => {
 				await softDeleteNote(selectedNoteID);
+				update();
 			}}>this note</Delete
 		>
 
 		<EditTags
 			bind:isOpen={isEditTagsOpen}
-			currentTags={selectedNote?.expand?.tags}
-			add={async (selectedTagID) => {
-				await addTagToNote({ selectedNoteID, selectedTagID });
-				await getNote(selectedNoteID).refresh();
-			}}
-			remove={async (selectedTagID) => {
-				await removeTagFromNote({ selectedNoteID, selectedTagID });
-				await getNote(selectedNoteID).refresh();
+			currentTags={selectedNoteTags}
+			// add={async (selectedTagID) => {
+			// 	await addTagToNote({ noteID: selectedNoteID, selectedTagID });
+			// 	selectedNote = await getNote(selectedNoteID);
+			// 	update();
+			// }}
+			// remove={async (selectedTagID) => {
+			// 	await removeTagFromNote({ noteID: selectedNoteID, selectedTagID });
+			// 	selectedNote = await getNote(selectedNoteID);
+			// 	console.log('removed', selectedNote?.expand.tags);
+			// 	update();
+			// }}
+			update={async (selectedTags) => {
+				await changeTags({noteID: selectedNoteID, selectedTags})
+				update();
 			}}
 		/>
 
@@ -197,8 +217,8 @@
 			currentNotebookID={selectedNote?.expand?.notebook?.id}
 			bind:isOpen={isEditNotebookOpen}
 			action={async (selectedNotebookID) => {
-				await changeNoteNotebook({ selectedNoteID, newNotebookID: selectedNotebookID });
-				await getNote(selectedNoteID).refresh();
+				await changeNoteNotebook({ noteID: selectedNoteID, newNotebookID: selectedNotebookID });
+				update();
 			}}
 		></EditNotebook>
 
@@ -207,11 +227,11 @@
 			thumbURL={selectedNote?.thumbnail}
 			bind:isOpen={isEditNoteOpen}
 			action={async (newTitle, newDescription, sources, selectedThumbnailURL) => {
-				await changeTitle({ selectedNoteID, newTitle });
-				await changeDescription({ selectedNoteID, newDescription });
-				await changeSources({ selectedNoteID, newSources: sources });
-				await changeThumbnail({ selectedNoteID, url: selectedThumbnailURL });
-				await getNote(selectedNoteID).refresh();
+				await changeTitle({ noteID: selectedNoteID, newTitle });
+				await changeDescription({ noteID: selectedNoteID, newDescription });
+				await changeSources({ ntoeID: selectedNoteID, newSources: sources });
+				await changeThumbnail({ noteID: selectedNoteID, url: selectedThumbnailURL });
+				update();
 			}}
 		></EditNote>
 	{/if}
