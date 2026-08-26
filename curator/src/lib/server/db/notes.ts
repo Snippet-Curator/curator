@@ -24,6 +24,8 @@ export async function getCurrentNotebook(pb: PocketBase, notebookID: string) {
 
 export async function getNotes(pb: PocketBase, query: NoteQuery) {
 	const page = query.page ?? 1;
+	const sort = query.sort ?? '-created';
+	const collection = query.fullContent ? notesCollection : viewNotesCollection;
 
 	const filters: string[] = [`status="${query.status ?? 'active'}"`];
 
@@ -48,11 +50,9 @@ export async function getNotes(pb: PocketBase, query: NoteQuery) {
 
 	const filter = filters.join(' && ');
 
-	// console.log('filter', filter);
-
 	const { data, error } = await tryCatch(
-		pb.collection(viewNotesCollection).getList(page, 24, {
-			sort: '-created',
+		pb.collection(collection).getList(page, 24, {
+			sort,
 			filter,
 			expand: 'notebook,tags'
 		})
@@ -64,6 +64,52 @@ export async function getNotes(pb: PocketBase, query: NoteQuery) {
 	}
 
 	return data;
+}
+
+export async function getDiscoverNoteList(pb: PocketBase, query: NoteQuery) {
+	const { data, error } = await tryCatch(
+		pb.collection(viewNotesCollection).getList(page, 30, {
+			sort: '-score',
+			filter: filter
+		})
+	);
+
+	if (error) {
+		console.error('Error getting discover note: ', error.data);
+	}
+	return data;
+}
+
+export async function getDiscoverNote(pb: PocketBase, index = 0) {
+	// const start3 = performance.now();
+	this.noteID = this.noteList.items[index].id;
+
+	// const start = performance.now();
+	const { data: record, error: recordError } = await tryCatch(
+		pb.collection(notesCollection).getFirstListItem(`id="${this.noteID}"`, {
+			expand: 'notebook,tags'
+		})
+	);
+	// const end = performance.now();
+
+	// console.log(`Fetched new note  in ${end - start} ms`);
+
+	if (recordError) {
+		console.error('Error getting discover note: ', recordError.data);
+	}
+
+	if (!record) {
+		console.log('No discovery note found');
+	}
+
+	// const start2 = performance.now();
+	this.note = record;
+
+	this.updateLastOpened();
+	// const end2 = performance.now();
+	// console.log(`Updated this.note  in ${end2 - start2} ms`);
+	// const end3 = performance.now();
+	// console.log(`Discover function  in ${end3 - start3} ms`);
 }
 
 export async function getByPage(pb: PocketBase, newPage = 1) {
@@ -408,61 +454,6 @@ export async function getNote(pb: PocketBase, noteID: string) {
 	}
 
 	return data;
-}
-
-export async function getDiscoverNoteList(
-	pb: PocketBase,
-	filter: string = `status="active"`,
-	page = 1
-) {
-	// const start = performance.now();
-	const { data, error } = await tryCatch(
-		pb.collection(viewNotesCollection).getList(page, 30, {
-			sort: '-score',
-			filter: filter
-		})
-	);
-
-	if (error) {
-		console.error('Error getting discover note: ', error.data);
-	}
-	// const end = performance.now();
-	// console.log(`Returned Discover List in ${end - start} ms`);
-
-	this.noteList = data;
-	return data;
-}
-
-export async function getDiscoverNote(pb: PocketBase, index = 0) {
-	// const start3 = performance.now();
-	this.noteID = this.noteList.items[index].id;
-
-	// const start = performance.now();
-	const { data: record, error: recordError } = await tryCatch(
-		pb.collection(notesCollection).getFirstListItem(`id="${this.noteID}"`, {
-			expand: 'notebook,tags'
-		})
-	);
-	// const end = performance.now();
-
-	// console.log(`Fetched new note  in ${end - start} ms`);
-
-	if (recordError) {
-		console.error('Error getting discover note: ', recordError.data);
-	}
-
-	if (!record) {
-		console.log('No discovery note found');
-	}
-
-	// const start2 = performance.now();
-	this.note = record;
-
-	this.updateLastOpened();
-	// const end2 = performance.now();
-	// console.log(`Updated this.note  in ${end2 - start2} ms`);
-	// const end3 = performance.now();
-	// console.log(`Discover function  in ${end3 - start3} ms`);
 }
 
 export async function updateLastOpened(pb: PocketBase, noteID: string) {

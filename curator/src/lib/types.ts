@@ -128,7 +128,10 @@ export type NoteQuery = {
 	excludedTagIDs?: string[];
 	notebookID: string;
 	starred?: boolean;
+	fullContent: boolean;
+	fullTextSearch: boolean;
 	status: 'active' | 'archived' | 'deleted';
+	sort: '-created' | '-score';
 };
 
 // ------ Parser ------

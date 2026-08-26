@@ -6,7 +6,7 @@
 
 	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
 
-	import { setSavedSearch } from '$lib/search.svelte';
+	// import { setSavedSearch } from '$lib/search.svelte';
 
 	import { setNotebookState, setTagState } from '$lib/db.svelte';
 	import { getMobileState, getMouseState, setMobileState, setMouseState } from '$lib/utils.svelte';
@@ -28,7 +28,7 @@
 	setNotebookState();
 	setMobileState();
 	setMouseState();
-	setSavedSearch();
+	// setSavedSearch();
 
 	const mobileState = getMobileState();
 	const mouseState = getMouseState();

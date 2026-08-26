@@ -15,19 +15,23 @@
 	} from '$lib/components';
 	import * as Topbar from '$lib/components/Topbar/index';
 	import { debouncedSearch, getQueryFromURL } from '$lib/utils.svelte';
+	import { type NoteQuery } from '$lib/types';
 
 	const scroll = new ScrollState({
 		element: () => scrollEl
 	});
 
 	let query = $derived(getQueryFromURL(page.url));
-	const newQuery = $derived({
+	const newQuery = $derived<NoteQuery>({
 		page: query.page ?? 1,
 		search: query.search ?? '',
 		notebookID: query.notebookID ?? '',
 		tagIDs: [page.params.slug ?? ''],
+		fullContent: query.fullContent ?? false,
+		fullTextSearch: query.fullTextSearch ?? false,
 		excludedTagIDs: query.excludedTagIDs ?? [],
-		status: 'archived'
+		status: 'archived',
+		sort: query.sort ?? '-created'
 	});
 
 	let result = $derived(await getNotes(newQuery));

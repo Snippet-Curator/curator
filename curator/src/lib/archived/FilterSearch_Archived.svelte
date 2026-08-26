@@ -5,12 +5,12 @@
 
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getNotebookState, getTagState } from '$lib/db.svelte';
-	import {
-		getSearchState,
-		SavedSearch,
-		type SearchState,
-		getSavedSearch
-	} from '$lib/search.svelte';
+	// import {
+	// 	getSearchState,
+	// 	SavedSearch,
+	// 	type SearchState,
+	// 	getSavedSearch
+	// } from '$lib/search.svelte';
 
 	type Props = {
 		isOpen: boolean;
@@ -19,8 +19,8 @@
 
 	let { isOpen = $bindable(), search }: Props = $props();
 
-	let searchState = $state<SearchState>();
-	let savedSearch = $state<SavedSearch>();
+	// let searchState = $state<SearchState>();
+	// let savedSearch = $state<SavedSearch>();
 
 	const notebookState = getNotebookState();
 	const tagState = getTagState();
@@ -28,26 +28,26 @@
 	const notebooks = $derived(notebookState.flatNotebooks);
 	const tags = $derived(tagState.flatTags);
 
-	let filterNotebookID = $state(searchState?.searchNotebookID || '');
+	// let filterNotebookID = $state(searchState?.searchNotebookID || '');
 	let filterTagIdArray = $state<string[]>([]);
 	let filterExcludeTagIdArray = $state<string[]>([]);
 
 	function submitForm() {
-		if (!searchState || !savedSearch) return;
-		savedSearch.term = searchState.searchInput;
-		searchState.searchNotebookID = filterNotebookID;
-		searchState.selectedTagIdArray = filterTagIdArray;
-		searchState.selectedExcludeTagIdArray = filterExcludeTagIdArray;
-		searchState.makeFilterQuery(searchState.searchInput);
-		console.log(searchState.customFilter);
-		search(searchState.customFilter);
-		savedSearch.customFilter = searchState.customFilter;
-		isOpen = false;
+		// if (!searchState || !savedSearch) return;
+		// savedSearch.term = searchState.searchInput;
+		// searchState.searchNotebookID = filterNotebookID;
+		// searchState.selectedTagIdArray = filterTagIdArray;
+		// searchState.selectedExcludeTagIdArray = filterExcludeTagIdArray;
+		// searchState.makeFilterQuery(searchState.searchInput);
+		// console.log(searchState.customFilter);
+		// search(searchState.customFilter);
+		// savedSearch.customFilter = searchState.customFilter;
+		// isOpen = false;
 	}
 
 	onMount(() => {
-		searchState = getSearchState();
-		savedSearch = getSavedSearch();
+		// searchState = getSearchState();
+		// savedSearch = getSavedSearch();
 	});
 </script>
 
@@ -68,19 +68,19 @@
 				<legend class="fieldset-legend">Full Text Search</legend>
 			</div>
 
-			<input
+			<!-- <input
 				type="text"
 				class="input col-span-8 col-start-4 w-full"
 				placeholder="Search title and content..."
 				bind:value={searchState.searchInput}
-			/>
+			/> -->
 
-			<button
+			<!-- <button
 				onclick={() => {
 					searchState.searchInput = '';
 				}}
 				class="btn col-span-1">Clear</button
-			>
+			> -->
 		</div>
 
 		<div class="gap-x-golden-md grid grid-cols-12 items-center">
@@ -89,10 +89,10 @@
 			</div>
 
 			<div class="col-span-8 w-full text-right">
-				<SelectNotebook {notebooks} bind:selectedNotebookID={filterNotebookID} />
+				<!-- <SelectNotebook {notebooks} bind:selectedNotebookID={filterNotebookID} /> -->
 			</div>
 
-			<button onclick={() => (filterNotebookID = '')} class="btn col-span-1">Clear</button>
+			<!-- <button onclick={() => (filterNotebookID = '')} class="btn col-span-1">Clear</button> -->
 		</div>
 
 		<div class="gap-x-golden-md grid grid-cols-12 items-start">

@@ -6,7 +6,7 @@
 
 	import { CaseSensitive, CircleX } from 'lucide-svelte';
 
-	import { uploadFileToPocketbase } from '$lib/db.svelte';
+	import { uploadFileToPocketbase } from '$lib/api/file.remote';
 	import {
 		addMediaToContent,
 		addResourcesToRecord,
@@ -54,7 +54,7 @@
 		const file = e.file as File;
 
 		// upload file and get url
-		const fileURL = await uploadFileToPocketbase(note?.id, file);
+		const fileURL = await uploadFileToPocketbase({ recordID: note?.id, file });
 		if (!fileURL) return;
 
 		// get hash

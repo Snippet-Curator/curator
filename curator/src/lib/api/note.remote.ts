@@ -11,7 +11,10 @@ const noteQuerySchema = v.object({
 	excludedTagIDs: v.optional(v.array(v.string())),
 	notebookID: v.optional(v.string()),
 	starred: v.optional(v.boolean()),
-	status: v.string()
+	status: v.string(),
+	fullContent: v.boolean(),
+	fullTextSearch: v.boolean(),
+	sort: v.string()
 });
 
 export const getNote = query(v.string(), (noteID) => {

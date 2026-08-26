@@ -18,13 +18,13 @@
 		signalPageState,
 		debounce
 	} from '$lib/utils.svelte';
-	import {
-		getSearchState,
-		setSearchState,
-		type SearchState,
-		type SavedSearch,
-		getSavedSearch
-	} from '$lib/search.svelte';
+	// import {
+	// 	getSearchState,
+	// 	setSearchState,
+	// 	type SearchState,
+	// 	type SavedSearch,
+	// 	getSavedSearch
+	// } from '$lib/search.svelte';
 	import type { NoteType } from '$lib/types';
 	import { ScrollState } from 'runed';
 
@@ -33,8 +33,8 @@
 	let isBulkEdit = $state(false);
 	let selectedNotesID = $state<string[]>([]);
 	let isFilterSearch = $state(false);
-	let searchState = $state<SearchState>();
-	let savedSearch = $state<SavedSearch>();
+	// let searchState = $state<SearchState>();
+	// let savedSearch = $state<SavedSearch>();
 	let scrollEl = $state<HTMLElement>();
 
 	let initialLoading = $state();
@@ -44,7 +44,7 @@
 	};
 
 	setNotelistState(notebookID, noteType);
-	setSearchState();
+	// setSearchState();
 
 	const notelistState = getNotelistState(notebookID);
 	const mouseState = getMouseState();
@@ -66,55 +66,52 @@
 
 	const updatePage = async (newPage: number) => {
 		// saves current clicked page number
-		saveCurrentPage(newPage);
-		notelistState.clickedPage = newPage;
-		if (!searchState || !savedSearch) return;
+		// saveCurrentPage(newPage);
+		// notelistState.clickedPage = newPage;
+		// if (!searchState || !savedSearch) return;
 
-		// get default page if no filters
-		mouseState.isBusy = true;
-		scroll.scrollTo(0, scrollPosition);
-		if (
-			!searchState.searchInput &&
-			!searchState.searchNotebookID &&
-			searchState.selectedTagIdArray.length == 0
-		) {
-			savedSearch.term = '';
-			searchState.resetCustomFilter();
-			savedSearch.customFilter = '';
-			await notelistState.getByPage(newPage);
-			mouseState.isBusy = false;
-			return;
-		}
+		// // get default page if no filters
+		// mouseState.isBusy = true;
+		// scroll.scrollTo(0, scrollPosition);
+		// if (
+		// 	!searchState.searchInput &&
+		// 	!searchState.searchNotebookID &&
+		// 	searchState.selectedTagIdArray.length == 0
+		// ) {
+		// 	savedSearch.term = '';
+		// 	searchState.resetCustomFilter();
+		// 	savedSearch.customFilter = '';
+		// 	await notelistState.getByPage(newPage);
+		// 	mouseState.isBusy = false;
+		// 	return;
+		// }
 
-		// run same filter if search term is same
-		if (savedSearch.term === searchState.searchInput) {
-			await notelistState.getByFilter(searchState.customFilter, newPage);
-			mouseState.isBusy = false;
-			return;
-		}
+		// // run same filter if search term is same
+		// if (savedSearch.term === searchState.searchInput) {
+		// 	await notelistState.getByFilter(searchState.customFilter, newPage);
+		// 	mouseState.isBusy = false;
+		// 	return;
+		// }
 
-		// uses new search filter
-		await searchState.getSearchTags(searchInput.trim());
-		await searchState.getSearchNotebook(searchInput.trim());
-		searchState.makeSearchQuery(searchState.searchInput);
-		await notelistState.getByFilter(searchState.customFilter, newPage);
-		savedSearch.term = searchState.searchInput;
-		savedSearch.customFilter = searchState.customFilter;
-		mouseState.isBusy = false;
+		// // uses new search filter
+		// await searchState.getSearchTags(searchInput.trim());
+		// await searchState.getSearchNotebook(searchInput.trim());
+		// searchState.makeSearchQuery(searchState.searchInput);
+		// await notelistState.getByFilter(searchState.customFilter, newPage);
+		// savedSearch.term = searchState.searchInput;
+		// savedSearch.customFilter = searchState.customFilter;
+		// mouseState.isBusy = false;
 	};
 
 	onMount(async () => {
-		searchState = getSearchState();
-		savedSearch = getSavedSearch();
-
-		if (savedSearch.term) {
-			searchState.searchInput = savedSearch.term;
-
-			searchState.customFilter = savedSearch.customFilter;
-		}
-
-		initialLoading = await updatePage(savedPage);
-		scroll.scrollTo(0, scrollPosition);
+		// searchState = getSearchState();
+		// savedSearch = getSavedSearch();
+		// if (savedSearch.term) {
+		// 	searchState.searchInput = savedSearch.term;
+		// 	searchState.customFilter = savedSearch.customFilter;
+		// }
+		// initialLoading = await updatePage(savedPage);
+		// scroll.scrollTo(0, scrollPosition);
 	});
 
 	$effect(() => {
@@ -125,14 +122,14 @@
 
 <Topbar.Root>
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
-	{#if searchState}
+	<!-- {#if searchState} -->
 		<Search
-			bind:searchInput={searchState.searchInput}
+			// bind:searchInput={searchState.searchInput}
 			searchNotes={() => debouncedSearch()}
 			clearNote={() => {
-				savedSearch.term = '';
-				savedSearch.customFilter = '';
-				searchState.resetCustomFilter();
+				// savedSearch.term = '';
+				// savedSearch.customFilter = '';
+				// searchState.resetCustomFilter();
 				scroll.scrollToTop();
 				updatePage(1);
 			}}

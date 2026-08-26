@@ -107,6 +107,7 @@ export const debouncedSearch = debounce(async (searchInput: string) => {
 }, 300);
 
 type Status = 'active' | 'archived' | 'deleted';
+type Sort = '-created' | '-score';
 // getSearchQuery
 export function getQueryFromURL(url: URL): NoteQuery {
 	return {
@@ -115,7 +116,10 @@ export function getQueryFromURL(url: URL): NoteQuery {
 		tagIDs: url.searchParams.getAll('tagIDs'),
 		excludedTagIDs: url.searchParams.getAll('excludedTagIDs'),
 		notebookID: url.searchParams.get('notebookID') ?? '',
-		status: (url.searchParams.get('status') ?? 'active') as Status
+		status: (url.searchParams.get('status') ?? 'active') as Status,
+		sort: (url.searchParams.get('sort') ?? '-created') as Sort,
+		fullContent: url.searchParams.get('fullContent') === 'true',
+		fullTextSearch: url.searchParams.get('fullTextSearch') === 'true'
 	};
 }
 

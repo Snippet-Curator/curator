@@ -4,14 +4,14 @@
 
 	type Props = {
 		currentIndex: number;
-		currentPage: number;
+
 		lastItemIndex: number;
-		totalPages: number;
+
 		onLeft: () => void;
 		onRight: () => void;
 	};
 
-	let { onLeft, onRight, currentIndex, currentPage, lastItemIndex, totalPages }: Props = $props();
+	let { onLeft, onRight, currentIndex, lastItemIndex }: Props = $props();
 	let nextButton: HTMLButtonElement;
 	let previousButton: HTMLButtonElement;
 
@@ -64,7 +64,7 @@
 <div class="md:tooltip md:tooltip-bottom z-30" data-tip="Previous">
 	<button
 		bind:this={previousButton}
-		disabled={currentIndex == 0 && currentPage == 1}
+		disabled={currentIndex === 0}
 		class="btn btn-square"
 		onclick={onLeft}><ArrowLeft size={18} /></button
 	>
@@ -72,7 +72,7 @@
 <div class="md:tooltip md:tooltip-bottom z-30" data-tip="Next">
 	<button
 		bind:this={nextButton}
-		disabled={currentIndex == lastItemIndex && currentPage == totalPages}
+		disabled={currentIndex == lastItemIndex}
 		class="btn btn-square"
 		onclick={onRight}><ArrowRight size={18} /></button
 	>
