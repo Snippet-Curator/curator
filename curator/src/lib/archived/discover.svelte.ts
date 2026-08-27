@@ -3,7 +3,7 @@ import PocketbaseQuery from '@emresandikci/pocketbase-query';
 import { getContext, setContext } from 'svelte';
 
 import type { Notebook, Tag } from '$lib/types';
-import { tryCatch } from '$lib/utils.svelte';
+import { tryCatch } from '$lib/utils';
 import { pb } from '$lib/pocketbase';
 import { viewNotebooksCollection, viewTagsCollectionName } from '$lib/const';
 

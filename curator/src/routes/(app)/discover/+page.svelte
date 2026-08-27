@@ -30,6 +30,7 @@
 	import type { NoteQuery } from '$lib/types';
 
 	import FilterDiscover from './FilterDiscover.svelte';
+	import { onMount, tick } from 'svelte';
 
 	let query = $state<NoteQuery>({
 		page: 1,
@@ -65,6 +66,12 @@
 		}
 
 		noteIndex++;
+
+		await tick();
+
+		if (note?.id) {
+			await updateLastOpened(note.id);
+		}
 	}
 
 	async function getPreviousNote() {
@@ -73,8 +80,10 @@
 		noteIndex--;
 	}
 
-	$effect(() => {
-		updateLastOpened(noteID);
+	onMount(() => {
+		if (noteID) {
+			updateLastOpened(noteID);
+		}
 	});
 </script>
 
