@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { ScrollState } from 'runed';
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
 
+	import * as Topbar from '$lib/components/Topbar/index';
 	import { getNotes } from '$lib/api/note.remote';
 
 	import {
@@ -13,8 +13,8 @@
 		Search,
 		FilterSearch
 	} from '$lib/components';
-	import * as Topbar from '$lib/components/Topbar/index';
-	import { debouncedSearch, getQueryFromURL } from '$lib/utils.svelte';
+
+	import { getQueryFromURL } from '$lib/utils.svelte';
 	import { type NoteQuery } from '$lib/types';
 
 	const scroll = new ScrollState({
@@ -49,15 +49,7 @@
 <Topbar.Root>
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
 
-	<Search
-		bind:searchInput
-		searchNotes={() => debouncedSearch(searchInput)}
-		clearNote={async () => {
-			await goto(`?page=1`, {
-				keepFocus: true
-			});
-		}}
-	/>
+	<Search bind:searchInput />
 
 	<Topbar.Filter bind:isOpen={isFilterSearch} />
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
@@ -88,4 +80,4 @@
 	{/if}
 </div>
 
-<FilterSearch bind:isOpen={isFilterSearch} query={newQuery} />
+<FilterSearch bind:isOpen={isFilterSearch} bind:query />

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { ScrollState } from 'runed';
 	import { page } from '$app/state';
-	import { goto } from '$app/navigation';
 
 	import { getNotes, emptyTrash } from '$lib/api/note.remote';
 
@@ -15,8 +14,8 @@
 		Delete
 	} from '$lib/components';
 	import * as Topbar from '$lib/components/Topbar/index';
-	import { debounce, debouncedSearch, getQueryFromURL } from '$lib/utils.svelte';
-	import { NoteQuery } from '$lib/types';
+	import { getQueryFromURL } from '$lib/utils.svelte';
+	import { type NoteQuery } from '$lib/types';
 
 	const scroll = new ScrollState({
 		element: () => scrollEl
@@ -51,18 +50,8 @@
 <Topbar.Root>
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
 	<Topbar.Back />
-
-	<Search
-		bind:searchInput
-		searchNotes={() => debouncedSearch(searchInput)}
-		clearNote={async () => {
-			await goto(`?page=1`, {
-				keepFocus: true
-			});
-		}}
-	/>
+	<Search bind:searchInput />
 	<Topbar.Empty bind:isOpen={isEmptyTrashOpen} />
-
 	<Topbar.Filter bind:isOpen={isFilterSearch} />
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
@@ -92,17 +81,7 @@
 	{/if}
 </div>
 
-<FilterSearch
-	bind:isOpen={isFilterSearch}
-	query={{
-		page: query.page ?? 1,
-		search: query.search ?? '',
-		notebookID: query.notebookID ?? '',
-		tagIDs: [page.params.slug ?? ''],
-		excludedTagIDs: query.excludedTagIDs ?? [],
-		status: 'deleted'
-	}}
-/>
+<FilterSearch bind:isOpen={isFilterSearch} bind:query />
 
 <Delete
 	bind:isOpen={isEmptyTrashOpen}

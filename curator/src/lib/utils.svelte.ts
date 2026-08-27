@@ -106,6 +106,25 @@ export const debouncedSearch = debounce(async (searchInput: string) => {
 	});
 }, 300);
 
+// updates url parameters based on query
+export function updateQueryParams(url: URL, updates: Record<string, string | string[] | null>) {
+	for (const [key, value] of Object.entries(updates)) {
+		url.searchParams.delete(key);
+
+		if (value == null) continue;
+
+		if (Array.isArray(value)) {
+			for (const item of value) {
+				url.searchParams.append(key, item);
+			}
+		} else {
+			url.searchParams.set(key, value);
+		}
+	}
+
+	return url;
+}
+
 type Status = 'active' | 'archived' | 'deleted';
 type Sort = '-created' | '-score';
 // getSearchQuery
