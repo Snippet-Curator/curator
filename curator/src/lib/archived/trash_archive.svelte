@@ -9,7 +9,7 @@
 		signalPageState,
 		saveScrollPosition
 	} from '$lib/utils.svelte';
-	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
+	import { getNotelistState, setNotelistState } from '$lib/archived/db.svelte';
 	import { BulkToolbar, BulkEditBtn, Delete, NoteListContainer } from '$lib/components/';
 	import * as Topbar from '$lib/components/Topbar/index';
 	import type { NoteType } from '$lib/types';

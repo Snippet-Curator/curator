@@ -6,9 +6,6 @@
 
 	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
 
-	// import { setSavedSearch } from '$lib/search.svelte';
-
-	import { setNotebookState, setTagState } from '$lib/db.svelte';
 	import { getMobileState, getMouseState, setMobileState, setMouseState } from '$lib/utils.svelte';
 
 	import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
@@ -24,11 +21,8 @@
 		pb.authStore.loadFromCookie(document.cookie);
 	}
 
-	setTagState();
-	setNotebookState();
 	setMobileState();
 	setMouseState();
-	// setSavedSearch();
 
 	const mobileState = getMobileState();
 	const mouseState = getMouseState();
@@ -51,7 +45,7 @@
 	const tags = $derived(allTags?.rootTags ?? []);
 	const inbox = $derived(await getInbox());
 	const inboxCount = $derived(inbox?.count ?? 0);
-	const inboxID = $derived(inbox?.id);
+	const inboxID = $derived(inbox?.id ?? '');
 
 	$effect(() => {
 		window.addEventListener('resize', updateScreenWidth);

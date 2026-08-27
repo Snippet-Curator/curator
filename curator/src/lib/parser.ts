@@ -4,21 +4,18 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import type { EnNote, EnMedia, EnResource, Resource, PError } from './types';
-import { uploadFileToPocketbase } from '$lib/db.svelte';
+import { uploadFileToPocketbase } from '$lib/utils';
 import { pb } from '$lib/pocketbase';
 import { tryCatch } from './utils.svelte';
 import type { RecordModel } from 'pocketbase';
 import {
 	addAsOnlyFileToRecord,
 	addMediaToContent,
-	addResourcesToRecord,
 	addThumbnailToRecord,
 	createDescription,
 	createThumbnail,
-	deleteAllAttachments,
 	getFileHash,
 	getMimeFromName,
-	getVideoThumb,
 	makeResourceFromFile,
 	mergeResources,
 	parser,

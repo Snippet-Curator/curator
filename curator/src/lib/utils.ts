@@ -3,7 +3,6 @@ import { twMerge } from 'tailwind-merge';
 import SparkMD5 from 'spark-md5';
 import { tryCatch } from './utils.svelte';
 import type { Resource } from './types';
-import { uploadFileToPocketbase } from '$lib/db.svelte';
 import { pb } from '$lib/pocketbase';
 import { notesCollection, baseURL, pbURL } from './const';
 // import sanitizeHTML from 'sanitize-html';
@@ -30,6 +29,25 @@ export function replacePbUrl(content: string) {
 	if (!content) return '';
 	if (pbURL == 'http://127.0.0.1:8090') return content;
 	return content.replace(/http:\/\/127\.0\.0\.1:8090/g, pbURL);
+}
+
+/**
+ * Uploads file to pocketbase and returns URL
+ */
+export async function uploadFileToPocketbase(recordID: string, file: File) {
+	// upload to database
+	const { data: record, error } = await tryCatch(
+		pb.collection(notesCollection).update(recordID, {
+			'attachments+': [file]
+		})
+	);
+
+	if (error) {
+		console.error('Error uploading file: ', error.message, error.data);
+		return '';
+	}
+
+	return `${baseURL}\/${notesCollection}\/${recordID}\/${record.attachments.at(-1)}`;
 }
 
 // ─────────────────────────────

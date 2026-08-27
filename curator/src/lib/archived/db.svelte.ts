@@ -9,9 +9,9 @@ import {
 	type NoteRecord,
 	type PError,
 	type NoteType
-} from './types';
+} from '../types';
 
-import { tryCatch } from './utils.svelte';
+import { tryCatch } from '../utils.svelte';
 import {
 	superUser,
 	superUserPass,
@@ -24,14 +24,14 @@ import {
 	inboxNotebook,
 	baseURL,
 	settingCollection
-} from './const';
+} from '../const';
 import {
 	addThumbnailToRecord,
 	createMergedNoteData,
 	createNewResources,
 	mergeContents
-} from './utils';
-import { pb } from './pocketbase';
+} from '../utils';
+import { pb } from '../pocketbase';
 
 // removed FTS temporarily due to performance issues
 // const re = new RegExp('/api/collections/notes/records?filter=');

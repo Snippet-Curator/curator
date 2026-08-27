@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 
 	import { pb } from '$lib/pocketbase';
-	import { type NotelistState, getNotebookState, getTagState } from '$lib/db.svelte';
+	import { type NotelistState, getNotebookState, getTagState } from '$lib/archived/db.svelte';
 	import { Delete, EditNotebook, EditBulkTags } from '$lib/components/';
 
 	import BulkNotebook from '../components/BulkEditBar/bulk-notebook.svelte';

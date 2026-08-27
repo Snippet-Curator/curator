@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Pagination, NoteList, BulkToolbar } from '$lib/components/';
 	import type { Snippet } from 'svelte';
-	import { type NotelistState } from '$lib/db.svelte';
+	import { type NotelistState } from '$lib/archived/db.svelte';
 	import { type MouseState } from '$lib/utils.svelte';
 
 	type Props = {

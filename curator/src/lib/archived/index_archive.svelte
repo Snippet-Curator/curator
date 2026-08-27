@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 
-	import { getNotelistState, setNotelistState } from '$lib/db.svelte';
+	import { getNotelistState, setNotelistState } from '$lib/archived/db.svelte';
 	import {
 		NoteListContainer,
 		Search,

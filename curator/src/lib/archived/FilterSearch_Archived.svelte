@@ -4,7 +4,7 @@
 	import * as Dialog from '$lib/components/ui/dialog/index';
 
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
-	import { getNotebookState, getTagState } from '$lib/db.svelte';
+	import { getNotebookState, getTagState } from '$lib/archived/db.svelte';
 	// import {
 	// 	getSearchState,
 	// 	SavedSearch,
