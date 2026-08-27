@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { NoteContent, Delete, EditNotebook, EditTags, Navbar, EditNote } from '$lib/components/';
+	import {
+		NoteContent,
+		Delete,
+		EditNotebook,
+		EditTags,
+		Navbar,
+		EditNote,
+		NoteLoading
+	} from '$lib/components/';
 
 	import * as Topbar from '$lib/components/Topbar/index';
 	import { getMobileState } from '$lib/utils.svelte';
@@ -20,9 +28,9 @@
 	} from '$lib/api/note.remote';
 	import type { NoteQuery } from '$lib/types';
 
-	// import FilterDiscover from './FilterDiscover.svelte';
+	import FilterDiscover from './FilterDiscover.svelte';
 
-	const query: NoteQuery = {
+	let query = $state<NoteQuery>({
 		page: 1,
 		search: '',
 		notebookID: '',
@@ -32,7 +40,7 @@
 		excludedTagIDs: [],
 		status: 'active',
 		sort: '-score'
-	};
+	});
 
 	const mobileState = getMobileState();
 
@@ -63,10 +71,6 @@
 
 		noteIndex--;
 	}
-
-	$effect(() => {
-		console.log(noteIndex);
-	});
 </script>
 
 {#if note}
@@ -143,7 +147,7 @@
 	</Navbar>
 {:else}
 	<div class="grid h-screen place-items-center">
-		<!-- <NoteLoading /> -->
+		<NoteLoading />
 		<br />
 	</div>
 {/if}
@@ -188,11 +192,11 @@
 		}}
 	></EditNote>
 
-	<!-- <FilterDiscover
+	<FilterDiscover
+		bind:query
 		bind:isOpen={isFilterSearch}
-		search={async (customFilters) => {
-			await noteState.getDiscoverNoteList(customFilters, 1);
-			await noteState.getDiscoverNote(0);
+		search={() => {
+			noteIndex = 0;
 		}}
-	/> -->
+	/>
 {/if}

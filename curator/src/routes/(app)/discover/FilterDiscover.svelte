@@ -1,46 +1,47 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-
 	import * as Dialog from '$lib/components/ui/dialog/index';
 
+	import { getAllNotebooks } from '$lib/api/notebook.remote';
+	import { getAllTags } from '$lib/api/tag.remote';
+	import type { NoteQuery } from '$lib/types';
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
-	import { getNotebookState, getTagState } from '$lib/db.svelte';
-	import { getSearchState, type SearchState } from './discover.svelte';
+	import { tick } from 'svelte';
 
 	type Props = {
 		isOpen: boolean;
-		search: (customFilter: string) => void;
+		query: NoteQuery;
+		search: () => void;
 	};
 
-	let { isOpen = $bindable(), search }: Props = $props();
+	let { isOpen = $bindable(), query = $bindable(), search }: Props = $props();
 
-	let searchState = $state<SearchState>();
+	const allNotebooks = $derived(await getAllNotebooks());
+	const allTags = $derived(await getAllTags());
 
-	const notebookState = getNotebookState();
-	const tagState = getTagState();
+	const notebooks = $derived(allNotebooks?.flatNotebooks ?? []);
+	const tags = $derived(allTags?.flatTags ?? []);
 
-	const notebooks = $derived(notebookState.flatNotebooks);
-	const tags = $derived(tagState.flatTags);
+	let searchInput = $state(query.search ?? '');
+	let searchNotebookID = $state(query.notebookID ?? '');
+	let searchTagIdArray = $state<string[]>(query.tagIDs ?? []);
+	let searchExcludeTagIdArray = $state<string[]>(query.excludedTagIDs ?? []);
 
-	let filterNotebookID = $state(searchState?.searchNotebookID || '');
-	let filterTagIdArray = $state<string[]>([]);
-	let filterExcludeTagIdArray = $state<string[]>([]);
-
-	function submitForm() {
-		if (!searchState) return;
-		searchState.searchTerm = searchState.searchInput;
-		searchState.searchNotebookID = filterNotebookID;
-		searchState.selectedTagIdArray = filterTagIdArray;
-		searchState.selectedExcludeTagIdArray = filterExcludeTagIdArray;
-		searchState.makeFilterQuery(searchState.searchInput);
-		console.log('searchState', searchState);
-		search(searchState.customFilter);
+	async function submitForm() {
 		isOpen = false;
+		await tick();
+		query = {
+			page: 1,
+			search: searchInput ?? '',
+			notebookID: searchNotebookID ?? '',
+			tagIDs: searchTagIdArray,
+			fullContent: query.fullContent ?? false,
+			fullTextSearch: query.fullTextSearch ?? false,
+			excludedTagIDs: searchExcludeTagIdArray,
+			status: 'active',
+			sort: query.sort ?? '-score'
+		};
+		search();
 	}
-
-	onMount(() => {
-		searchState = getSearchState();
-	});
 </script>
 
 <Dialog.Root open={isOpen}>
@@ -49,7 +50,7 @@
 			e.preventDefault();
 			isOpen = false;
 		}}
-		class="scrollbar-thin max-h-full max-w-4xl overflow-y-auto"
+		class="max-h-full max-w-4xl scrollbar-thin overflow-y-auto"
 	>
 		<Dialog.Header>
 			<Dialog.Title>Filter Discovery</Dialog.Title>
@@ -64,12 +65,12 @@
 				type="text"
 				class="input col-span-8 col-start-4 w-full"
 				placeholder="Search title..."
-				bind:value={searchState.searchInput}
+				bind:value={searchInput}
 			/>
 
 			<button
 				onclick={() => {
-					searchState.searchInput = '';
+					searchInput = '';
 				}}
 				class="btn col-span-1">Clear</button
 			>
@@ -81,10 +82,10 @@
 			</div>
 
 			<div class="col-span-8 w-full text-right">
-				<SelectNotebook {notebooks} bind:selectedNotebookID={filterNotebookID} />
+				<SelectNotebook {notebooks} bind:selectedNotebookID={searchNotebookID} />
 			</div>
 
-			<button onclick={() => (filterNotebookID = '')} class="btn col-span-1">Clear</button>
+			<button onclick={() => (searchNotebookID = '')} class="btn col-span-1">Clear</button>
 		</div>
 
 		<div class="gap-x-golden-md grid grid-cols-12 items-start">
@@ -92,7 +93,7 @@
 				<legend class="fieldset-legend">Tags</legend>
 			</div>
 			<div class="col-span-9 col-start-4 text-right">
-				<SelectTags {tags} bind:selectedTagIdArray={filterTagIdArray} />
+				<SelectTags {tags} bind:selectedTagIdArray={searchTagIdArray} />
 			</div>
 		</div>
 
@@ -101,7 +102,7 @@
 				<legend class="fieldset-legend">Exclude Tags</legend>
 			</div>
 			<div class="col-span-9 col-start-4 text-right">
-				<SelectTags {tags} bind:selectedTagIdArray={filterExcludeTagIdArray} />
+				<SelectTags {tags} bind:selectedTagIdArray={searchExcludeTagIdArray} />
 			</div>
 		</div>
 
