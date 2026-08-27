@@ -5,7 +5,7 @@
 	import { page as pageState } from '$app/state';
 	import { onDestroy, onMount } from 'svelte';
 
-	import { getMobileState } from '$lib/utils.svelte';
+	import { getMobileState } from '$lib/state/ui.svelte';
 
 	type Props = {
 		currentPage: number;

@@ -14,7 +14,7 @@
 		changeDescription,
 		changeThumbnail,
 		changeSources,
-		changeTags
+		updateTags
 	} from '$lib/api/note.remote';
 	import { replacePbUrl } from '$lib/utils';
 	import { getSetting } from '$lib/api/setting.remote';
@@ -199,7 +199,7 @@
 			bind:isOpen={isEditTagsOpen}
 			currentTags={selectedNoteTags}
 			update={async (selectedTags) => {
-				await changeTags({ noteID: selectedNoteID, selectedTags });
+				await updateTags({ noteID: selectedNoteID, selectedTags });
 				update();
 				selectedNote = await getNote(selectedNoteID).refresh();
 			}}

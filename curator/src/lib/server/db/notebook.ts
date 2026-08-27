@@ -1,5 +1,5 @@
 import PocketBase from 'pocketbase';
-import { tryCatch } from '$lib/utils.svelte';
+import { tryCatch } from '$lib/utils';
 import {
 	notebooksCollection,
 	notesCollection,

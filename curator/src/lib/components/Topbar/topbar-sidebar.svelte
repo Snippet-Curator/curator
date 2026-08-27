@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getMobileState } from '$lib/utils.svelte';
+	import { getMobileState } from '$lib/state/ui.svelte';
 	import { PanelLeft } from 'lucide-svelte';
 
 	const mobileState = getMobileState();

@@ -19,7 +19,7 @@
 	import BulkArchive from './bulk-archive.svelte';
 	import BulkDelete from './bulk-delete.svelte';
 	import BulkMerge from './bulk-merge.svelte';
-	import { getMouseState } from '$lib/utils.svelte';
+	import { getMouseState } from '$lib/state/ui.svelte';
 	import type { Note } from '$lib/types';
 
 	type Props = {

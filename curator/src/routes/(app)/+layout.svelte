@@ -6,7 +6,12 @@
 
 	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
 
-	import { getMobileState, getMouseState, setMobileState, setMouseState } from '$lib/utils.svelte';
+	import {
+		getMobileState,
+		getMouseState,
+		setMobileState,
+		setMouseState
+	} from '$lib/state/ui.svelte';
 
 	import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
 	import { getAllTags } from '$lib/api/tag.remote';
@@ -48,7 +53,6 @@
 	const inbox = $derived(await getInbox());
 	const inboxCount = $derived(inbox?.count ?? 0);
 	const inboxID = $derived(inbox?.id ?? '');
-	console.log(inbox);
 
 	onMount(async () => {
 		await pb.collection('notes').subscribe('*', async () => {

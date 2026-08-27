@@ -1,6 +1,6 @@
 import PocketBase from 'pocketbase';
 
-import { tryCatch } from '$lib/utils.svelte';
+import { tryCatch } from '$lib/utils';
 import { type PError, type Setting } from '$lib/types';
 import { settingCollection } from '$lib/const';
 

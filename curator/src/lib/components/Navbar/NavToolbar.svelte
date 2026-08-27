@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getMobileState } from '$lib/utils.svelte';
+	import { getMobileState } from '$lib/state/ui.svelte';
 	import { cn } from '$lib/utils.js';
 
 	let { children, class: className = '' } = $props();
@@ -8,7 +8,7 @@
 </script>
 
 {#if mobileState.isMobile}
-	<div class={cn('bottom-15 fixed right-8 z-30', className)}>
+	<div class={cn('fixed right-8 bottom-15 z-30', className)}>
 		{@render children()}
 	</div>
 {/if}

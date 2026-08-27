@@ -13,7 +13,7 @@
 		Search,
 		FilterSearch
 	} from '$lib/components';
-	import { getQueryFromURL } from '$lib/utils.svelte';
+	import { getQueryFromURL } from '$lib/utils';
 
 	const scroll = new ScrollState({
 		element: () => scrollEl

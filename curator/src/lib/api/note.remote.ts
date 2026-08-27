@@ -43,13 +43,13 @@ export const changeNoteNotebook = command(
 	}
 );
 
-export const changeTags = command(
+export const updateTags = command(
 	v.object({
 		noteID: v.string(),
 		selectedTags: v.array(v.string())
 	}),
 	({ noteID, selectedTags }) => {
-		db.changeTags(getPB(), noteID, selectedTags);
+		db.updateTags(getPB(), noteID, selectedTags);
 	}
 );
 
@@ -220,16 +220,16 @@ export const removeTagFromNotes = command(
 );
 
 export const clearTagsFromNotes = command(v.array(v.string()), (selectedNotesID) => {
-	db.clearTagsFromNotes(getPB(), selectedNotesID);
+	db.updateTagsForNotes(getPB(), selectedNotesID, []);
 });
 
-export const changeTagsFromNotes = command(
+export const updateTagsForNotes = command(
 	v.object({
 		selectedNotesID: v.array(v.string()),
 		selectedTagsID: v.array(v.string())
 	}),
 	({ selectedNotesID, selectedTagsID }) => {
-		db.changeTagsFromNotes(getPB(), selectedNotesID, selectedTagsID);
+		db.updateTagsForNotes(getPB(), selectedNotesID, selectedTagsID);
 	}
 );
 

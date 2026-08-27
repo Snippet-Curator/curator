@@ -1,17 +1,8 @@
-import { tryCatch } from '$lib/utils.svelte';
-
 import PocketBase from 'pocketbase';
 
-import { pbURL, notesCollection, viewNotesCollection, viewNotebooksCollection } from '$lib/const';
+import { notesCollection, viewNotesCollection, viewNotebooksCollection } from '$lib/const';
 import { type Note, type NoteQuery } from '$lib/types';
-import { mergeContents } from '$lib/utils';
-
-export function createPB(cookie: string) {
-	const pb = new PocketBase(pbURL);
-	pb.authStore.loadFromCookie(cookie);
-
-	return pb;
-}
+import { mergeContents, tryCatch } from '$lib/utils';
 
 export async function getCurrentNotebook(pb: PocketBase, notebookID: string) {
 	const { data, error } = await tryCatch(pb.collection(viewNotebooksCollection).getOne(notebookID));
@@ -66,162 +57,6 @@ export async function getNotes(pb: PocketBase, query: NoteQuery) {
 	return data;
 }
 
-export async function getDiscoverNoteList(pb: PocketBase, query: NoteQuery) {
-	const { data, error } = await tryCatch(
-		pb.collection(viewNotesCollection).getList(page, 30, {
-			sort: '-score',
-			filter: filter
-		})
-	);
-
-	if (error) {
-		console.error('Error getting discover note: ', error.data);
-	}
-	return data;
-}
-
-export async function getDiscoverNote(pb: PocketBase, index = 0) {
-	// const start3 = performance.now();
-	this.noteID = this.noteList.items[index].id;
-
-	// const start = performance.now();
-	const { data: record, error: recordError } = await tryCatch(
-		pb.collection(notesCollection).getFirstListItem(`id="${this.noteID}"`, {
-			expand: 'notebook,tags'
-		})
-	);
-	// const end = performance.now();
-
-	// console.log(`Fetched new note  in ${end - start} ms`);
-
-	if (recordError) {
-		console.error('Error getting discover note: ', recordError.data);
-	}
-
-	if (!record) {
-		console.log('No discovery note found');
-	}
-
-	// const start2 = performance.now();
-	this.note = record;
-
-	this.updateLastOpened();
-	// const end2 = performance.now();
-	// console.log(`Updated this.note  in ${end2 - start2} ms`);
-	// const end3 = performance.now();
-	// console.log(`Discover function  in ${end3 - start3} ms`);
-}
-
-export async function getByPage(pb: PocketBase, newPage = 1) {
-	const start = performance.now();
-
-	const { data, error } = await tryCatch(
-		pb.collection(viewNotesCollection).getList(newPage, 24, {
-			sort: '-created',
-			filter: `status="active"`,
-			expand: 'notebook, tags'
-		})
-	);
-
-	if (error) {
-		console.error('Unable to get notes by page ', error.message);
-	}
-
-	const end = performance.now();
-	// console.log(`Default notes seen in ${end - start} ms`);
-
-	return data;
-}
-
-export async function getByNotebook(pb: PocketBase, notebookID: string, page: number) {
-	const { data, error } = await tryCatch(
-		pb.collection(viewNotesCollection).getList(page, 24, {
-			filter: `notebook="${notebookID}" && status="active"`,
-			expand: 'tags,notebook',
-			sort: '-created'
-		})
-	);
-
-	if (error) {
-		console.error('Error getting notes: ', error);
-	}
-
-	return data;
-}
-
-export async function getArchived(pb: PocketBase, page: number) {
-	const { data, error } = await tryCatch(
-		pb.collection(viewNotesCollection).getList(page, 24, {
-			filter: `status="archived"`,
-			expand: 'tags,notebook',
-			sort: '-created'
-		})
-	);
-
-	if (error) {
-		console.error('Error getting notes: ', error);
-	}
-
-	return data;
-}
-
-export async function getDeleted(pb: PocketBase, page: number) {
-	const { data, error } = await tryCatch(
-		pb.collection(viewNotesCollection).getList(page, 24, {
-			filter: `status="deleted"`,
-			expand: 'tags,notebook',
-			sort: '-created'
-		})
-	);
-
-	if (error) {
-		console.error('Error getting notes: ', error);
-	}
-
-	return data;
-}
-
-export async function getByTag(pb: PocketBase, tagID: string, page: number) {
-	const { data, error } = await tryCatch(
-		pb.collection(viewNotesCollection).getList(page, 24, {
-			filter: `tags~"${tagID}" && status="active"`,
-			expand: 'tags,notebook',
-			sort: '-created'
-		})
-	);
-
-	if (error) {
-		console.error('Error getting notes: ', error);
-	}
-
-	return data;
-}
-
-export async function getByFilter(pb: PocketBase, customFilters: string, page: number) {
-	console.log('custom filter: ', customFilters);
-	const start = performance.now();
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).getList(page, 24, {
-			sort: '-created',
-			expand: 'tags,notebook',
-			filter: customFilters
-		})
-	);
-
-	if (error) {
-		console.error('Unable to get notes by filter ', error.message);
-		return;
-	}
-	const end = performance.now();
-	console.log(`search complete in ${end - start} ms`);
-
-	return data;
-}
-
-export async function getOneByName(pb: PocketBase) {
-	return await pb.collection(notesCollection).getFirstListItem(`name='${name}'`);
-}
-
 export async function emptyTrash(pb: PocketBase) {
 	const { data, error } = await tryCatch(
 		pb.collection(viewNotesCollection).getFullList({
@@ -254,7 +89,6 @@ export async function softDeleteMultiple(pb: PocketBase, recordIDs: string[]) {
 			}
 		})
 	);
-	// await this.getDefault(this.clickedPage)
 }
 
 export async function unSoftDeleteMultiple(pb: PocketBase, recordIDs: string[]) {
@@ -283,7 +117,6 @@ export async function archiveMultiple(pb: PocketBase, recordIDs: string[]) {
 			}
 		})
 	);
-	// await this.getDefault(this.clickedPage)
 }
 
 export async function unArchiveMultiple(pb: PocketBase, recordIDs: string[]) {
@@ -298,7 +131,6 @@ export async function unArchiveMultiple(pb: PocketBase, recordIDs: string[]) {
 			}
 		})
 	);
-	// await this.getDefault(this.clickedPage)
 }
 
 export async function changeNotesNotebook(
@@ -338,7 +170,6 @@ export async function addTagToNotes(
 			}
 		})
 	);
-	// await this.getDefault(this.clickedPage)
 }
 
 export async function removeTagFromNotes(
@@ -360,22 +191,7 @@ export async function removeTagFromNotes(
 	);
 }
 
-export async function clearTagsFromNotes(pb: PocketBase, selectedNotesID: string[]) {
-	await Promise.all(
-		selectedNotesID.map(async (noteID) => {
-			const { data, error } = await tryCatch(
-				pb.collection(notesCollection).update(noteID, {
-					tags: []
-				})
-			);
-			if (error) {
-				console.error('Error clearing tags: ', noteID, error);
-			}
-		})
-	);
-}
-
-export async function changeTagsFromNotes(
+export async function updateTagsForNotes(
 	pb: PocketBase,
 	selectedNotesID: string[],
 	selectedTagsID: string[]
@@ -498,7 +314,7 @@ export async function changeNoteNotebook(pb: PocketBase, noteID: string, newNote
 	}
 }
 
-export async function changeTags(pb: PocketBase, noteID: string, selectedTags: string[]) {
+export async function updateTags(pb: PocketBase, noteID: string, selectedTags: string[]) {
 	const { data, error } = await tryCatch(
 		pb.collection(notesCollection).update(noteID, {
 			tags: selectedTags
@@ -539,32 +355,6 @@ export async function changeRating(pb: PocketBase, noteID: string, newRating: nu
 	);
 	if (error) {
 		console.error('Error changing rating: ', noteID, error.message);
-	}
-}
-
-export async function upvoteWeight(pb: PocketBase, noteID: string) {
-	const newWeight = note.weight + 1;
-
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
-			weight: newWeight
-		})
-	);
-	if (error) {
-		console.error('Error changing weight: ', noteID, error.message);
-	}
-}
-
-export async function downvoteWeight(pb: PocketBase, noteID: string) {
-	const newWeight = note.weight - 1;
-
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
-			weight: newWeight
-		})
-	);
-	if (error) {
-		console.error('Error changing weight: ', noteID, error.message);
 	}
 }
 
@@ -746,3 +536,31 @@ export async function unshareNote(pb: PocketBase, noteID: string) {
 	}
 	return sharedToken;
 }
+
+// Archived
+
+// export async function upvoteWeight(pb: PocketBase, noteID: string) {
+// 	const newWeight = note.weight + 1;
+
+// 	const { data, error } = await tryCatch(
+// 		pb.collection(notesCollection).update(noteID, {
+// 			weight: newWeight
+// 		})
+// 	);
+// 	if (error) {
+// 		console.error('Error changing weight: ', noteID, error.message);
+// 	}
+// }
+
+// export async function downvoteWeight(pb: PocketBase, noteID: string) {
+// 	const newWeight = note.weight - 1;
+
+// 	const { data, error } = await tryCatch(
+// 		pb.collection(notesCollection).update(noteID, {
+// 			weight: newWeight
+// 		})
+// 	);
+// 	if (error) {
+// 		console.error('Error changing weight: ', noteID, error.message);
+// 	}
+// }

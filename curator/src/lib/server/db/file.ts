@@ -1,6 +1,6 @@
 import PocketBase from 'pocketbase';
 import { notesCollection, baseURL } from '$lib/const';
-import { tryCatch } from '$lib/utils.svelte';
+import { tryCatch } from '$lib/utils';
 
 export async function uploadFileToPocketbase(pb: PocketBase, recordID: string, file: File) {
 	// upload to database

@@ -27,7 +27,7 @@
 		changeDescription,
 		changeThumbnail,
 		changeSources,
-		changeTags
+		updateTags
 	} from '$lib/api/note.remote';
 
 	const mobileState = getMobileState();
@@ -157,7 +157,7 @@
 	bind:isOpen={isEditTagsOpen}
 	currentTags={note?.expand?.tags}
 	update={async (selectedTags) => {
-		await changeTags({ noteID, selectedTags });
+		await updateTags({ noteID, selectedTags });
 		getNote(noteID).refresh();
 	}}
 />

@@ -18,13 +18,14 @@
 		changeNoteNotebook,
 		changeRating,
 		changeSources,
-		changeTags,
+		updateTags,
 		changeThumbnail,
 		changeTitle,
 		getNote,
 		getNotes,
 		restoreNote,
-		softDeleteNote
+		softDeleteNote,
+		updateLastOpened
 	} from '$lib/api/note.remote';
 	import type { NoteQuery } from '$lib/types';
 
@@ -71,6 +72,10 @@
 
 		noteIndex--;
 	}
+
+	$effect(() => {
+		updateLastOpened(noteID);
+	});
 </script>
 
 {#if note}
@@ -174,7 +179,7 @@
 		bind:isOpen={isEditTagsOpen}
 		currentTags={note?.expand?.tags}
 		update={async (selectedTags) => {
-			await changeTags({ noteID, selectedTags });
+			await updateTags({ noteID, selectedTags });
 			getNote(noteID).refresh();
 		}}
 	/>

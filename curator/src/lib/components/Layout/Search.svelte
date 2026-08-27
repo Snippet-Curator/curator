@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/state';
-	import { debounce, debouncedSearch, updateQueryParams } from '$lib/utils.svelte';
+	import { debouncedSearch } from '$lib/utils';
 	import { CircleX, Search } from 'lucide-svelte';
 
 	type Props = {
