@@ -142,8 +142,6 @@ export async function createOneNotebookbyName(
 	if (error) {
 		console.error('Error while creating new notebook: ', error.data, error.message);
 	}
-	await this.getAll();
-	await this.getAllCounts();
 }
 
 export async function getOneNotebookByName(pb: PocketBase, notebookName: string) {

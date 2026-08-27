@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { pb } from '$lib/pocketbase';
-	import { tryCatch } from '$lib/utils.svelte';
+	import { tryCatch } from '$lib/utils';
 	import SparkMD5 from 'spark-md5';
 
 	let files = $state();

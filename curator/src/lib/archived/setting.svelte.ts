@@ -1,5 +1,5 @@
 import { pb } from '$lib/pocketbase';
-import { tryCatch } from '$lib/utils.svelte';
+import { tryCatch } from '$lib/utils';
 import { type PError, type Setting } from '$lib/types';
 import { settingCollection } from '$lib/const';
 import { getContext, setContext } from 'svelte';

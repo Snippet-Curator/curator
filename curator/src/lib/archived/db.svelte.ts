@@ -11,7 +11,7 @@ import {
 	type NoteType
 } from '../types';
 
-import { tryCatch } from '../utils.svelte';
+import { tryCatch } from '$lib/utils';
 import {
 	superUser,
 	superUserPass,

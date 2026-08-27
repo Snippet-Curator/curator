@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getMouseState } from '$lib/utils.svelte';
+	import { getMouseState } from '$lib/state/ui.svelte';
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getImportState } from './import.svelte';
 
@@ -34,8 +34,7 @@
 				<textarea
 					placeholder="Paste full youtube URLs or video IDs, one on each line."
 					bind:value={youtubeURLs}
-					class="textarea w-full"
-				></textarea>
+					class="textarea w-full"></textarea>
 
 				<SelectNotebook bind:selectedNotebookID={selectedYoutubeNotebookID} {notebooks} />
 				<SelectTags bind:selectedTagIdArray {tags} />

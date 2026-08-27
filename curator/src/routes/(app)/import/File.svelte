@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { pb } from '$lib/pocketbase';
-	import { getMouseState } from '$lib/utils.svelte';
+	import { getMouseState } from '$lib/state/ui.svelte';
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getImportState } from './import.svelte';
 	import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
@@ -17,7 +16,6 @@
 
 	async function upload() {
 		// avoid updating tags and notebook errors
-		// await pb.collection('notes').unsubscribe();
 		guiUpdate.suppressRefresh = true;
 
 		// setting mouse state
@@ -35,23 +33,7 @@
 			await getInbox().refresh(),
 			await getTotalNotecount().refresh()
 		]);
-		// await tagState.getAll();
-		// await notebookState.getAll();
-		// await notebookState.getInbox();
-		// await notebookState.getAllCounts();
-		// await
-		// await getInbox()
-		// await getTotalNotecount()
 
-		// resubscribe
-		// await pb.collection('notes').subscribe('*', async () => {
-		// 	notebookState.getAll();
-		// 	notebookState.getInbox();
-		// 	notebookState.getAllCounts();
-		// 	tagState.getAll();
-		// });
-
-		// setting mouse state
 		mouseState.isBusy = false;
 	}
 </script>

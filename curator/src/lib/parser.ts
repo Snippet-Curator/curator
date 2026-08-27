@@ -6,7 +6,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import type { EnNote, EnMedia, EnResource, Resource, PError } from './types';
 import { uploadFileToPocketbase } from '$lib/utils';
 import { pb } from '$lib/pocketbase';
-import { tryCatch } from './utils.svelte';
+import { tryCatch } from '$lib/utils';
 import type { RecordModel } from 'pocketbase';
 import {
 	addAsOnlyFileToRecord,

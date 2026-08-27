@@ -2,7 +2,7 @@ import { getKarakeepUser } from '$lib/server/karakeep';
 
 import type { PageServerLoad } from './$types';
 import { fail } from '@sveltejs/kit';
-import { tryCatch } from '$lib/utils.svelte';
+import { tryCatch } from '$lib/utils';
 
 export const load: PageServerLoad = ({ locals }) => {
 	const user = locals.user;

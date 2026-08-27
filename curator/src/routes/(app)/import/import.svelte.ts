@@ -1,5 +1,5 @@
 import { EnImport, fileImport, htmlImport, youtubeImport } from '$lib/parser';
-import { tryCatch } from '$lib/utils.svelte';
+import { tryCatch } from '$lib/utils';
 import { getContext, setContext } from 'svelte';
 
 type UploadStatus = 'stopped' | 'in progress' | 'error' | 'completed';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { getMouseState } from '$lib/utils.svelte';
+	import { getMouseState } from '$lib/state/ui.svelte';
 	import { getImportState } from './import.svelte';
 
 	let { form } = $props();

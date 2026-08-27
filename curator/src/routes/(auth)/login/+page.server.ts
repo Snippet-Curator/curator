@@ -1,4 +1,4 @@
-import { tryCatch } from '$lib/utils.svelte';
+import { tryCatch } from '$lib/utils';
 import { fail, redirect } from '@sveltejs/kit';
 
 export const actions = {

@@ -37,6 +37,7 @@ export function replacePbUrl(content: string) {
  */
 export async function uploadFileToPocketbase(recordID: string, file: File) {
 	// upload to database
+	console.log('file', file);
 	const { data: record, error } = await tryCatch(
 		pb.collection(notesCollection).update(recordID, {
 			'attachments+': [file]
@@ -498,7 +499,9 @@ export async function createNewResources(recordID: string, records: RecordModel[
 		if (!record.resources) continue;
 		for (const resource of record.resources) {
 			if (!resource) continue;
+			console.log('before createonenewresource');
 			const newResource = await createOneNewResource(recordID, resource);
+			console.log('aftercreatingonenewreousrce');
 			newResources.push(newResource);
 		}
 	}

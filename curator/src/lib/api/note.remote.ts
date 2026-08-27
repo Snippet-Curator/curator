@@ -186,7 +186,12 @@ export const unSoftDeleteMultiple = command(v.array(v.string()), (recordIDs: str
 });
 
 export const mergeNotes = command(v.array(v.string()), (selectedNotesID: string[]) => {
-	db.mergeNotes(getPB(), selectedNotesID);
+	try {
+		db.mergeNotes(getPB(), selectedNotesID);
+	} catch (error) {
+		console.error('error merging', error);
+		throw error;
+	}
 });
 
 export const changeNotesNotebook = command(

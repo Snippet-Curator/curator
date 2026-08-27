@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { pb } from '$lib/pocketbase';
-	import { tryCatch } from '$lib/utils.svelte';
+	import { tryCatch } from '$lib/utils';
 
 	let files = $state();
 	const baseURL = 'http://127.0.0.1:8090/api/files/notes/';

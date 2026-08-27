@@ -2,7 +2,13 @@ import PocketBase from 'pocketbase';
 
 import { notesCollection, viewNotesCollection, viewNotebooksCollection } from '$lib/const';
 import { type Note, type NoteQuery } from '$lib/types';
-import { mergeContents, tryCatch } from '$lib/utils';
+import {
+	addThumbnailToRecord,
+	createNewResources,
+	getResourceforThumbGen,
+	tryCatch
+} from '$lib/utils';
+import { mergeNotesContent, createMergedNoteData } from './file';
 
 export async function getCurrentNotebook(pb: PocketBase, notebookID: string) {
 	const { data, error } = await tryCatch(pb.collection(viewNotebooksCollection).getOne(notebookID));
@@ -150,7 +156,6 @@ export async function changeNotesNotebook(
 			}
 		})
 	);
-	// await this.getDefault(this.clickedPage)
 }
 
 export async function addTagToNotes(
@@ -211,8 +216,6 @@ export async function updateTagsForNotes(
 }
 
 export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
-	await pb.collection('notes').unsubscribe();
-
 	let selectedNotes = [];
 
 	for (const selectedNoteID of selectedNotesID) {
@@ -230,9 +233,10 @@ export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
 	if (!selectedNotes || selectedNotes.length < 2) return;
 
 	const [baseNote, ...restNotes] = selectedNotes;
+	console.log('before merge resources');
 	const newResources = await createNewResources(baseNote.id, restNotes);
 	const mergedNoteData = createMergedNoteData(selectedNotes, newResources);
-
+	console.log('after merge resources');
 	const { data: finalNote, error: finalNoteError } = await tryCatch(
 		pb.collection(notesCollection).update(baseNote.id, mergedNoteData)
 	);
@@ -244,7 +248,7 @@ export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
 	// create new thumbnail if doesn't have one
 	if (!baseNote.thumbnail) {
 		try {
-			const thumbResource = getResourceThumbURL(finalNote.resources);
+			const thumbResource = getResourceforThumbGen(finalNote.resources);
 			await addThumbnailToRecord(baseNote.id, thumbResource?.fileURL);
 		} catch (e) {
 			console.log(e);
@@ -474,7 +478,7 @@ export async function appendContent(pb: PocketBase, noteID: string, newContent: 
 	}
 
 	const contentList = [record.content, newContent];
-	const mergedContent = mergeContents(contentList);
+	const mergedContent = mergeNotesContent(contentList);
 
 	const { data, error } = await tryCatch(
 		pb.collection(notesCollection).update(

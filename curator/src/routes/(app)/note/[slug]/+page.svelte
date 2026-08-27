@@ -41,7 +41,7 @@
 	let isPermaDeleteNoteOpen = $state(false);
 	let isShareNoteOpen = $state(false);
 
-	updateLastOpened(page.params.slug ?? '');
+	updateLastOpened(noteID);
 </script>
 
 <Topbar.Root>

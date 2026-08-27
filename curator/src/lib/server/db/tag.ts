@@ -94,6 +94,7 @@ export async function updateOneTagByName(pb: PocketBase, recordID: string, newNa
 	if (error) {
 		console.error('Error while updating tag name: ', error.message, error.data);
 	}
+	return data;
 }
 
 export async function updateOneTagByParent(pb: PocketBase, recordID: string, parentTagID: string) {
