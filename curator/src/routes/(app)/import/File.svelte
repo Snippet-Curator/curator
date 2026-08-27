@@ -3,6 +3,9 @@
 	import { getMouseState } from '$lib/utils.svelte';
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getImportState } from './import.svelte';
+	import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
+	import { guiUpdate } from '$lib/state/ui.svelte';
+	import { getAllTags } from '$lib/api/tag.remote';
 
 	let { flatNotebooks, flatTags } = $props();
 
@@ -14,7 +17,8 @@
 
 	async function upload() {
 		// avoid updating tags and notebook errors
-		await pb.collection('notes').unsubscribe();
+		// await pb.collection('notes').unsubscribe();
+		guiUpdate.suppressRefresh = true;
 
 		// setting mouse state
 		mouseState.isBusy = true;
@@ -24,10 +28,20 @@
 		await importState.importFiles();
 
 		// get initial counts again
+		guiUpdate.suppressRefresh = false;
+		await Promise.all([
+			await getAllNotebooks().refresh(),
+			await getAllTags().refresh(),
+			await getInbox().refresh(),
+			await getTotalNotecount().refresh()
+		]);
 		// await tagState.getAll();
 		// await notebookState.getAll();
 		// await notebookState.getInbox();
 		// await notebookState.getAllCounts();
+		// await
+		// await getInbox()
+		// await getTotalNotecount()
 
 		// resubscribe
 		// await pb.collection('notes').subscribe('*', async () => {

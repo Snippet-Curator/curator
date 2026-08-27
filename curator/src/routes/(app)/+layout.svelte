@@ -13,6 +13,8 @@
 	import { getDefaultSettings } from '$lib/api/setting.remote';
 
 	import { bottomPages } from './links';
+	import { onMount } from 'svelte';
+	import { guiUpdate } from '$lib/state/ui.svelte';
 
 	let { children } = $props();
 
@@ -46,6 +48,20 @@
 	const inbox = $derived(await getInbox());
 	const inboxCount = $derived(inbox?.count ?? 0);
 	const inboxID = $derived(inbox?.id ?? '');
+	console.log(inbox);
+
+	onMount(async () => {
+		await pb.collection('notes').subscribe('*', async () => {
+			if (guiUpdate.suppressRefresh) return;
+
+			await Promise.all([
+				await getAllNotebooks().refresh(),
+				await getAllTags().refresh(),
+				await getInbox().refresh(),
+				await getTotalNotecount().refresh()
+			]);
+		});
+	});
 
 	$effect(() => {
 		window.addEventListener('resize', updateScreenWidth);

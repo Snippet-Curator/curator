@@ -60,7 +60,9 @@
 
 	{#if totalItems && totalItems > 0}
 		<NoteList
-			update={async () => await getNotes(newQuery).refresh()}
+			update={async () => {
+				await getNotes(newQuery).refresh();
+			}}
 			{isBulkEdit}
 			bind:selectedNotesID
 			notes={result}

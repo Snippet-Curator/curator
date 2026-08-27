@@ -109,7 +109,7 @@ export async function getInbox(pb: PocketBase) {
 	return {
 		inbox,
 		id: inbox.id,
-		count: inbox.count
+		count: inbox.note_count
 	};
 }
 
