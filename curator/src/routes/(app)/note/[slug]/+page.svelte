@@ -11,7 +11,7 @@
 	} from '$lib/components/';
 	import * as Topbar from '$lib/components/Topbar/index';
 
-	import { getMobileState } from '$lib/utils.svelte';
+	import { getMobileState } from '$lib/state/ui.svelte';
 	import {
 		changeRating,
 		getNote,

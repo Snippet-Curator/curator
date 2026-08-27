@@ -12,7 +12,7 @@
 		Search,
 		FilterSearch
 	} from '$lib/components';
-	import { getQueryFromURL } from '$lib/utils.svelte';
+	import { getQueryFromURL } from '$lib/utils';
 	import { type NoteQuery } from '$lib/types';
 
 	const scroll = new ScrollState({
