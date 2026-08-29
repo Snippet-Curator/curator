@@ -1,4 +1,5 @@
 // ------ Pocketbase ------
+
 // attachments
 export type Resource = {
 	name: string;
@@ -134,7 +135,19 @@ export type NoteQuery = {
 	sort: '-created' | '-score';
 };
 
-// ------ Parser ------
+// ------ Parser and Import ------
+
+export type ImportRecord = {
+	id: string;
+	type: string;
+	status: 'processing' | 'pending' | 'completed' | 'failed';
+	progress: number;
+	filename: string;
+	error: string;
+	createdBy: User;
+};
+
+export type UpdateImportData = Partial<ImportRecord>;
 
 export type EnResource = {
 	data: {

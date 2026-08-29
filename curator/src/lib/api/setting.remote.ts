@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import { command, query } from '$app/server';
 
 import * as db from '$lib/server/db/setting';
-import { getPB } from './utils';
+import { getPB } from '$lib/server/pocketbase';
 
 const primitive = v.union([v.string(), v.number(), v.boolean()]);
 

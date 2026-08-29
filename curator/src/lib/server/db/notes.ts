@@ -1,14 +1,15 @@
 import PocketBase from 'pocketbase';
 
-import { notesCollection, viewNotesCollection, viewNotebooksCollection } from '$lib/const';
+import { notesCollection, viewNotesCollection, viewNotebooksCollection } from '$lib/server/const';
 import { type Note, type NoteQuery } from '$lib/types';
 import {
 	addThumbnailToRecord,
 	createNewResources,
 	getResourceforThumbGen,
-	tryCatch
-} from '$lib/utils';
-import { mergeNotesContent, createMergedNoteData } from './file';
+	mergeNotesContent,
+	createMergedNoteData
+} from '$lib/server/utils';
+import { tryCatch } from '$lib/utils';
 
 export async function getCurrentNotebook(pb: PocketBase, notebookID: string) {
 	const { data, error } = await tryCatch(pb.collection(viewNotebooksCollection).getOne(notebookID));

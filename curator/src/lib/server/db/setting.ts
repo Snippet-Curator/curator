@@ -2,7 +2,7 @@ import PocketBase from 'pocketbase';
 
 import { tryCatch } from '$lib/utils';
 import { type PError, type Setting } from '$lib/types';
-import { settingCollection } from '$lib/const';
+import { settingCollection } from '$lib/server/const';
 
 /**
  * return setting values by type

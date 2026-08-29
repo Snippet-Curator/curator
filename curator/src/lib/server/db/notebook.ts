@@ -6,7 +6,7 @@ import {
 	viewNotesCollection,
 	viewNotebooksCollection,
 	inboxNotebook
-} from '$lib/const';
+} from '$lib/server/const';
 import { type Notebook } from '$lib/types';
 
 export async function makeDefaultNotebook(pb: PocketBase) {

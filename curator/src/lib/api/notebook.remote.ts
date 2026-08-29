@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import { command, query } from '$app/server';
 
 import * as db from '$lib/server/db/notebook';
-import { getPB } from './utils';
+import { getPB } from '$lib/server/pocketbase';
 
 export const makeDefaultNotebook = query(() => {
 	return db.makeDefaultNotebook(getPB());

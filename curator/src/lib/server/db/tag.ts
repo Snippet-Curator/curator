@@ -1,7 +1,7 @@
 import PocketBase from 'pocketbase';
 
 import { tryCatch } from '$lib/utils';
-import { viewTagsCollectionName, tagsCollection } from '$lib/const';
+import { viewTagsCollectionName, tagsCollection } from '$lib/server/const';
 import { type Tag } from '$lib/types';
 
 export async function getAllTags(pb: PocketBase) {

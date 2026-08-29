@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import { command, query } from '$app/server';
 
 import * as db from '$lib/server/db/notes';
-import { getPB } from './utils';
+import { getPB } from '$lib/server/pocketbase';
 
 const noteQuerySchema = v.object({
 	page: v.number(),
