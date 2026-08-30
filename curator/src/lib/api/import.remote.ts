@@ -1,15 +1,25 @@
 import * as v from 'valibot';
 import { command } from '$app/server';
 import { processImport } from '$lib/server/imports/processor';
-import { getPB } from '$lib/server/pocketbase';
-import { createImport, updateImport } from '$lib/server/db/imports';
 
-export const startImport = command(v.file(), async (file) => {
-	const importRecord = await createImport(getPB(), file);
+export const startImport = command(
+	v.object({
+		file: v.file(),
+		selectedNotebookID: v.string(),
+		selectedTagIdArray: v.array(v.string())
+	}),
+	async ({ file, selectedNotebookID, selectedTagIdArray }) => {
+		await processImport({ file, type: 'file', selectedNotebookID, selectedTagIdArray });
+	}
+);
 
-	await processImport(getPB(), importRecord.id).catch(async (error) => {
-		await updateImport(getPB(), importRecord.id, { error: error });
-	});
-
-	return importRecord.id;
-});
+export const startYTImport = command(
+	v.object({
+		url: v.string(),
+		selectedNotebookID: v.string(),
+		selectedTagIdArray: v.array(v.string())
+	}),
+	async ({ url, selectedNotebookID, selectedTagIdArray }) => {
+		await processImport({ type: 'youtube', url, selectedNotebookID, selectedTagIdArray });
+	}
+);

@@ -3,9 +3,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import PocketBase from 'pocketbase';
 
-import { getPB } from '$lib/server/pocketbase';
-
-import type { EnNote, EnMedia, EnResource, Resource, PError } from '$lib/types';
+import type { EnNote, EnMedia, EnResource, Resource, PError, ImportRecord } from '$lib/types';
 import { uploadFileToPocketbase } from '$lib/server/pocketbase';
 import { tryCatch } from '$lib/utils';
 import type { RecordModel } from 'pocketbase';
@@ -21,7 +19,7 @@ import { notesCollection } from '$lib/server/const';
 
 dayjs.extend(customParseFormat);
 
-export class EnImport {
+export class ENEXImport {
 	enNote: EnNote;
 	enMedias: EnMedia[] | null;
 	enResources: EnResource[] | null;
@@ -37,11 +35,18 @@ export class EnImport {
 	description: string | null;
 	selectedNotebookdID: string;
 	selectedTagsID: string[];
+	pb: PocketBase;
 
-	constructor(fileContent: string, selectedNotebookID: string, selectedTagsID: string[]) {
+	constructor(
+		pb: PocketBase,
+		fileContent: string,
+		selectedNotebookID: string,
+		selectedTagIdArrays: string[]
+	) {
+		this.pb = pb;
 		this.recordID = '';
 		this.selectedNotebookdID = selectedNotebookID;
-		this.selectedTagsID = selectedTagsID;
+		this.selectedTagsID = selectedTagIdArrays;
 
 		const { xmlNote, xmlMedia, xmlContent } = this.parseEnex(fileContent);
 
@@ -150,7 +155,7 @@ export class EnImport {
 
 			resource.name = resource.file.name;
 			resource.mime = resource.file.type;
-			resource.fileURL = await uploadFileToPocketbase(getPB(), this.recordID, resource.file);
+			resource.fileURL = await uploadFileToPocketbase(this.pb, this.recordID, resource.file);
 		}
 	}
 
@@ -188,7 +193,7 @@ export class EnImport {
 		const tagList: string[] = [];
 
 		const { data: existingTags, error } = await tryCatch<RecordModel[], PError>(
-			pb.collection('tags').getFullList()
+			this.pb.collection('tags').getFullList()
 		);
 
 		if (error) {
@@ -208,7 +213,7 @@ export class EnImport {
 				tagList.push(record.id);
 			} else {
 				const { data: newTag, error: newTagError } = await tryCatch<RecordModel[], PError>(
-					pb.collection('tags').create({ name: tag.toLowerCase() })
+					this.pb.collection('tags').create({ name: tag.toLowerCase() })
 				);
 
 				if (newTagError) {
@@ -249,7 +254,7 @@ export class EnImport {
 		return resources;
 	}
 
-	async uploadToDB(pb: PocketBase) {
+	async uploadToDB() {
 		const oldTags = await this.addTags(pb);
 		const newTags = this.selectedTagsID || [];
 		const tags = [...oldTags, ...newTags];
@@ -272,7 +277,7 @@ export class EnImport {
 		};
 
 		const { data: record, error } = await tryCatch<RecordModel, PError>(
-			pb.collection(notesCollection).create(skeletonData)
+			this.pb.collection(notesCollection).create(skeletonData)
 		);
 
 		if (error) {
@@ -299,7 +304,7 @@ export class EnImport {
 		};
 
 		const { data: updatedRecord, error: updatedError } = await tryCatch(
-			pb.collection(notesCollection).update(this.recordID, data)
+			this.pb.collection(notesCollection).update(this.recordID, data)
 		);
 
 		if (updatedError) {

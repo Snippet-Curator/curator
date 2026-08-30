@@ -3,8 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-import type { Resource } from '$lib/types';
-import { getPB } from '$lib/server/pocketbase';
+import type { ImportRecord, Resource } from '$lib/types';
 import PocketBase from 'pocketbase';
 
 import { uploadFileToPocketbase } from '$lib/server/pocketbase';
@@ -19,7 +18,7 @@ import { notesCollection } from '$lib/server/const';
 
 dayjs.extend(customParseFormat);
 
-export class htmlImport {
+export class HtmlImport {
 	title: string | 'Untitled';
 	content: string;
 	parsedHTML: Document;
@@ -33,8 +32,14 @@ export class htmlImport {
 	HTMLparser: DOMParser;
 	resources: Resource[];
 	bodyResources: Resource[]; // this is for thumbnail generation
+	pb: PocketBase;
 
-	constructor(fileContent: string, selectedNotebookID: string, selectedTagIdArrays: string[]) {
+	constructor(
+		pb: PocketBase,
+		fileContent: string,
+		selectedNotebookID: string,
+		selectedTagIdArrays: string[]
+	) {
 		this.HTMLparser = new DOMParser();
 		this.content = fileContent;
 		this.parsedHTML = this.parseHTML(fileContent);
@@ -48,6 +53,7 @@ export class htmlImport {
 		this.selectedTagIdArrays = selectedTagIdArrays;
 		this.resources = [];
 		this.bodyResources = [];
+		this.pb = pb;
 	}
 
 	parseHTML(fileContent: string) {
@@ -180,7 +186,7 @@ export class htmlImport {
 			}
 
 			// upload to database
-			const fileURL = await uploadFileToPocketbase(getPB(), this.recordID, resourceFile);
+			const fileURL = await uploadFileToPocketbase(this.pb, this.recordID, resourceFile);
 
 			// add to list of resources
 			const resource = makeResourceFromFile(resourceFile, hash, fileURL);
@@ -205,7 +211,7 @@ export class htmlImport {
 		this.content = this.content.replace(matchPattern, '');
 	}
 
-	async uploadToDB(pb: PocketBase) {
+	async uploadToDB() {
 		const sources = [
 			{
 				source: this.source,
@@ -223,11 +229,11 @@ export class htmlImport {
 			last_score_updated: new Date().toISOString(),
 			sources: JSON.stringify(sources),
 			status: 'active',
-			user: pb.authStore.record?.id
+			user: this.pb.authStore.record?.id
 		};
 
 		const { data: record, error } = await tryCatch(
-			pb.collection(notesCollection).create(skeletonData)
+			this.pb.collection(notesCollection).create(skeletonData)
 		);
 
 		if (error) {
@@ -243,7 +249,7 @@ export class htmlImport {
 
 		await this.replaceResources(this.content);
 		this.stripCSP();
-		const thumbResource = await createThumbnail(getPB(), this.recordID, this.bodyResources);
+		const thumbResource = await createThumbnail(this.pb, this.recordID, this.bodyResources);
 		const mergedResource = mergeResources(this.resources, thumbResource) || this.resources;
 
 		const data = {
@@ -253,7 +259,7 @@ export class htmlImport {
 		};
 
 		const { data: updatedRecord, error: updatedError } = await tryCatch(
-			pb.collection(notesCollection).update(this.recordID, data)
+			this.pb.collection(notesCollection).update(this.recordID, data)
 		);
 
 		if (updatedError) {

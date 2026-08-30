@@ -1,61 +1,51 @@
 import PocketBase from 'pocketbase';
-import { updateImport } from '$lib/server/db/imports';
-import { htmlImport } from '$lib/server/imports/parsers/html';
 
-import { type UpdateImportData } from '$lib/types';
+import { getPB } from '$lib/server/pocketbase';
+import { importCollection } from '$lib/server/const';
 
-function getParser(filename: string) {
-	const extension = filename.split('.').pop()?.toLowerCase();
+import { FileImport } from '$lib/server/imports/parsers/file';
+import { ENEXImport } from '$lib/server/imports/parsers/evernote';
+import { HtmlImport } from '$lib/server/imports/parsers/html';
+import { YoutubeImport } from '$lib/server/imports/parsers/youtube';
+import { url } from 'valibot';
+import type { ImportOptions } from '$lib/types';
 
-	switch (extension) {
-		case '':
-			return new EPUBParser();
+const decoder = new TextDecoder('utf-8');
 
-		case 'html':
-			return new htmlImport();
+async function getDecodedText(file: File) {
+	const decodedText = decoder.decode(await file.arrayBuffer());
+	if (!decodedText) throw new Error('Error decoding text');
+	return decodedText;
+}
 
-		case 'xml':
-			return new XMLImportParser();
+async function importFile(file: File, selectedNotebookID: string, selectedTagIdArray: string[]) {
+	const fileContent = await getDecodedText(file);
 
-		case 'md':
-			return new MarkdownParser();
-
-		default:
-			throw new Error(`Unsupported file type: ${extension}`);
+	if (file.type == 'text/html') {
+		const parsedHTML = new HtmlImport(getPB(), fileContent, selectedNotebookID, selectedTagIdArray);
+		await parsedHTML.uploadToDB();
+	} else if (file.name.includes('.enex')) {
+		const parsedXML = new ENEXImport(getPB(), fileContent, selectedNotebookID, selectedTagIdArray);
+		await parsedXML.uploadToDB();
+	} else {
+		const imageFile = new FileImport(getPB(), file, selectedNotebookID, selectedTagIdArray);
+		await imageFile.uploadToDB();
 	}
 }
 
-export async function uploadImport(pb: PocketBase, file: File) {}
+async function importYoutube(
+	url: string,
+	selectedNotebookID: string,
+	selectedTagIdArray: string[]
+) {
+	const ytImport = new YoutubeImport(getPB(), url, selectedNotebookID, selectedTagIdArray);
+	await ytImport.uploadToDB();
+}
 
-export async function processImport(pb: PocketBase, importID: string) {
-	try {
-		await updateImport(pb, importID, {
-			status: 'processing',
-			progress: 0
-		});
-
-		const importRecord = await pb.collection('imports').getOne(importID);
-
-		const parser = getParser(importRecord.filename);
-
-		const result = await parser.parse(importRecord);
-
-		await updateImport(pb, importID, {
-			progress: 90
-		});
-
-		await saveImportedNotes(pb, result);
-
-		await updateImport(pb, importID, {
-			status: 'completed',
-			progress: 100
-		});
-	} catch (error) {
-		await updateImport(pb, importID, {
-			status: 'failed',
-			error: String(error)
-		});
-
-		throw error;
+export async function processImport(options: ImportOptions) {
+	if (options.type === 'file') {
+		await importFile(options.file, options.selectedNotebookID, options.selectedTagIdArray);
+	} else if (options.type === 'youtube') {
+		await importYoutube(options.url, options.selectedNotebookID, options.selectedTagIdArray);
 	}
 }

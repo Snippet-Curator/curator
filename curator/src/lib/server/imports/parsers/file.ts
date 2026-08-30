@@ -1,9 +1,8 @@
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-import type { PError } from '$lib/types';
+import type { ImportRecord, PError } from '$lib/types';
 import { uploadFileToPocketbase } from '$lib/server/pocketbase';
-import { getPB } from '$lib/server/pocketbase';
 import PocketBase from 'pocketbase';
 
 import { tryCatch } from '$lib/utils';
@@ -19,7 +18,7 @@ import { notesCollection } from '$lib/server/const';
 
 dayjs.extend(customParseFormat);
 
-export class fileImport {
+export class FileImport {
 	title: string;
 	file: File;
 	mimeType: string;
@@ -29,8 +28,15 @@ export class fileImport {
 	recordID: string;
 	selectedNotebookdID: string;
 	selectedTagIdArrays: string[];
+	pb: PocketBase;
 
-	constructor(file: File, selectedNotebookID: string, selectedTagIdArrays: string[]) {
+	constructor(
+		pb: PocketBase,
+		file: File,
+		selectedNotebookID: string,
+		selectedTagIdArrays: string[]
+	) {
+		this.pb = pb;
 		this.file = file;
 		this.mimeType = file.type;
 		this.recordID = '';
@@ -42,7 +48,7 @@ export class fileImport {
 		this.added = new Date().toISOString();
 	}
 
-	async uploadToDB(pb: PocketBase) {
+	getSkeletonData() {
 		const sources = [
 			{
 				source: 'Desktop',
@@ -50,7 +56,7 @@ export class fileImport {
 			}
 		];
 
-		const skeletonData = {
+		return {
 			title: this.title,
 			notebook: this.selectedNotebookdID,
 			tags: this.selectedTagIdArrays,
@@ -59,11 +65,15 @@ export class fileImport {
 			added: this.added,
 			status: 'active',
 			sources: sources,
-			user: pb.authStore.record?.id
+			user: this.pb.authStore.record?.id
 		};
+	}
+
+	async uploadToDB() {
+		const skeletonData = this.getSkeletonData();
 
 		const { data: record, error } = await tryCatch<RecordModel, PError>(
-			pb.collection(notesCollection).create(skeletonData)
+			this.pb.collection(notesCollection).create(skeletonData)
 		);
 
 		if (error) {
@@ -76,11 +86,11 @@ export class fileImport {
 		if (!record) return;
 		this.recordID = record.id;
 
-		this.fileURL = await uploadFileToPocketbase(getPB(), this.recordID, this.file);
+		this.fileURL = await uploadFileToPocketbase(this.pb, this.recordID, this.file);
 		this.content = addMediaToContent(this.mimeType, this.fileURL, this.file.name);
 		const hash = await getFileHash(this.file);
 		const resources = [makeResourceFromFile(this.file, hash, this.fileURL)];
-		const thumbResource = await createThumbnail(getPB(), this.recordID, resources);
+		const thumbResource = await createThumbnail(this.pb, this.recordID, resources);
 		const mergedResource = mergeResources(resources, thumbResource) || resources;
 
 		const data = {
@@ -90,7 +100,7 @@ export class fileImport {
 		};
 
 		const { data: updatedRecord, error: updatedError } = await tryCatch(
-			pb.collection(notesCollection).update(this.recordID, data)
+			this.pb.collection(notesCollection).update(this.recordID, data)
 		);
 
 		if (updatedError) {

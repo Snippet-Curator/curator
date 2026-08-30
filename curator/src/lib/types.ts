@@ -137,17 +137,21 @@ export type NoteQuery = {
 
 // ------ Parser and Import ------
 
-export type ImportRecord = {
-	id: string;
-	type: string;
-	status: 'processing' | 'pending' | 'completed' | 'failed';
-	progress: number;
-	filename: string;
-	error: string;
-	createdBy: User;
+type FileImport = {
+	type: 'file';
+	file: File;
+	selectedNotebookID: string;
+	selectedTagIdArray: string[];
 };
 
-export type UpdateImportData = Partial<ImportRecord>;
+type YoutubeImport = {
+	type: 'youtube';
+	url: string;
+	selectedNotebookID: string;
+	selectedTagIdArray: string[];
+};
+
+export type ImportOptions = FileImport | YoutubeImport;
 
 export type EnResource = {
 	data: {

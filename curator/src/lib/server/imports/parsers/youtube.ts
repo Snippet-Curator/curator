@@ -6,7 +6,6 @@ import type { RecordModel } from 'pocketbase';
 import type { Resource, PError } from '$lib/types';
 
 import { tryCatch } from '$lib/utils';
-import { getPB } from '$lib/server/pocketbase';
 import {
 	addAsOnlyFileToRecord,
 	addThumbnailToRecord,
@@ -16,10 +15,12 @@ import {
 	parseYouTubeDuration
 } from '$lib/server/utils';
 import { notesCollection } from '$lib/server/const';
+import { getSetting } from '$lib/api/setting.remote';
 
 dayjs.extend(customParseFormat);
 
-export class youtubeImport {
+export class YoutubeImport {
+	pb: PocketBase;
 	title: string | 'Untitled';
 	channelTitle: string;
 	channelID: string;
@@ -31,7 +32,7 @@ export class youtubeImport {
 	youtubeFullURL: string;
 	youtubeThumbURL: string;
 	thumbURL: string;
-	youtubeID: string | undefined;
+	youtubeID: string;
 	youtubeAPI: string;
 	selectedNotebookID: string;
 	selectedTagIdArrays: string[];
@@ -40,16 +41,17 @@ export class youtubeImport {
 	duration: string;
 
 	constructor(
+		pb: PocketBase,
 		youtubeFullURL: string,
 		selectedNotebookID: string,
-		selectedTagIdArrays: string[],
-		youtubeAPI: string
+		selectedTagIdArrays: string[]
 	) {
+		this.pb = pb;
 		this.youtubeFullURL = youtubeFullURL;
 		this.youtubeID = this.getYoutubeID(youtubeFullURL);
 		this.selectedNotebookID = selectedNotebookID;
 		this.selectedTagIdArrays = selectedTagIdArrays;
-		this.youtubeAPI = youtubeAPI;
+		this.youtubeAPI = '';
 		this.youtubeThumbURL = '';
 		this.thumbURL = '';
 		this.title = '';
@@ -66,7 +68,7 @@ export class youtubeImport {
 	}
 
 	getYoutubeID(url: string) {
-		if (!url) return;
+		if (!url) throw new Error('Error: no URL provided');
 
 		const patterns = [
 			/^(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/,
@@ -96,7 +98,7 @@ export class youtubeImport {
 		const video = data.items?.[0];
 
 		if (!video) {
-			await pb.collection(notesCollection).delete(this.recordID);
+			await this.pb.collection(notesCollection).delete(this.recordID);
 			throw new Error('Video not found');
 		}
 
@@ -130,10 +132,10 @@ export class youtubeImport {
 		const thumbFile = new File([blob], 'youtube-thumbnail.jpg', { type: blob.type });
 
 		// upload file to db
-		this.thumbURL = await addAsOnlyFileToRecord(getPB(), this.recordID, thumbFile);
+		this.thumbURL = await addAsOnlyFileToRecord(this.pb, this.recordID, thumbFile);
 
 		// add thumbnail to record
-		await addThumbnailToRecord(getPB(), this.recordID, this.thumbURL);
+		await addThumbnailToRecord(this.pb, this.recordID, this.thumbURL);
 
 		// get hash
 		const hash = await getFileHash(thumbFile);
@@ -184,7 +186,9 @@ export class youtubeImport {
 `;
 	}
 
-	async uploadToDB(pb: PocketBase) {
+	async uploadToDB() {
+		this.youtubeAPI = (await getSetting('youtubeAPIKey')) as string;
+
 		const skeletonData = {
 			title: this.title,
 			notebook: this.selectedNotebookID,
@@ -193,17 +197,17 @@ export class youtubeImport {
 			weight: 5,
 			added: new Date().toISOString(),
 			status: 'active',
-			user: pb.authStore.record?.id
+			user: this.pb.authStore.record?.id
 		};
 
 		const filter = `sources.0.source = "Youtube" && sources.0.source_url ~ "${this.youtubeID}"`;
 
 		const { data: record, error } = await tryCatch<RecordModel, PError>(
-			pb.collection(notesCollection).getFirstListItem(filter)
+			this.pb.collection(notesCollection).getFirstListItem(filter)
 		);
 
 		if (error || !record) {
-			const newRecord = await pb.collection(notesCollection).create(skeletonData);
+			const newRecord = await this.pb.collection(notesCollection).create(skeletonData);
 			this.recordID = newRecord.id;
 		} else {
 			this.recordID = record.id;
@@ -237,7 +241,7 @@ export class youtubeImport {
 		};
 
 		const { data: updatedRecord, error: updatedError } = await tryCatch(
-			pb.collection(notesCollection).update(this.recordID, data)
+			this.pb.collection(notesCollection).update(this.recordID, data)
 		);
 
 		if (updatedError) {

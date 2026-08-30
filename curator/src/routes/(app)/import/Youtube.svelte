@@ -45,7 +45,7 @@
 						mouseState.isBusy = true;
 						importState.getSelectedNotebookID(selectedYoutubeNotebookID);
 						importState.selectedTagIdArray = selectedTagIdArray;
-						await importState.importYoutube(youtubeURLs, youtubeAPIKey);
+						await importState.importYoutube(youtubeURLs);
 						mouseState.isBusy = false;
 					}}
 					class="btn btn-neutral">Import</button
