@@ -6,6 +6,9 @@ import { pbURL } from './const';
 import { type NoteQuery } from '$lib/types';
 import { goto } from '$app/navigation';
 
+import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
+import { getAllTags } from '$lib/api/tag.remote';
+
 // ─────────────────────────────
 //          Tailwind
 // ─────────────────────────────
@@ -156,4 +159,14 @@ export function getQueryFromURL(url: URL): NoteQuery {
 		fullContent: url.searchParams.get('fullContent') === 'true',
 		fullTextSearch: url.searchParams.get('fullTextSearch') === 'true'
 	};
+}
+
+// resubscribe
+export async function resubscribeToPocketNotes() {
+	await Promise.all([
+		await getAllNotebooks().refresh(),
+		await getAllTags().refresh(),
+		await getInbox().refresh(),
+		await getTotalNotecount().refresh()
+	]);
 }

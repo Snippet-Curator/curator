@@ -1,4 +1,6 @@
 <script lang="ts">
+	import {  toast } from 'svelte-sonner';
+
 	import { pb } from '$lib/pocketbase';
 	import { page } from '$app/state';
 	import { browser } from '$app/environment';
@@ -20,6 +22,7 @@
 	import { bottomPages } from './links';
 	import { onMount } from 'svelte';
 	import { guiUpdate } from '$lib/state/ui.svelte';
+	import { resubscribeToPocketNotes } from '$lib/utils';
 
 	let { children } = $props();
 
@@ -58,12 +61,7 @@
 		await pb.collection('notes').subscribe('*', async () => {
 			if (guiUpdate.suppressRefresh) return;
 
-			await Promise.all([
-				await getAllNotebooks().refresh(),
-				await getAllTags().refresh(),
-				await getInbox().refresh(),
-				await getTotalNotecount().refresh()
-			]);
+			await resubscribeToPocketNotes();
 		});
 	});
 
@@ -73,6 +71,8 @@
 </script>
 
 <Command {inboxID} {notebooks} {tags} />
+
+
 
 {#if browser}
 	<Resizable.PaneGroup

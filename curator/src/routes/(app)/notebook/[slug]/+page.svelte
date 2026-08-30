@@ -75,7 +75,6 @@
 		<BulkToolbar
 			update={async () => await getNotes(newQuery).refresh()}
 			notes={result}
-			isTrash
 			bind:isBulkEdit
 			bind:selectedNotesID
 		/>

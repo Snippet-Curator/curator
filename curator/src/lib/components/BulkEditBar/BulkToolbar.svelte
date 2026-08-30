@@ -12,6 +12,7 @@
 		removeTagFromNotes,
 		clearTagsFromNotes
 	} from '$lib/api/note.remote';
+	import { guiUpdate } from '$lib/state/ui.svelte';
 	import { Delete, EditNotebook, EditBulkTags } from '$lib/components/';
 
 	import BulkNotebook from './bulk-notebook.svelte';
@@ -21,6 +22,7 @@
 	import BulkMerge from './bulk-merge.svelte';
 	import { getMouseState } from '$lib/state/ui.svelte';
 	import type { Note } from '$lib/types';
+	import { resubscribeToPocketNotes } from '$lib/utils';
 
 	type Props = {
 		selectedNotesID: string[];
@@ -84,16 +86,14 @@
 				{selectedNotesID}
 				merge={async () => {
 					mouseState.isBusy = true;
-
-					console.log('before merge notes');
-
+					guiUpdate.suppressRefresh = true;
 					await mergeNotes(selectedNotesID);
-					console.log('after merge notes');
-					update();
 					selectedNotesID = [];
 					isBulkEdit = false;
-
 					mouseState.isBusy = false;
+					guiUpdate.suppressRefresh = false;
+					await resubscribeToPocketNotes();
+					update();
 				}}
 			></BulkMerge>
 			{#if !isTrash}

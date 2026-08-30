@@ -2,9 +2,8 @@
 	import { getMouseState } from '$lib/state/ui.svelte';
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getImportState } from './import.svelte';
-	import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
 	import { guiUpdate } from '$lib/state/ui.svelte';
-	import { getAllTags } from '$lib/api/tag.remote';
+	import { resubscribeToPocketNotes } from '$lib/utils';
 
 	let { flatNotebooks, flatTags } = $props();
 
@@ -27,12 +26,7 @@
 
 		// get initial counts again
 		guiUpdate.suppressRefresh = false;
-		await Promise.all([
-			await getAllNotebooks().refresh(),
-			await getAllTags().refresh(),
-			await getInbox().refresh(),
-			await getTotalNotecount().refresh()
-		]);
+		await resubscribeToPocketNotes();
 
 		mouseState.isBusy = false;
 	}
