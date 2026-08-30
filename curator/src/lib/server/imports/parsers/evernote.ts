@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import PocketBase from 'pocketbase';
 
-import type { EnNote, EnMedia, EnResource, Resource, PError, ImportRecord } from '$lib/types';
+import type { EnNote, EnMedia, EnResource, Resource, PError } from '$lib/types';
 import { uploadFileToPocketbase } from '$lib/server/pocketbase';
 import { tryCatch } from '$lib/utils';
 import type { RecordModel } from 'pocketbase';
@@ -186,7 +186,7 @@ export class ENEXImport {
 		this.content = this.content.replace(mediaMatch, replaceMedia);
 	}
 
-	async addTags(pb: PocketBase) {
+	async addTags() {
 		if (!this.tags) return [''];
 		if (this.tags.length == 1 && this.tags[0] == '') return [''];
 
@@ -273,7 +273,7 @@ export class ENEXImport {
 			last_score_updated: new Date().toISOString(),
 			sources: JSON.stringify(sources),
 			status: 'active',
-			user: pb.authStore.record?.id
+			user: this.pb.authStore.record?.id
 		};
 
 		const { data: record, error } = await tryCatch<RecordModel, PError>(
@@ -293,7 +293,7 @@ export class ENEXImport {
 		await this.uploadResources();
 		this.replaceEnMedia();
 		const resources = this.makeResourceFromFiles(this.enResources);
-		const thumbResource = await createThumbnail(getPB(), this.recordID, resources);
+		const thumbResource = await createThumbnail(this.pb, this.recordID, resources);
 		const mergedResource = mergeResources(resources, thumbResource) || resources;
 
 		const data = {

@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-import type { ImportRecord, Resource } from '$lib/types';
+import type { Resource } from '$lib/types';
 import PocketBase from 'pocketbase';
 
 import { uploadFileToPocketbase } from '$lib/server/pocketbase';

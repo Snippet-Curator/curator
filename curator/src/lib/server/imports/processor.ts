@@ -1,13 +1,8 @@
-import PocketBase from 'pocketbase';
-
 import { getPB } from '$lib/server/pocketbase';
-import { importCollection } from '$lib/server/const';
-
 import { FileImport } from '$lib/server/imports/parsers/file';
 import { ENEXImport } from '$lib/server/imports/parsers/evernote';
 import { HtmlImport } from '$lib/server/imports/parsers/html';
 import { YoutubeImport } from '$lib/server/imports/parsers/youtube';
-import { url } from 'valibot';
 import type { ImportOptions } from '$lib/types';
 
 const decoder = new TextDecoder('utf-8');

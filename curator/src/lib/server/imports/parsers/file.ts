@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-import type { ImportRecord, PError } from '$lib/types';
+import type { PError } from '$lib/types';
 import { uploadFileToPocketbase } from '$lib/server/pocketbase';
 import PocketBase from 'pocketbase';
 
