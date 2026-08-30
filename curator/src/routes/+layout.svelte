@@ -4,7 +4,7 @@ import { Toaster } from 'svelte-sonner';
 	let { children } = $props();
 </script>
 
-	<Toaster richColors />
+	<Toaster />
 
 <div class="font-display">
 	{@render children()}

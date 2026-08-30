@@ -72,8 +72,6 @@
 
 <Command {inboxID} {notebooks} {tags} />
 
-
-
 {#if browser}
 	<Resizable.PaneGroup
 		direction="horizontal"

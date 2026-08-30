@@ -17,20 +17,20 @@ const noteQuerySchema = v.object({
 	sort: v.string()
 });
 
-export const getNote = query(v.string(), (noteID) => {
-	return db.getNote(getPB(), noteID);
+export const getNote = query(v.string(), async (noteID) => {
+	return await db.getNote(getPB(), noteID);
 });
 
-export const updateLastOpened = command(v.string(), (noteID) => {
-	db.updateLastOpened(getPB(), noteID);
+export const updateLastOpened = command(v.string(), async (noteID) => {
+	await db.updateLastOpened(getPB(), noteID);
 });
 
-export const deleteNote = command(v.string(), (noteID) => {
-	db.deleteNote(getPB(), noteID);
+export const deleteNote = command(v.string(), async (noteID) => {
+	await db.deleteNote(getPB(), noteID);
 });
 
-export const softDeleteNote = command(v.string(), (noteID) => {
-	db.softDeleteNote(getPB(), noteID);
+export const softDeleteNote = command(v.string(), async (noteID) => {
+	await db.softDeleteNote(getPB(), noteID);
 });
 
 export const changeNoteNotebook = command(
@@ -38,8 +38,8 @@ export const changeNoteNotebook = command(
 		noteID: v.string(),
 		newNotebookID: v.string()
 	}),
-	({ noteID, newNotebookID }) => {
-		db.changeNoteNotebook(getPB(), noteID, newNotebookID);
+	async ({ noteID, newNotebookID }) => {
+		await db.changeNoteNotebook(getPB(), noteID, newNotebookID);
 	}
 );
 
@@ -48,8 +48,8 @@ export const updateTags = command(
 		noteID: v.string(),
 		selectedTags: v.array(v.string())
 	}),
-	({ noteID, selectedTags }) => {
-		db.updateTags(getPB(), noteID, selectedTags);
+	async ({ noteID, selectedTags }) => {
+		await db.updateTags(getPB(), noteID, selectedTags);
 	}
 );
 
@@ -58,8 +58,8 @@ export const addTagToNote = command(
 		noteID: v.string(),
 		selectedTagID: v.string()
 	}),
-	({ noteID, selectedTagID }) => {
-		db.addTagToNote(getPB(), noteID, selectedTagID);
+	async ({ noteID, selectedTagID }) => {
+		await db.addTagToNote(getPB(), noteID, selectedTagID);
 	}
 );
 
@@ -68,8 +68,8 @@ export const removeTagFromNote = command(
 		noteID: v.string(),
 		selectedTagID: v.string()
 	}),
-	({ noteID, selectedTagID }) => {
-		db.removeTagFromNote(getPB(), noteID, selectedTagID);
+	async ({ noteID, selectedTagID }) => {
+		await db.removeTagFromNote(getPB(), noteID, selectedTagID);
 	}
 );
 
@@ -78,21 +78,21 @@ export const changeRating = command(
 		noteID: v.string(),
 		newRating: v.number()
 	}),
-	({ newRating, noteID }) => {
-		db.changeRating(getPB(), noteID, newRating);
+	async ({ newRating, noteID }) => {
+		await db.changeRating(getPB(), noteID, newRating);
 	}
 );
 
-export const archiveNote = command(v.string(), (noteID) => {
-	db.archiveNote(getPB(), noteID);
+export const archiveNote = command(v.string(), async (noteID) => {
+	await db.archiveNote(getPB(), noteID);
 });
 
-export const restoreNote = command(v.string(), (noteID) => {
-	db.restoreNote(getPB(), noteID);
+export const restoreNote = command(v.string(),  async (noteID) => {
+	await db.restoreNote(getPB(), noteID);
 });
 
-export const permaDeleteNote = command(v.string(), (noteID) => {
-	db.permaDeleteNote(getPB(), noteID);
+export const permaDeleteNote = command(v.string(),  async (noteID) => {
+	await db.permaDeleteNote(getPB(), noteID);
 });
 
 export const changeTitle = command(
@@ -100,8 +100,8 @@ export const changeTitle = command(
 		noteID: v.string(),
 		newTitle: v.string()
 	}),
-	({ noteID, newTitle }) => {
-		db.changeTitle(getPB(), noteID, newTitle);
+	 async ({ noteID, newTitle }) => {
+		await db.changeTitle(getPB(), noteID, newTitle);
 	}
 );
 
@@ -110,8 +110,8 @@ export const changeDescription = command(
 		noteID: v.string(),
 		newDescription: v.string()
 	}),
-	({ noteID, newDescription }) => {
-		db.changeDescription(getPB(), noteID, newDescription);
+	 async ({ noteID, newDescription }) => {
+		await db.changeDescription(getPB(), noteID, newDescription);
 	}
 );
 
@@ -120,8 +120,8 @@ export const changeSources = command(
 		noteID: v.string(),
 		newSources: v.string()
 	}),
-	({ noteID, newSources }) => {
-		db.changeSources(getPB(), noteID, newSources);
+	 async ({ noteID, newSources }) => {
+		await db.changeSources(getPB(), noteID, newSources);
 	}
 );
 
@@ -130,8 +130,8 @@ export const changeThumbnail = command(
 		noteID: v.string(),
 		url: v.string()
 	}),
-	({ noteID, url }) => {
-		db.changeThumbnail(getPB(), noteID, url);
+	 async ({ noteID, url }) => {
+		await db.changeThumbnail(getPB(), noteID, url);
 	}
 );
 
@@ -140,8 +140,8 @@ export const updateContent = command(
 		noteID: v.string(),
 		newContent: v.string()
 	}),
-	({ noteID, newContent }) => {
-		db.updateContent(getPB(), noteID, newContent);
+	 async ({ noteID, newContent }) => {
+		await db.updateContent(getPB(), noteID, newContent);
 	}
 );
 
@@ -150,48 +150,43 @@ export const appendContent = command(
 		noteID: v.string(),
 		newContent: v.string()
 	}),
-	({ noteID, newContent }) => {
-		db.appendContent(getPB(), noteID, newContent);
+	 async ({ noteID, newContent }) => {
+		await db.appendContent(getPB(), noteID, newContent);
 	}
 );
 
-export const shareNote = command(v.string(), (noteID) => {
-	return db.shareNote(getPB(), noteID);
+export const shareNote = command(v.string(),  async  (noteID) => {
+	return await db.shareNote(getPB(), noteID);
 });
 
-export const unshareNote = command(v.string(), (noteID) => {
-	return db.unshareNote(getPB(), noteID);
+export const unshareNote = command(v.string(),  async (noteID) => {
+	return await db.unshareNote(getPB(), noteID);
 });
 
 // multiple notes
 
 export const getNotes = query(noteQuerySchema, async (query) => {
-	return db.getNotes(getPB(), query);
+	return await db.getNotes(getPB(), query);
 });
 
 export const archiveMultiple = command(v.array(v.string()), async (recordIDs: string[]) => {
-	return db.archiveMultiple(getPB(), recordIDs);
+	return await db.archiveMultiple(getPB(), recordIDs);
 });
 
 export const unArchiveMultiple = command(v.array(v.string()), async (recordIDs: string[]) => {
-	return db.unArchiveMultiple(getPB(), recordIDs);
+	return await db.unArchiveMultiple(getPB(), recordIDs);
 });
 
-export const softDeleteMultiple = command(v.array(v.string()), (recordIDs: string[]) => {
-	db.softDeleteMultiple(getPB(), recordIDs);
+export const softDeleteMultiple = command(v.array(v.string()), async (recordIDs: string[]) => {
+	await db.softDeleteMultiple(getPB(), recordIDs);
 });
 
-export const unSoftDeleteMultiple = command(v.array(v.string()), (recordIDs: string[]) => {
-	db.unSoftDeleteMultiple(getPB(), recordIDs);
+export const unSoftDeleteMultiple = command(v.array(v.string()),  async (recordIDs: string[]) => {
+	await db.unSoftDeleteMultiple(getPB(), recordIDs);
 });
 
-export const mergeNotes = command(v.array(v.string()), (selectedNotesID: string[]) => {
-	try {
-		db.mergeNotes(getPB(), selectedNotesID);
-	} catch (error) {
-		console.error('error merging', error);
-		throw error;
-	}
+export const mergeNotes = command(v.array(v.string()), async (selectedNotesID: string[]) => {
+	await db.mergeNotes(getPB(), selectedNotesID);
 });
 
 export const changeNotesNotebook = command(
@@ -200,7 +195,7 @@ export const changeNotesNotebook = command(
 		newNotebookID: v.string()
 	}),
 	async ({ selectedNotesID, newNotebookID }) => {
-		db.changeNotesNotebook(getPB(), selectedNotesID, newNotebookID);
+		await db.changeNotesNotebook(getPB(), selectedNotesID, newNotebookID);
 	}
 );
 
@@ -209,8 +204,8 @@ export const addTagToNotes = command(
 		selectedNotesID: v.array(v.string()),
 		selectedTagID: v.string()
 	}),
-	({ selectedNotesID, selectedTagID }) => {
-		db.addTagToNotes(getPB(), selectedNotesID, selectedTagID);
+	 async ({ selectedNotesID, selectedTagID }) => {
+		await db.addTagToNotes(getPB(), selectedNotesID, selectedTagID);
 	}
 );
 
@@ -219,13 +214,13 @@ export const removeTagFromNotes = command(
 		selectedNotesID: v.array(v.string()),
 		selectedTagID: v.string()
 	}),
-	({ selectedNotesID, selectedTagID }) => {
-		db.removeTagFromNotes(getPB(), selectedNotesID, selectedTagID);
+	 async ({ selectedNotesID, selectedTagID }) => {
+		await db.removeTagFromNotes(getPB(), selectedNotesID, selectedTagID);
 	}
 );
 
-export const clearTagsFromNotes = command(v.array(v.string()), (selectedNotesID) => {
-	db.updateTagsForNotes(getPB(), selectedNotesID, []);
+export const clearTagsFromNotes = command(v.array(v.string()),  async (selectedNotesID) => {
+	await db.updateTagsForNotes(getPB(), selectedNotesID, []);
 });
 
 export const updateTagsForNotes = command(
@@ -233,11 +228,11 @@ export const updateTagsForNotes = command(
 		selectedNotesID: v.array(v.string()),
 		selectedTagsID: v.array(v.string())
 	}),
-	({ selectedNotesID, selectedTagsID }) => {
-		db.updateTagsForNotes(getPB(), selectedNotesID, selectedTagsID);
+	 async ({ selectedNotesID, selectedTagsID }) => {
+		await db.updateTagsForNotes(getPB(), selectedNotesID, selectedTagsID);
 	}
 );
 
-export const emptyTrash = command(() => {
-	db.emptyTrash(getPB());
+export const emptyTrash = command( async () => {
+	await db.emptyTrash(getPB());
 });

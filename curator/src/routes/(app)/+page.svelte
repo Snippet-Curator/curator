@@ -59,9 +59,7 @@
 	{#if isBulkEdit}
 		<BulkToolbar
 			update={async () => {
-				console.log('refresh page');
 				await getNotes(query).refresh();
-				console.log('finished refreshing');
 			}}
 			notes={result}
 			bind:isBulkEdit

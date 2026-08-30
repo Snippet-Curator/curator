@@ -6,8 +6,8 @@ import { getPB } from '$lib/server/pocketbase';
 
 const primitive = v.union([v.string(), v.number(), v.boolean()]);
 
-export const getDefaultSettings = query(() => {
-	return db.getDefaultSettings(getPB());
+export const getDefaultSettings = query(async () => {
+	return await db.getDefaultSettings(getPB());
 });
 
 export const getSetting = query(v.string(), async (name) => {
@@ -29,11 +29,11 @@ export const changeJSONSetting = command(
 		name: v.string(),
 		newValue: v.record(v.string(), primitive)
 	}),
-	({ name, newValue }) => {
-		return db.changeJSONSetting(getPB(), name, newValue);
+	async ({ name, newValue }) => {
+		return await db.changeJSONSetting(getPB(), name, newValue);
 	}
 );
 
-export const getJsonSetting = query(v.string(), (name) => {
-	return db.getJsonReadOnlySetting(getPB(), name);
+export const getJsonSetting = query(v.string(), async (name) => {
+	return await db.getJsonReadOnlySetting(getPB(), name);
 });

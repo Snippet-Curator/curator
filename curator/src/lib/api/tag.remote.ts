@@ -4,20 +4,20 @@ import { command, query } from '$app/server';
 import * as db from '$lib/server/db/tag';
 import { getPB } from '$lib/server/pocketbase';
 
-export const getAllTags = query(() => {
-	return db.getAllTags(getPB());
+export const getAllTags = query(async() => {
+	return await db.getAllTags(getPB());
 });
 
-export const getOneTag = query(v.string(), (tagID) => {
-	return db.getOneTag(getPB(), tagID);
+export const getOneTag = query(v.string(), async(tagID) => {
+	return await  db.getOneTag(getPB(), tagID);
 });
 
-export const pinTag = command(v.string(), (recordID) => {
-	db.pinTag(getPB(), recordID);
+export const pinTag = command(v.string(),async(recordID) => {
+	await db.pinTag(getPB(), recordID);
 });
 
-export const unpinTags = command(v.string(), (recordID) => {
-	db.unpinTag(getPB(), recordID);
+export const unpinTags = command(v.string(), async(recordID) => {
+	await db.unpinTag(getPB(), recordID);
 });
 
 export const createOneTagbyName = command(
@@ -25,8 +25,8 @@ export const createOneTagbyName = command(
 		newName: v.string(),
 		parentTagID: v.optional(v.string())
 	}),
-	({ newName, parentTagID }) => {
-		return db.createOneTagbyName(getPB(), newName, parentTagID);
+	async({ newName, parentTagID }) => {
+		return await db.createOneTagbyName(getPB(), newName, parentTagID);
 	}
 );
 
@@ -35,8 +35,8 @@ export const updateOneTagByName = command(
 		tagID: v.string(),
 		newName: v.string()
 	}),
-	({ tagID, newName }) => {
-		db.updateOneTagByName(getPB(), tagID, newName);
+	async({ tagID, newName }) => {
+		await db.updateOneTagByName(getPB(), tagID, newName);
 	}
 );
 
@@ -45,11 +45,11 @@ export const updateOneTagByParent = command(
 		tagID: v.string(),
 		parentTagID: v.string()
 	}),
-	({ tagID, parentTagID }) => {
-		db.updateOneTagByParent(getPB(), tagID, parentTagID);
+	async({ tagID, parentTagID }) => {
+		await db.updateOneTagByParent(getPB(), tagID, parentTagID);
 	}
 );
 
-export const deleteTag = command(v.string(), (recordID) => {
-	db.deleteTag(getPB(), recordID);
+export const deleteTag = command(v.string(), async(recordID) => {
+	await db.deleteTag(getPB(), recordID);
 });

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { toast } from 'svelte-sonner';
 
 	import {
 		archiveMultiple,
@@ -23,6 +24,7 @@
 	import { getMouseState } from '$lib/state/ui.svelte';
 	import type { Note } from '$lib/types';
 	import { resubscribeToPocketNotes } from '$lib/utils';
+	import { tick } from 'svelte';
 
 	type Props = {
 		selectedNotesID: string[];
@@ -87,13 +89,27 @@
 				merge={async () => {
 					mouseState.isBusy = true;
 					guiUpdate.suppressRefresh = true;
-					await mergeNotes(selectedNotesID);
-					selectedNotesID = [];
 					isBulkEdit = false;
-					mouseState.isBusy = false;
-					guiUpdate.suppressRefresh = false;
-					await resubscribeToPocketNotes();
-					update();
+					await tick()
+
+					const mergePromise = mergeNotes(selectedNotesID)
+
+					toast.promise(mergePromise, {
+						loading: `Merging ${selectedNotesID.length} notes...`,
+						success: `Merged ${selectedNotesID.length} notes`,
+						error: "Failed to Merge notes."
+					})
+
+					try {
+						await mergePromise
+					} catch (e) {
+					} finally {
+						mouseState.isBusy = false;
+						guiUpdate.suppressRefresh = false;
+						await resubscribeToPocketNotes();
+						selectedNotesID = [];
+						update();
+					}			
 				}}
 			></BulkMerge>
 			{#if !isTrash}

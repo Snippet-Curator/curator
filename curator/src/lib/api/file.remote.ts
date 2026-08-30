@@ -27,8 +27,8 @@ export const uploadFileToPocketbase = command(
 		recordID: v.string(),
 		file: v.file()
 	}),
-	({ recordID, file }) => {
-		return db.uploadFileToPocketbase(db.getPB(), recordID, file);
+	async ({ recordID, file }) => {
+		return await db.uploadFileToPocketbase(db.getPB(), recordID, file);
 	}
 );
 
@@ -48,8 +48,8 @@ export const addResourcesToRecord = command(
 		recordID: v.string(),
 		resource: resourceSchema
 	}),
-	({ recordID, resource }) => {
-		return utils.addResourcesToRecord(getPB(), recordID, resource);
+	async ({ recordID, resource }) => {
+		return await utils.addResourcesToRecord(getPB(), recordID, resource);
 	}
 );
 
@@ -58,13 +58,13 @@ export const addThumbnailToRecord = command(
 		recordID: v.string(),
 		thumbURL: v.string()
 	}),
-	({ recordID, thumbURL }) => {
-		return utils.addThumbnailToRecord(getPB(), recordID, thumbURL);
+	async ({ recordID, thumbURL }) => {
+		return await utils.addThumbnailToRecord(getPB(), recordID, thumbURL);
 	}
 );
 
-export const getFileHash = command(v.file(), (file) => {
-	return utils.getFileHash(file);
+export const getFileHash = command(v.file(), async (file) => {
+	return await utils.getFileHash(file);
 });
 
 export const getResourceforThumbGen = command(v.array(resourceSchema), (resources) => {

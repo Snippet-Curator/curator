@@ -4,32 +4,32 @@ import { command, query } from '$app/server';
 import * as db from '$lib/server/db/notebook';
 import { getPB } from '$lib/server/pocketbase';
 
-export const makeDefaultNotebook = query(() => {
-	return db.makeDefaultNotebook(getPB());
+export const makeDefaultNotebook = query(async () => {
+	return await db.makeDefaultNotebook(getPB());
 });
 
-export const getAllNotebooks = query(() => {
-	return db.getAllNotebooks(getPB());
+export const getAllNotebooks = query(async () => {
+	return await db.getAllNotebooks(getPB());
 });
 
-export const getActiveNotebooks = query(() => {
-	return db.getActiveNotebooks(getPB());
+export const getActiveNotebooks = query(async () => {
+	return await db.getActiveNotebooks(getPB());
 });
 
-export const getTotalNotecount = query(() => {
-	return db.getTotalNotecount(getPB());
+export const getTotalNotecount = query(async () => {
+	return await db.getTotalNotecount(getPB());
 });
 
-export const getInbox = query(() => {
-	return db.getInbox(getPB());
+export const getInbox = query(async () => {
+	return await db.getInbox(getPB());
 });
 
 export const pinNotebook = command(v.string(), async (recordID) => {
 	await db.pinNotebook(getPB(), recordID);
 });
 
-export const unpinNotebook = command(v.string(), (recordID) => {
-	db.unpinNotebook(getPB(), recordID);
+export const unpinNotebook = command(v.string(), async (recordID) => {
+	await db.unpinNotebook(getPB(), recordID);
 });
 
 export const createOneNotebookbyName = command(
@@ -37,8 +37,8 @@ export const createOneNotebookbyName = command(
 		newName: v.string(),
 		parentNotebookID: v.optional(v.string())
 	}),
-	({ newName, parentNotebookID }) => {
-		db.createOneNotebookbyName(getPB(), newName, parentNotebookID);
+	async ({ newName, parentNotebookID }) => {
+		await db.createOneNotebookbyName(getPB(), newName, parentNotebookID);
 	}
 );
 
@@ -47,8 +47,8 @@ export const updateOneNotebookByName = command(
 		recordID: v.string(),
 		newName: v.string()
 	}),
-	({ recordID, newName }) => {
-		db.updateOneNotebookByName(getPB(), recordID, newName);
+	async ({ recordID, newName }) => {
+		await db.updateOneNotebookByName(getPB(), recordID, newName);
 	}
 );
 
@@ -57,8 +57,8 @@ export const deleteNotebook = command(
 		recordID: v.string(),
 		inboxID: v.string()
 	}),
-	({ recordID, inboxID }) => {
-		db.deleteNotebook(getPB(), recordID, inboxID);
+	async ({ recordID, inboxID }) => {
+		await db.deleteNotebook(getPB(), recordID, inboxID);
 	}
 );
 
@@ -67,7 +67,7 @@ export const updateOneNotebookByParent = command(
 		recordID: v.string(),
 		parentNotebook: v.string()
 	}),
-	({ recordID, parentNotebook }) => {
-		db.updateOneNotebookByParent(getPB(), recordID, parentNotebook);
+	async ({ recordID, parentNotebook }) => {
+		await db.updateOneNotebookByParent(getPB(), recordID, parentNotebook);
 	}
 );
