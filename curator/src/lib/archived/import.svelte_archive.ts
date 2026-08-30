@@ -1,4 +1,4 @@
-import { EnImport, fileImport, htmlImport, youtubeImport } from '$lib/parser';
+import { EnImport, fileImport, htmlImport, youtubeImport } from '$lib/archived/parser';
 import { tryCatch } from '$lib/utils';
 import { getContext, setContext } from 'svelte';
 

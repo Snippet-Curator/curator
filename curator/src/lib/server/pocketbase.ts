@@ -33,6 +33,7 @@ export async function uploadFileToPocketbase(pb: PocketBase, recordID: string, f
  * downloads attachment from pocketbase and returns in file format
  */
 export async function downloadAttachmentByURL(fileURL: string, fileName: string, fileType: string) {
+	if (!fileURL) throw new Error('no file URL provided');
 	const response = await fetch(fileURL);
 	const blob = await response.blob();
 	return new File([blob], fileName, { type: fileType });

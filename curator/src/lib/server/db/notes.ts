@@ -235,7 +235,7 @@ export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
 
 	const [baseNote, ...restNotes] = selectedNotes;
 	console.log('before merge resources');
-	const newResources = await createNewResources(baseNote.id, restNotes);
+	const newResources = await createNewResources(pb, baseNote.id, restNotes);
 	const mergedNoteData = createMergedNoteData(selectedNotes, newResources);
 	console.log('after merge resources');
 	const { data: finalNote, error: finalNoteError } = await tryCatch(
@@ -250,7 +250,7 @@ export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
 	if (!baseNote.thumbnail) {
 		try {
 			const thumbResource = getResourceforThumbGen(finalNote.resources);
-			await addThumbnailToRecord(baseNote.id, thumbResource?.fileURL);
+			await addThumbnailToRecord(pb, baseNote.id, thumbResource?.fileURL);
 		} catch (e) {
 			console.log(e);
 		}

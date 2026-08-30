@@ -1,4 +1,5 @@
 import { startImport, startYTImport } from '$lib/api/import.remote';
+import { tryCatch } from '$lib/utils';
 import { getContext, setContext } from 'svelte';
 
 type UploadStatus = 'stopped' | 'in progress' | 'error' | 'completed';
@@ -48,11 +49,24 @@ export class ImportStateClass {
 
 		for (const [index, file] of this.filesToUpload.entries()) {
 			this.currentFile = file.name;
-			await startImport({
-				file,
-				selectedNotebookID: this.selectedNotebookID,
-				selectedTagIdArray: this.selectedTagIdArray
-			});
+			const { data, error } = await tryCatch(
+				startImport({
+					file,
+					selectedNotebookID: this.selectedNotebookID,
+					selectedTagIdArray: this.selectedTagIdArray
+				})
+			);
+
+			if (error) {
+				console.error(error);
+				this.failureFiles.push({
+					name: file.name,
+					error: error.message
+				});
+				continue;
+			}
+
+			this.successFiles.push(file.name);
 			this.progress = Math.round(((index + 1) / this.totalFiles) * 100);
 		}
 		this.currentFile = '';
@@ -70,11 +84,24 @@ export class ImportStateClass {
 			this.progress = Math.round(((index + 1) / this.totalFiles) * 100);
 			if (!url) continue;
 			this.currentFile = url.trim();
-			await startYTImport({
-				url: url.trim(),
-				selectedNotebookID: this.selectedNotebookID,
-				selectedTagIdArray: this.selectedTagIdArray
-			});
+			const { data, error } = await tryCatch(
+				startYTImport({
+					url: url.trim(),
+					selectedNotebookID: this.selectedNotebookID,
+					selectedTagIdArray: this.selectedTagIdArray
+				})
+			);
+
+			if (error) {
+				console.error(error);
+				this.failureFiles.push({
+					name: url,
+					error: error.message
+				});
+				continue;
+			}
+
+			this.successFiles.push(url);
 		}
 		this.currentFile = '';
 		this.uploadStatus = 'completed';

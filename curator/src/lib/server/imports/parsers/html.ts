@@ -15,13 +15,14 @@ import {
 	mergeResources
 } from '$lib/server/utils';
 import { notesCollection } from '$lib/server/const';
+import * as cheerio from 'cheerio';
 
 dayjs.extend(customParseFormat);
 
 export class HtmlImport {
-	title: string | 'Untitled';
+	title: string;
 	content: string;
-	parsedHTML: Document;
+	parsedHTML: cheerio.CheerioAPI;
 	source: string | null;
 	sourceURL: string | null;
 	recordID: string;
@@ -29,7 +30,7 @@ export class HtmlImport {
 	description: string | null;
 	selectedNotebookdID: string;
 	selectedTagIdArrays: string[];
-	HTMLparser: DOMParser;
+	// HTMLparser: DOMParser;
 	resources: Resource[];
 	bodyResources: Resource[]; // this is for thumbnail generation
 	pb: PocketBase;
@@ -40,7 +41,7 @@ export class HtmlImport {
 		selectedNotebookID: string,
 		selectedTagIdArrays: string[]
 	) {
-		this.HTMLparser = new DOMParser();
+		// this.HTMLparser = new DOMParser();
 		this.content = fileContent;
 		this.parsedHTML = this.parseHTML(fileContent);
 		this.title = this.getTitle();
@@ -57,24 +58,22 @@ export class HtmlImport {
 	}
 
 	parseHTML(fileContent: string) {
-		return this.HTMLparser.parseFromString(fileContent, 'text/html');
+		return cheerio.load(fileContent);
 	}
 
 	getTitle() {
-		return this.parsedHTML.querySelector('title')?.textContent || 'Untitled';
+		return this.parsedHTML('title')?.text() || 'Untitled';
 	}
 
 	getDescription() {
 		// parse instagram saves with source meta property
-		const description = this.parsedHTML.querySelector('meta[property="description"]');
+		const description = this.parsedHTML('meta[property="description"]').attr('content');
 
 		if (description) {
-			return description.getAttribute('content');
+			return description;
 		}
 
-		const ogDescription = this.parsedHTML
-			.querySelector('meta[property="og:description"]')
-			?.getAttribute('content');
+		const ogDescription = this.parsedHTML('meta[property="og:description"]')?.attr('content');
 
 		if (!ogDescription) return null;
 
@@ -83,10 +82,10 @@ export class HtmlImport {
 
 	getSource() {
 		// parse instagram saves with source meta property
-		const source = this.parsedHTML.querySelector('meta[property="source"]');
+		const source = this.parsedHTML('meta[property="source"]').attr('content');
 
 		if (source) {
-			return source.getAttribute('content');
+			return source;
 		}
 
 		// if not, use regex to match singleFile source
@@ -100,10 +99,10 @@ export class HtmlImport {
 	}
 
 	getSourceURL() {
-		const sourceURL = this.parsedHTML.querySelector('meta[property="source-url"]');
+		const sourceURL = this.parsedHTML('meta[property="source-url"]').attr('content');
 
 		if (sourceURL) {
-			return sourceURL.getAttribute('content');
+			return sourceURL;
 		}
 
 		const match = this.content.match(/url:\s*(.+?)\s+saved date:\s*(.+?)\s*-->/s);
@@ -116,10 +115,10 @@ export class HtmlImport {
 	}
 
 	getAdded() {
-		const added = this.parsedHTML.querySelector('meta[property="added"]');
+		const added = this.parsedHTML('meta[property="added"]').attr('content');
 
-		if (added && added.textContent) {
-			return added.getAttribute('content') || new Date().toISOString();
+		if (added) {
+			return added;
 		}
 
 		const match = this.content.match(/url:\s*(.+?)\s+saved date:\s*(.+?)\s*-->/s);
@@ -160,7 +159,7 @@ export class HtmlImport {
 
 	async replaceResources(fileContent: string) {
 		if (!fileContent) return;
-		const bodyContent = this.parsedHTML.querySelector('body')?.outerHTML || '';
+		const bodyContent = this.parsedHTML('body')?.toString() || '';
 
 		// replaces src with image and font with db file links.
 		const mediaMatch = /\b(data:(?:image|font|video)\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=]+)\1?/g;

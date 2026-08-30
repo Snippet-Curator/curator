@@ -11,6 +11,7 @@ import type { RecordModel } from 'pocketbase';
 import { replacePbUrl, tryCatch } from '$lib/utils';
 import { notesCollection } from '$lib/server/const';
 import { downloadAttachmentByURL, uploadFileToPocketbase } from '$lib/server/pocketbase';
+import { baseURL } from '$lib/const';
 
 dayjs.extend(customParseFormat);
 
@@ -452,9 +453,7 @@ export async function createNewResources(pb: PocketBase, recordID: string, recor
 		if (!record.resources) continue;
 		for (const resource of record.resources) {
 			if (!resource) continue;
-			console.log('before createonenewresource');
 			const newResource = await createOneNewResource(pb, recordID, resource);
-			console.log('aftercreatingonenewreousrce');
 			newResources.push(newResource);
 		}
 	}

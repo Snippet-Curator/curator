@@ -6,17 +6,16 @@
 
 	import { CaseSensitive, CircleX } from 'lucide-svelte';
 
-	import { uploadFileToPocketbase } from '$lib/api/file.remote';
 	import {
-		addMediaToContent,
+		uploadFileToPocketbase,
 		addResourcesToRecord,
+		addMediaToContent,
 		addThumbnailToRecord,
-		getCustomStyles,
 		getFileHash,
 		getResourceforThumbGen,
-		makeResourceFromFile,
-		replacePbUrl
-	} from '$lib/utils';
+		makeResourceFromFile
+	} from '$lib/api/file.remote';
+	import { getCustomStyles, replacePbUrl } from '$lib/utils';
 	import type { Note } from '$lib/types';
 	import { appendContent, changeTitle } from '$lib/api/note.remote';
 
@@ -61,20 +60,23 @@
 		const hash = await getFileHash(file);
 
 		// create resource
-		const newResource = makeResourceFromFile(file, hash, fileURL);
+		const newResource = makeResourceFromFile({ file, hash, url: fileURL });
 
 		// add to resources
-		const mergedResources = await addResourcesToRecord(note.id, newResource);
+		const mergedResources = await addResourcesToRecord({
+			recordID: note.id,
+			resource: newResource
+		});
 		if (!mergedResources) return;
 
 		// check thumbnails
 		if (!note.thumbnail) {
 			const thumbResource = getResourceforThumbGen(mergedResources);
-			await addThumbnailToRecord(note?.id, thumbResource.fileURL);
+			await addThumbnailToRecord({ recordID: note?.id, thumbURL: thumbResource.fileURL });
 		}
 
 		// get new file content
-		const newContent = addMediaToContent(file.type, fileURL, file.name);
+		const newContent = addMediaToContent({ mimeType: file.type, fileURL, fileName: file.name });
 
 		// insert file content to editor
 		editor.editor.insertHTML(newContent);

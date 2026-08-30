@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-import type { EnNote, EnMedia, EnResource, Resource, PError } from './types';
+import type { EnNote, EnMedia, EnResource, Resource, PError } from '../types';
 import { uploadFileToPocketbase } from '$lib/utils';
 import { pb } from '$lib/pocketbase';
 import { tryCatch } from '$lib/utils';
@@ -20,8 +20,8 @@ import {
 	mergeResources,
 	parser,
 	parseYouTubeDuration
-} from './utils';
-import { notesCollection } from './const';
+} from '../utils';
+import { notesCollection } from '../const';
 
 dayjs.extend(customParseFormat);
 
@@ -174,14 +174,14 @@ export class htmlImport {
 			const base64Data = match.split(',')[1];
 
 			if (!base64Data || !mimeType) {
-				console.error('Error: invalid data URL format');
+				console.error('Invalid data URL format');
 				continue;
 			}
 
 			const { file: resourceFile, hash } = this.base64ToFile(base64Data, mimeType);
 
 			if (!resourceFile) {
-				console.error('Error converting resource file');
+				console.error("Can't convert resource file");
 				continue;
 			}
 

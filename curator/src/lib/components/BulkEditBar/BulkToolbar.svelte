@@ -85,7 +85,10 @@
 				merge={async () => {
 					mouseState.isBusy = true;
 
+					console.log('before merge notes');
+
 					await mergeNotes(selectedNotesID);
+					console.log('after merge notes');
 					update();
 					selectedNotesID = [];
 					isBulkEdit = false;
