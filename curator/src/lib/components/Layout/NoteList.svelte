@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 
 	import * as ContextMenu from '$lib/components/ui/context-menu/index';
@@ -149,7 +150,13 @@
 							>
 							<ContextMenu.Item
 								onSelect={async () => {
-									await archiveNote(note.id);
+									const promise = archiveNote(note.id);
+									toast.promise(promise, {
+										loading: `Archiving note...`,
+										success: `Archived note`,
+										error: "Failed to archive note."
+									})
+									await promise
 									update();
 								}}>Archive</ContextMenu.Item
 							>
@@ -180,7 +187,13 @@
 		bind:isOpen={isDeleteOpen}
 		name="Note"
 		action={async () => {
-			await softDeleteNote(selectedNoteID);
+			const promise = softDeleteNote(selectedNoteID)
+			toast.promise(promise, {
+				loading: `Deleting note...`,
+				success: `Deleted note`,
+				error: "Failed to delete note."
+			})
+			await promise
 			update();
 		}}>this note</Delete
 	>
@@ -189,7 +202,7 @@
 		currentNotebookID={selectedNote?.expand?.notebook?.id}
 		bind:isOpen={isEditNotebookOpen}
 		action={async (selectedNotebookID) => {
-			await changeNoteNotebook({ noteID: selectedNoteID, newNotebookID: selectedNotebookID });
+			await changeNoteNotebook({ noteID: selectedNoteID, newNotebookID: selectedNotebookID })
 			update();
 		}}
 	></EditNotebook>

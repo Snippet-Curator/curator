@@ -99,15 +99,11 @@
 						error: "Failed to merge notes."
 					})
 
-					try {
-						await mergePromise
-					} catch (e) {
-					} finally {
-						guiUpdate.suppressRefresh = false;
-						await resubscribeToPocketNotes();
-						selectedNotesID = [];
-						update();
-					}			
+					await mergePromise
+					guiUpdate.suppressRefresh = false;
+					await resubscribeToPocketNotes();
+					selectedNotesID = [];
+					update();	
 				}}
 			></BulkMerge>
 			{#if !isTrash}
