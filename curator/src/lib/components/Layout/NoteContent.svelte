@@ -25,8 +25,8 @@
 
 	let { note }: Props = $props();
 
-	let content = $derived(replacePbUrl(note?.content ?? ''));
-	let noteTitle = $state(note?.title ?? '');
+	let content = $derived(replacePbUrl(note.content));
+	let noteTitle = $state(note.title);
 	let textContent = $state('');
 	let editor: Element;
 	let fontScale = $state(1);
@@ -48,12 +48,12 @@
 
 	async function handleFile(e: Event) {
 		e.preventDefault();
-		if (!note?.id) return;
+		if (!note.id) return;
 
 		const file = e.file as File;
 
 		// upload file and get url
-		const fileURL = await uploadFileToPocketbase({ recordID: note?.id, file });
+		const fileURL = await uploadFileToPocketbase({ recordID: note.id, file });
 		if (!fileURL) return;
 
 		// get hash
@@ -72,7 +72,7 @@
 		// check thumbnails
 		if (!note.thumbnail) {
 			const thumbResource = getResourceforThumbGen(mergedResources);
-			await addThumbnailToRecord({ recordID: note?.id, thumbURL: thumbResource.fileURL });
+			await addThumbnailToRecord({ recordID: note.id, thumbURL: thumbResource.fileURL });
 		}
 
 		// get new file content

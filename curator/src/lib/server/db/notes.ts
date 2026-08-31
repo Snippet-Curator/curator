@@ -1,4 +1,5 @@
 import PocketBase from 'pocketbase';
+import type { ListResult } from 'pocketbase';
 
 import { notesCollection, viewNotesCollection, viewNotebooksCollection } from '$lib/server/const';
 import { type Note, type NoteQuery } from '$lib/types';
@@ -20,7 +21,7 @@ export async function getCurrentNotebook(pb: PocketBase, notebookID: string) {
 	return data;
 }
 
-export async function getNotes(pb: PocketBase, query: NoteQuery) {
+export async function getNotes(pb: PocketBase, query: NoteQuery): Promise<ListResult<Note>> {
 	const page = query.page ?? 1;
 	const sort = query.sort ?? '-created';
 	const collection = query.fullContent ? notesCollection : viewNotesCollection;
@@ -48,20 +49,11 @@ export async function getNotes(pb: PocketBase, query: NoteQuery) {
 
 	const filter = filters.join(' && ');
 
-	const { data, error } = await tryCatch(
-		pb.collection(collection).getList(page, 24, {
-			sort,
-			filter,
-			expand: 'notebook,tags'
-		})
-	);
-
-	if (error) {
-		console.error(error);
-		return;
-	}
-
-	return data;
+	return await pb.collection(collection).getList<Note>(page, 24, {
+		sort,
+		filter,
+		expand: 'notebook,tags'
+	});
 }
 
 export async function emptyTrash(pb: PocketBase) {
@@ -261,18 +253,9 @@ export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
 // Single Note
 
 export async function getNote(pb: PocketBase, noteID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).getOne<Note>(noteID, {
-			expand: 'notebook,tags'
-		})
-	);
-
-	if (error) {
-		console.error('Error getting note: ', noteID, error);
-		return null;
-	}
-
-	return data;
+	return await pb.collection(notesCollection).getOne<Note>(noteID, {
+		expand: 'notebook,tags'
+	});
 }
 
 export async function updateLastOpened(pb: PocketBase, noteID: string) {

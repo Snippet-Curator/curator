@@ -36,10 +36,10 @@
 	});
 
 	let result = $derived(await getNotes(newQuery));
-	let notes = $derived(result?.items);
+	let notes = $derived(result.items);
 
-	let totalPages = $derived(result?.totalPages ?? 0);
-	let totalItems = $derived(result?.totalItems ?? 0);
+	let totalPages = $derived(result.totalPages);
+	let totalItems = $derived(result.totalItems);
 	let searchInput = $state<string>(query.search ?? '');
 
 	let scrollEl = $state<HTMLElement>();

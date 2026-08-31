@@ -13,23 +13,16 @@
 			sources: Note['sources'],
 			selectedThumbnailURL: string
 		) => void;
-		note: Note | undefined;
+		note: Note;
 		thumbURL: string | undefined;
 	};
 
 	let { isOpen = $bindable(), action, note, thumbURL = '' }: Props = $props();
 
 	let selectedThumbnailURL = $state<string>(thumbURL.split('?')[0]);
-	let title = $state(note?.title ?? '');
-	let description = $state(note?.description ?? '');
-	let sources = $state(
-		note?.sources ?? [
-			{
-				source: '',
-				source_url: ''
-			}
-		]
-	);
+	let title = $state(note.title);
+	let description = $state(note.description);
+	let sources = $state(note.sources);
 
 	function save() {
 		action(title, description, sources, selectedThumbnailURL);

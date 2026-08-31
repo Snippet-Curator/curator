@@ -27,7 +27,7 @@
 		softDeleteNote,
 		updateLastOpened
 	} from '$lib/api/note.remote';
-	import type { NoteQuery } from '$lib/types';
+	import type { NoteQuery, Note } from '$lib/types';
 
 	import FilterDiscover from './FilterDiscover.svelte';
 	import { onMount, tick } from 'svelte';
@@ -48,11 +48,11 @@
 	const mobileState = getMobileState();
 
 	let result = $derived(await getNotes(query));
-	let notes = $derived(result?.items);
+	let notes = $derived(result.items);
 	let noteIndex = $state(0);
-	let note = $derived(result?.items[noteIndex]);
-	let noteID = $derived(note?.id ?? '');
-	let lastItemIndex = $derived(result?.perPage ?? 30);
+	let note = $derived(result.items[noteIndex]);
+	let noteID = $derived(note.id);
+	let lastItemIndex = $derived(result.perPage ?? 30);
 
 	let isDeleteOpen = $state(false);
 	let isEditTagsOpen = $state(false);
@@ -71,7 +71,7 @@
 
 		await tick();
 
-		if (note?.id) {
+		if (note.id) {
 			await updateLastOpened(note.id);
 		}
 	}
@@ -104,11 +104,11 @@
 		<!-- {note.score.toFixed(2)} -->
 		<div class="hidden grow md:block"></div>
 
-		{#if note?.expand?.tags}
+		{#if note.expand?.tags}
 			<Topbar.Tags tags={note.expand.tags} />
 		{/if}
 		<Topbar.TagBtn bind:isOpen={isEditTagsOpen} />
-		{#if note?.expand?.notebook}
+		{#if note.expand?.notebook}
 			<Topbar.Notebook bind:isOpen={isEditNotebookOpen} notebook={note.expand.notebook} />
 		{/if}
 
@@ -144,7 +144,12 @@
 				getNextNote();
 			}}
 		/>
-		<Topbar.Delete noteStatus={note.status} bind:isOpen={isDeleteOpen} />
+		<Topbar.Delete
+			isPermaDeleteNoteOpen={false}
+			restore={() => {}}
+			noteStatus={note.status}
+			bind:isOpen={isDeleteOpen}
+		/>
 		<Topbar.Info {note} />
 	</Topbar.Root>
 
@@ -193,26 +198,30 @@
 		}}>this note</Delete
 	>
 
-	<EditNotebook
-		currentNotebookID={note.expand?.notebook.id}
-		bind:isOpen={isEditNotebookOpen}
-		action={(newNotebookID) => {
-			changeNoteNotebook({ noteID: note.id, newNotebookID });
-		}}
-	></EditNotebook>
+	{#if note.expand?.notebook}
+		<EditNotebook
+			currentNotebookID={note.expand?.notebook.id}
+			bind:isOpen={isEditNotebookOpen}
+			action={(newNotebookID) => {
+				changeNoteNotebook({ noteID: note.id, newNotebookID });
+			}}
+		></EditNotebook>
+	{/if}
 
-	<EditTags
-		bind:isOpen={isEditTagsOpen}
-		currentTags={note?.expand?.tags}
-		update={async (selectedTags) => {
-			await updateTags({ noteID, selectedTags });
-			getNote(noteID).refresh();
-		}}
-	/>
+	{#if note.expand?.tags}
+		<EditTags
+			bind:isOpen={isEditTagsOpen}
+			currentTags={note.expand.tags}
+			update={async (selectedTags) => {
+				await updateTags({ noteID, selectedTags });
+				getNote(noteID).refresh();
+			}}
+		/>
+	{/if}
 
 	<EditNote
 		{note}
-		thumbURL={note?.thumbnail}
+		thumbURL={note.thumbnail}
 		bind:isOpen={isEditNoteOpen}
 		action={async (newTitle, newDescription, sources, selectedThumbnailURL) => {
 			await changeTitle({ noteID, newTitle });

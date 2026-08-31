@@ -32,7 +32,7 @@
 	import { toast } from 'svelte-sonner';
 
 	const mobileState = getMobileState();
-	let noteID = page.params.slug ?? '';
+	let noteID = page.params.slug!;
 	let note = $derived(await getNote(noteID));
 
 	let isDeleteOpen = $state(false);
@@ -49,15 +49,15 @@
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
 	<Topbar.Back />
 	<div class="grow"></div>
-	{#if note?.expand?.tags}
+	{#if note.expand?.tags}
 		<Topbar.Tags tags={note.expand.tags} />
 	{/if}
 	<Topbar.TagBtn bind:isOpen={isEditTagsOpen} />
-	{#if note?.expand?.notebook}
+	{#if note.expand?.notebook}
 		<Topbar.Notebook bind:isOpen={isEditNotebookOpen} notebook={note.expand.notebook} />
 	{/if}
 	<Topbar.Rating
-		rating={note?.rating ?? 0}
+		rating={note.rating ?? 0}
 		action={async (newRating) => {
 			await changeRating({
 				noteID,
@@ -74,11 +74,11 @@
 				<Topbar.Share
 					share={async () => await shareNote(noteID)}
 					bind:isOpen={isShareNoteOpen}
-					isShared={note?.is_shared}
+					isShared={note.is_shared}
 				/>
 
 				<Topbar.Archive
-					noteStatus={note?.status ?? 'active'}
+					noteStatus={note.status}
 					archive={async () => {
 						const promise = archiveNote(noteID);
 
@@ -106,7 +106,7 @@
 					}}
 				/>
 				<Topbar.Delete
-					noteStatus={note?.status ?? 'active'}
+					noteStatus={note.status}
 					bind:isOpen={isDeleteOpen}
 					restore={async () => {
 						const promise = restoreNote(noteID);
@@ -135,11 +135,11 @@
 				await getNote(noteID).refresh();
 			}}
 			bind:isOpen={isShareNoteOpen}
-			isShared={note?.is_shared}
+			isShared={note.is_shared}
 		/>
 
 		<Topbar.Archive
-			noteStatus={note?.status ?? 'active'}
+			noteStatus={note.status}
 			archive={async () => {
 				const promise = archiveNote(noteID);
 
@@ -166,7 +166,7 @@
 			}}
 		/>
 		<Topbar.Delete
-			noteStatus={note?.status ?? 'active'}
+			noteStatus={note.status}
 			bind:isOpen={isDeleteOpen}
 			restore={async () => {
 				const promise = restoreNote(noteID);
@@ -223,17 +223,19 @@
 	}}>this note permanently</Delete
 >
 
-<EditTags
-	bind:isOpen={isEditTagsOpen}
-	currentTags={note?.expand?.tags}
-	update={async (selectedTags) => {
-		await updateTags({ noteID, selectedTags });
-		getNote(noteID).refresh();
-	}}
-/>
+{#if note.expand?.tags}
+	<EditTags
+		bind:isOpen={isEditTagsOpen}
+		currentTags={note.expand?.tags}
+		update={async (selectedTags) => {
+			await updateTags({ noteID, selectedTags });
+			getNote(noteID).refresh();
+		}}
+	/>
+{/if}
 
 <EditNotebook
-	currentNotebookID={note?.expand?.notebook?.id}
+	currentNotebookID={note.expand?.notebook?.id}
 	bind:isOpen={isEditNotebookOpen}
 	action={async (selectedNotebookID) => {
 		await changeNoteNotebook({ noteID, newNotebookID: selectedNotebookID });
@@ -243,7 +245,7 @@
 
 <EditNote
 	{note}
-	thumbURL={note?.thumbnail}
+	thumbURL={note.thumbnail}
 	bind:isOpen={isEditNoteOpen}
 	action={async (newTitle, newDescription, sources, selectedThumbnailURL) => {
 		await changeTitle({ noteID, newTitle });

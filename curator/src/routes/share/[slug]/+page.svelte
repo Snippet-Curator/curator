@@ -1,7 +1,14 @@
 <script lang="ts">
 	import NoteContent from './NoteContent.svelte';
+	import type { Note } from '$lib/types';
 
-	let { data } = $props();
+	type Props = {
+		data: {
+			note: Note;
+		};
+	};
+
+	let { data }: Props = $props();
 </script>
 
 <div class="h-[calc(100vh-60px)]">

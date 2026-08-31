@@ -1,3 +1,5 @@
+import { notesCollection } from '$lib/server/const';
+import type { Note } from '$lib/types';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params, locals }) {
@@ -5,8 +7,8 @@ export async function load({ params, locals }) {
 
 	try {
 		const note = await locals.pb
-			.collection('notes')
-			.getFirstListItem(`share_token="${token}" && is_shared=true`);
+			.collection(notesCollection)
+			.getFirstListItem<Note>(`share_token="${token}" && is_shared=true`);
 
 		return {
 			note

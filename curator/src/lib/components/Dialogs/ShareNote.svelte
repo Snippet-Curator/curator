@@ -5,7 +5,7 @@
 	type Props = {
 		isOpen: boolean;
 		unshare: () => void;
-		note: Note | undefined;
+		note: Note;
 	};
 
 	let { isOpen = $bindable(), unshare, note }: Props = $props();
@@ -16,7 +16,7 @@
 	}
 
 	async function copyURL() {
-		const URL = `${window.location.origin}/share/${note?.share_token}`;
+		const URL = `${window.location.origin}/share/${note.share_token}`;
 
 		if (navigator.clipboard) {
 			await navigator.clipboard.writeText(URL);
@@ -46,7 +46,7 @@
 		<div>
 			<legend class="fieldset-legend">URL</legend>
 
-			<span>{window.location.origin}/share/{note?.share_token}</span>
+			<span>{window.location.origin}/share/{note.share_token}</span>
 		</div>
 
 		<div class="flex justify-end gap-x-2">

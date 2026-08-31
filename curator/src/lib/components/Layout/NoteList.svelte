@@ -198,16 +198,16 @@
 		}}>this note</Delete
 	>
 
-	<EditNotebook
-		currentNotebookID={selectedNote?.expand?.notebook?.id}
-		bind:isOpen={isEditNotebookOpen}
-		action={async (selectedNotebookID) => {
-			await changeNoteNotebook({ noteID: selectedNoteID, newNotebookID: selectedNotebookID });
-			update();
-		}}
-	></EditNotebook>
-
 	{#if selectedNote}
+		<EditNotebook
+			currentNotebookID={selectedNote.expand?.notebook?.id}
+			bind:isOpen={isEditNotebookOpen}
+			action={async (selectedNotebookID) => {
+				await changeNoteNotebook({ noteID: selectedNoteID, newNotebookID: selectedNotebookID });
+				update();
+			}}
+		></EditNotebook>
+
 		<EditTags
 			bind:isOpen={isEditTagsOpen}
 			currentTags={selectedNoteTags}

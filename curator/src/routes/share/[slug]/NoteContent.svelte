@@ -13,8 +13,8 @@
 
 	let { note }: Props = $props();
 
-	let content = $derived(replacePbUrl(note?.content ?? ''));
-	let noteTitle = $state(note?.title ?? '');
+	let content = $derived(replacePbUrl(note.content));
+	let noteTitle = $state(note.title);
 	let textContent = $state('');
 	let editor: Element;
 
