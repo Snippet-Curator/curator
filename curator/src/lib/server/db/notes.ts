@@ -234,10 +234,8 @@ export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
 	if (!selectedNotes || selectedNotes.length < 2) return;
 
 	const [baseNote, ...restNotes] = selectedNotes;
-	console.log('before merge resources');
 	const newResources = await createNewResources(pb, baseNote.id, restNotes);
 	const mergedNoteData = createMergedNoteData(selectedNotes, newResources);
-	console.log('after merge resources');
 	const { data: finalNote, error: finalNoteError } = await tryCatch(
 		pb.collection(notesCollection).update(baseNote.id, mergedNoteData)
 	);

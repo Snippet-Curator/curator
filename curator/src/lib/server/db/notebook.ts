@@ -132,16 +132,13 @@ export async function createOneNotebookbyName(
 	newName: string,
 	parentNotebookID?: string
 ) {
-	const { data, error } = await tryCatch(
-		pb.collection(notebooksCollection).create({
+
+	await pb.collection(notebooksCollection).create({
 			name: newName,
 			parent: parentNotebookID,
 			user: pb.authStore.record?.id
 		})
-	);
-	if (error) {
-		console.error('Error while creating new notebook: ', error.data, error.message);
-	}
+
 }
 
 export async function getOneNotebookByName(pb: PocketBase, notebookName: string) {
@@ -188,14 +185,8 @@ export async function deleteNotebook(pb: PocketBase, recordID: string, inboxID: 
 }
 
 export async function updateOneNotebookByName(pb: PocketBase, recordID: string, newName: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notebooksCollection).update(recordID, {
-			name: newName
-		})
-	);
-	if (error) {
-		console.error('Error while updating notebook name: ', error);
-	}
+	 await pb.collection(notebooksCollection).update(recordID, {
+			name: newName})
 }
 
 export async function updateOneNotebookByParent(
@@ -203,34 +194,22 @@ export async function updateOneNotebookByParent(
 	recordID: string,
 	parentNotebook: string
 ) {
-	const { data, error } = await tryCatch(
-		pb.collection(notebooksCollection).update(recordID, {
+	await pb.collection(notebooksCollection).update(recordID, {
 			parent: parentNotebook
 		})
-	);
-	if (error) {
-		console.error('Error while updating parent notebook: ', error);
-	}
 }
 
 export async function pinNotebook(pb: PocketBase, recordID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notebooksCollection).update(recordID, {
+	
+	await pb.collection(notebooksCollection).update(recordID, {
 			status: 'pinned'
 		})
-	);
-	if (error) {
-		console.error('Error pinning notebook: ', error.data);
 	}
-}
 
 export async function unpinNotebook(pb: PocketBase, recordID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notebooksCollection).update(recordID, {
+
+		await pb.collection(notebooksCollection).update(recordID, {
 			status: ''
 		})
-	);
-	if (error) {
-		console.error('Error unpinning notebook: ', error.data);
-	}
+
 }

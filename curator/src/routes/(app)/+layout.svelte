@@ -1,6 +1,4 @@
 <script lang="ts">
-	import {  toast } from 'svelte-sonner';
-
 	import { pb } from '$lib/pocketbase';
 	import { page } from '$app/state';
 	import { browser } from '$app/environment';

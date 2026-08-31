@@ -33,6 +33,7 @@
 	});
 
 	let result = $derived(await getNotes(newQuery));
+	let notes = $derived(result?.items);
 
 	let totalPages = $derived(result?.totalPages ?? 0);
 	let totalItems = $derived(result?.totalItems ?? 0);
@@ -59,7 +60,7 @@
 	{#if totalItems && totalItems > 0}
 		<NoteList
 			update={async () => await getNotes(newQuery).refresh()}
-			notes={result}
+			{notes}
 			{isBulkEdit}
 			bind:selectedNotesID
 		/>
@@ -70,7 +71,7 @@
 	{#if isBulkEdit}
 		<BulkToolbar
 			update={async () => await getNotes(newQuery).refresh()}
-			notes={result}
+			{notes}
 			isArchive
 			bind:isBulkEdit
 			bind:selectedNotesID

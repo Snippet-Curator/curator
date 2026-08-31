@@ -9,11 +9,13 @@
 	import {
 		createOneNotebookbyName,
 		deleteNotebook,
+		getAllNotebooks,
 		getInbox,
 		pinNotebook,
 		updateOneNotebookByName,
 		updateOneNotebookByParent
 	} from '$lib/api/notebook.remote';
+	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		notebooks: Notebook[];
@@ -56,8 +58,9 @@
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>
 			<ContextMenu.Item
-				onSelect={() => {
-					pinNotebook(notebook.id);
+				onSelect={async () => {
+					await pinNotebook(notebook.id);
+					await getAllNotebooks().refresh();
 				}}>Pin</ContextMenu.Item
 			>
 			<ContextMenu.Item
@@ -93,7 +96,7 @@
 	{#each notebooks as notebook}
 		{#if notebook.name != 'Inbox'}
 			<li class="group mr-4">
-				{#if notebook.children?.length > 0}
+				{#if notebook.children && notebook.children?.length > 0}
 					<details class="w-full">
 						<summary class="flex w-full py-0 pl-0">
 							<div class="grow">
@@ -119,18 +122,42 @@
 	{/snippet}
 </svelte:boundary>
 
-{#if selectedNotebook}
+{#if selectedNotebook && inboxID}
 	<Rename
 		bind:isOpen={isEditOpen}
 		renameType="Notebook"
 		currentName={selectedNotebook.name}
-		action={(newName) => updateOneNotebookByName({ recordID: selectedNotebook.id, newName })}
+		action={async (newName) => {
+			if (!selectedNotebook) return;
+			const promise = updateOneNotebookByName({ recordID: selectedNotebook.id, newName });
+
+			toast.promise(promise, {
+				loading: `Renaming ${selectedNotebook.name}...`,
+				success: `Renamed ${selectedNotebook.name}.`,
+				error: 'Failed to rename notebook.'
+			});
+
+			await promise;
+			await getAllNotebooks().refresh();
+		}}
 	/>
 
 	<Delete
 		bind:isOpen={isDeleteOpen}
 		name="Notebook"
-		action={() => deleteNotebook({ recordID: selectedNotebook.id, inboxID })}>this notebook?</Delete
+		action={async () => {
+			if (!selectedNotebook) return;
+			const promise = deleteNotebook({ recordID: selectedNotebook.id, inboxID });
+
+			toast.promise(promise, {
+				loading: `Deleting ${selectedNotebook.name}...`,
+				success: `Deleted ${selectedNotebook.name}.`,
+				error: 'Failed to delete notebook.'
+			});
+
+			await promise;
+			await getAllNotebooks().refresh();
+		}}>this notebook?</Delete
 	>
 
 	<ChangeParent
@@ -138,18 +165,46 @@
 		type="notebook"
 		fullList={notebooks}
 		currentItemID={selectedNotebook?.id}
-		clear={() => updateOneNotebookByParent({ recordID: selectedNotebook?.id, parentID: '' })}
-		action={(parentID) =>
-			updateOneNotebookByParent({
+		clear={async () => {
+			if (!selectedNotebook) return;
+			await updateOneNotebookByParent({ recordID: selectedNotebook?.id, parentNotebook: '' });
+			await getAllNotebooks().refresh();
+		}}
+		action={async (parentNotebook) => {
+			if (!selectedNotebook) return;
+			const promise = updateOneNotebookByParent({
 				recordID: selectedNotebook?.id,
-				parentID
-			})}
+				parentNotebook
+			});
+
+			toast.promise(promise, {
+				loading: `Updating parent...`,
+				success: `Updated parent.`,
+				error: 'Failed to update parent notebook.'
+			});
+
+			await promise;
+			await getAllNotebooks().refresh();
+		}}
 	/>
 
 	<New
 		bind:isOpen={isNewNotebookOpen}
 		newType="Notebook"
-		action={(newName) =>
-			createOneNotebookbyName({ newName, parentNotebookID: selectedNotebook.id })}
+		action={async (newName) => {
+			const promise = createOneNotebookbyName({
+				newName,
+				parentNotebookID: selectedNotebook?.id ?? ''
+			});
+
+			toast.promise(promise, {
+				loading: `Creating ${newName}...`,
+				success: `Created ${newName}.`,
+				error: 'Failed to create notebook.'
+			});
+
+			await promise;
+			await getAllNotebooks().refresh();
+		}}
 	/>
 {/if}

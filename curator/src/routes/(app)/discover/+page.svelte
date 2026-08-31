@@ -31,6 +31,7 @@
 
 	import FilterDiscover from './FilterDiscover.svelte';
 	import { onMount, tick } from 'svelte';
+	import { toast } from 'svelte-sonner';
 
 	let query = $state<NoteQuery>({
 		page: 1,
@@ -47,6 +48,7 @@
 	const mobileState = getMobileState();
 
 	let result = $derived(await getNotes(query));
+	let notes = $derived(result?.items);
 	let noteIndex = $state(0);
 	let note = $derived(result?.items[noteIndex]);
 	let noteID = $derived(note?.id ?? '');
@@ -124,8 +126,17 @@
 
 		<Topbar.Archive
 			noteStatus={note.status}
-			archive={() => {
-				archiveNote(note.id);
+			archive={async () => {
+				const promise = archiveNote(note.id);
+
+				toast.promise(promise, {
+					loading: `Archiving note...`,
+					success: `Archived note.`,
+					error: 'Failed to archive note.'
+				});
+
+				await promise;
+
 				getNextNote();
 			}}
 			unarchive={() => {
@@ -170,8 +181,14 @@
 	<Delete
 		bind:isOpen={isDeleteOpen}
 		name="Note"
-		action={() => {
-			softDeleteNote(note.id);
+		action={async () => {
+			const promise = softDeleteNote(note.id);
+			toast.promise(promise, {
+				loading: `Deleting note...`,
+				success: `Deleted note.`,
+				error: 'Failed to delete note.'
+			});
+			await promise;
 			getNextNote();
 		}}>this note</Delete
 	>

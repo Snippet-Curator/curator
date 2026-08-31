@@ -22,6 +22,7 @@
 	let query = $derived(getQueryFromURL(page.url));
 
 	let result = $derived(await getNotes(query));
+	let notes = $derived(result?.items);
 
 	let totalPages = $derived(result?.totalPages ?? 0);
 	let totalItems = $derived(result?.totalItems ?? 0);
@@ -50,7 +51,7 @@
 			update={async () => await getNotes(query).refresh()}
 			{isBulkEdit}
 			bind:selectedNotesID
-			notes={result}
+			{notes}
 		/>
 	{:else}
 		<br />
@@ -61,7 +62,7 @@
 			update={async () => {
 				await getNotes(query).refresh();
 			}}
-			notes={result}
+			{notes}
 			bind:isBulkEdit
 			bind:selectedNotesID
 		/>

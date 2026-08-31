@@ -16,6 +16,7 @@
 	import * as Topbar from '$lib/components/Topbar/index';
 	import { getQueryFromURL } from '$lib/utils';
 	import { type NoteQuery } from '$lib/types';
+	import { toast } from 'svelte-sonner';
 
 	const scroll = new ScrollState({
 		element: () => scrollEl
@@ -35,6 +36,7 @@
 	});
 
 	let result = $derived(await getNotes(newQuery));
+	let notes = $derived(result?.items);
 
 	let totalPages = $derived(result?.totalPages ?? 0);
 	let totalItems = $derived(result?.totalItems ?? 0);
@@ -51,7 +53,9 @@
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
 	<Topbar.Back />
 	<Search bind:searchInput />
-	<Topbar.Empty bind:isOpen={isEmptyTrashOpen} />
+	{#if notes && notes.length > 0}
+		<Topbar.Empty bind:isOpen={isEmptyTrashOpen} />
+	{/if}
 	<Topbar.Filter bind:isOpen={isFilterSearch} />
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
@@ -64,7 +68,7 @@
 			update={async () => await getNotes(newQuery).refresh()}
 			{isBulkEdit}
 			bind:selectedNotesID
-			notes={result}
+			{notes}
 		/>
 	{:else}
 		<br />
@@ -73,7 +77,7 @@
 	{#if isBulkEdit}
 		<BulkToolbar
 			update={async () => await getNotes(newQuery).refresh()}
-			notes={result}
+			{notes}
 			isTrash
 			bind:isBulkEdit
 			bind:selectedNotesID
@@ -87,7 +91,16 @@
 	bind:isOpen={isEmptyTrashOpen}
 	name="Notes Permanently"
 	action={async () => {
-		await emptyTrash();
+		const promise = emptyTrash();
+
+		toast.promise(promise, {
+			loading: `Emptying trash...`,
+			success: `Deleted all note.`,
+			error: 'Failed to empty trash.'
+		});
+
+		await promise;
+
 		window.history.back();
 	}}>these notes</Delete
 >

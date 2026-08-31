@@ -29,6 +29,7 @@
 		changeSources,
 		updateTags
 	} from '$lib/api/note.remote';
+	import { toast } from 'svelte-sonner';
 
 	const mobileState = getMobileState();
 	let noteID = page.params.slug ?? '';
@@ -79,19 +80,46 @@
 				<Topbar.Archive
 					noteStatus={note?.status ?? 'active'}
 					archive={async () => {
-						await archiveNote(noteID);
+						const promise = archiveNote(noteID);
+
+						toast.promise(promise, {
+							loading: `Archiving note...`,
+							success: `Archived note.`,
+							error: 'Failed to archive note.'
+						});
+
+						await promise;
+
 						window.history.back();
 					}}
 					unarchive={async () => {
-						await restoreNote(noteID);
-						window.history.back();
+						const promise = restoreNote(noteID);
+
+						toast.promise(promise, {
+							loading: `Restoring note...`,
+							success: `Restored note.`,
+							error: 'Failed to restore note.'
+						});
+
+						await promise;
+						await getNote(noteID).refresh();
 					}}
 				/>
 				<Topbar.Delete
 					noteStatus={note?.status ?? 'active'}
 					bind:isOpen={isDeleteOpen}
-					trash={async () => await softDeleteNote(noteID)}
-					restore={async () => await restoreNote(noteID)}
+					restore={async () => {
+						const promise = restoreNote(noteID);
+
+						toast.promise(promise, {
+							loading: `Restoring note...`,
+							success: `Restored note.`,
+							error: 'Failed to restore note.'
+						});
+
+						await promise;
+						await getNote(noteID).refresh();
+					}}
 					bind:isPermaDeleteNoteOpen
 				/>
 				<Topbar.Info {note} />
@@ -113,19 +141,45 @@
 		<Topbar.Archive
 			noteStatus={note?.status ?? 'active'}
 			archive={async () => {
-				await archiveNote(noteID);
+				const promise = archiveNote(noteID);
+
+				toast.promise(promise, {
+					loading: `Archiving note...`,
+					success: `Archived note.`,
+					error: 'Failed to archive note.'
+				});
+
+				await promise;
 				window.history.back();
 			}}
 			unarchive={async () => {
-				await restoreNote(noteID);
+				const promise = restoreNote(noteID);
+
+				toast.promise(promise, {
+					loading: `Restoring note...`,
+					success: `Restored note.`,
+					error: 'Failed to restore note.'
+				});
+
+				await promise;
 				await getNote(noteID).refresh();
 			}}
 		/>
 		<Topbar.Delete
 			noteStatus={note?.status ?? 'active'}
 			bind:isOpen={isDeleteOpen}
-			trash={async () => await softDeleteNote(noteID)}
-			restore={async () => await restoreNote(noteID)}
+			restore={async () => {
+				const promise = restoreNote(noteID);
+
+				toast.promise(promise, {
+					loading: `Restoring note...`,
+					success: `Restored note.`,
+					error: 'Failed to restore note.'
+				});
+
+				await promise;
+				await getNote(noteID).refresh();
+			}}
 			bind:isPermaDeleteNoteOpen
 		/>
 		<Topbar.Info {note} />
@@ -139,7 +193,15 @@
 	bind:isOpen={isDeleteOpen}
 	name="Note"
 	action={async () => {
-		await softDeleteNote(noteID);
+		const promise = softDeleteNote(noteID);
+
+		toast.promise(promise, {
+			loading: `Deleting note...`,
+			success: `Deleted note.`,
+			error: 'Failed to delete note.'
+		});
+
+		await promise;
 		window.history.back();
 	}}>this note</Delete
 >
@@ -148,7 +210,15 @@
 	bind:isOpen={isPermaDeleteNoteOpen}
 	name="Note"
 	action={async () => {
-		await permaDeleteNote(noteID);
+		const promise = permaDeleteNote(noteID);
+
+		toast.promise(promise, {
+			loading: `Deleting note...`,
+			success: `Deleted note.`,
+			error: 'Failed to delete note.'
+		});
+
+		await promise;
 		window.history.back();
 	}}>this note permanently</Delete
 >
@@ -187,7 +257,15 @@
 <ShareNote
 	{note}
 	unshare={async () => {
-		await unshareNote(noteID);
+		const promise = unshareNote(noteID);
+
+		toast.promise(promise, {
+			loading: `Unsharing note...`,
+			success: `Unshared note.`,
+			error: 'Failed to unshare note.'
+		});
+
+		await promise;
 		await getNote(noteID).refresh();
 	}}
 	bind:isOpen={isShareNoteOpen}

@@ -7,7 +7,6 @@
 		isOpen: boolean;
 		isPermaDeleteNoteOpen: boolean;
 		noteStatus: 'active' | 'archived' | 'deleted';
-		trash: () => void;
 		restore: () => void;
 	};
 

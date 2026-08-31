@@ -59,7 +59,7 @@
 			target.blur();
 			return;
 		}
-		notes.items.forEach((item) => {
+		notes.forEach((item) => {
 			selectedNotesID.push(item.id);
 		});
 		target.blur();
@@ -89,21 +89,21 @@
 				merge={async () => {
 					guiUpdate.suppressRefresh = true;
 					isBulkEdit = false;
-					await tick()
+					await tick();
 
-					const mergePromise = mergeNotes(selectedNotesID)
+					const mergePromise = mergeNotes(selectedNotesID);
 
 					toast.promise(mergePromise, {
 						loading: `Merging ${selectedNotesID.length} notes...`,
 						success: `Merged ${selectedNotesID.length} notes`,
-						error: "Failed to merge notes."
-					})
+						error: 'Failed to merge notes.'
+					});
 
-					await mergePromise
+					await mergePromise;
 					guiUpdate.suppressRefresh = false;
 					await resubscribeToPocketNotes();
 					selectedNotesID = [];
-					update();	
+					update();
 				}}
 			></BulkMerge>
 			{#if !isTrash}
@@ -112,30 +112,29 @@
 					{isArchive}
 					archive={async () => {
 						isBulkEdit = false;
-						await tick()
-						const promise = archiveMultiple(selectedNotesID)
+						await tick();
+						const promise = archiveMultiple(selectedNotesID);
 						toast.promise(promise, {
 							loading: `Archiving ${selectedNotesID.length} notes...`,
 							success: `Archived ${selectedNotesID.length} notes`,
-							error: "Failed to archive notes."
-						})
-					await promise
-					selectedNotesID = [];
-					update();
+							error: 'Failed to archive notes.'
+						});
+						await promise;
+						selectedNotesID = [];
+						update();
 					}}
 					unArchive={async () => {
 						isBulkEdit = false;
-						await tick()
+						await tick();
 						const promise = unArchiveMultiple(selectedNotesID);
 						toast.promise(promise, {
 							loading: `Restoring ${selectedNotesID.length} notes...`,
 							success: `Restored ${selectedNotesID.length} notes`,
-							error: "Failed to unarchive notes."
-						})
-						await promise
+							error: 'Failed to unarchive notes.'
+						});
+						await promise;
 						selectedNotesID = [];
 						update();
-						
 					}}
 				/>
 			{/if}
@@ -145,14 +144,14 @@
 				trash={() => (isDeleteOpen = true)}
 				restore={async () => {
 					isBulkEdit = false;
-					await tick()
+					await tick();
 					const promise = unSoftDeleteMultiple(selectedNotesID);
 					toast.promise(promise, {
-							loading: `Restoring ${selectedNotesID.length} notes...`,
-							success: `Restored ${selectedNotesID.length} notes`,
-							error: "Failed to restore notes."
-						})
-					await promise
+						loading: `Restoring ${selectedNotesID.length} notes...`,
+						success: `Restored ${selectedNotesID.length} notes`,
+						error: 'Failed to restore notes.'
+					});
+					await promise;
 					selectedNotesID = [];
 					update();
 				}}
@@ -169,17 +168,16 @@
 	name="Notes"
 	action={async () => {
 		isBulkEdit = false;
-		await tick()
-		const promise =  softDeleteMultiple(selectedNotesID);
+		await tick();
+		const promise = softDeleteMultiple(selectedNotesID);
 		toast.promise(promise, {
 			loading: `Deleting ${selectedNotesID.length} notes...`,
 			success: `Deleted ${selectedNotesID.length} notes`,
-			error: "Failed to delete notes."
-		})
-		await promise
+			error: 'Failed to delete notes.'
+		});
+		await promise;
 		selectedNotesID = [];
 		update();
-		
 	}}>these notes?</Delete
 >
 

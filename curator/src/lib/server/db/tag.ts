@@ -54,78 +54,47 @@ export async function getAllTags(pb: PocketBase) {
 }
 
 export async function deleteTag(pb: PocketBase, recordID: string) {
-	const { data, error } = await tryCatch(pb.collection(tagsCollection).delete(recordID));
-
-	if (error) {
-		console.error('Error while deleting tag: ', error);
-	}
+	await pb.collection(tagsCollection).delete(recordID)
 }
 
 export async function getOneTag(pb: PocketBase, tagID: string) {
-	const { data, error } = await tryCatch(pb.collection(tagsCollection).getOne(tagID));
-
-	if (error) {
-		console.error('Error getting tag: ', error);
-	}
-
-	return data;
+	return await pb.collection(tagsCollection).getOne(tagID)
 }
 
-export async function createOneTagbyName(pb: PocketBase, newName: string, parentTagID?: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(tagsCollection).create({
+export async function createOneTagbyName(pb: PocketBase, newName: string, parentTagID = "") {
+	await	pb.collection(tagsCollection).create({
 			name: newName,
 			parent: parentTagID,
 			user: pb.authStore.record?.id
 		})
-	);
-	if (error) {
-		console.error('Error while creating new tag: ', error.data);
-	}
-	return data;
 }
 
 export async function updateOneTagByName(pb: PocketBase, recordID: string, newName: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(tagsCollection).update(recordID, {
+	
+	await 	pb.collection(tagsCollection).update(recordID, {
 			name: newName
 		})
-	);
-	if (error) {
-		console.error('Error while updating tag name: ', error.message, error.data);
-	}
-	return data;
 }
 
 export async function updateOneTagByParent(pb: PocketBase, recordID: string, parentTagID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(tagsCollection).update(recordID, {
+	 
+	await	pb.collection(tagsCollection).update(recordID, {
 			parent: parentTagID
 		})
-	);
-	if (error) {
-		console.error('Error while updating parent tag: ', error.message);
-	}
+
 }
 
 export async function pinTag(pb: PocketBase, recordID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(tagsCollection).update(recordID, {
+	 
+	await	pb.collection(tagsCollection).update(recordID, {
 			status: 'pinned'
 		})
-	);
-	if (error) {
-		console.error('Error pinning tag: ', error.message, error.data);
-	}
 }
 
 export async function unpinTag(pb: PocketBase, recordID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(tagsCollection).update(recordID, {
+	 
+	await	pb.collection(tagsCollection).update(recordID, {
 			status: ''
 		})
-	);
-	if (error) {
-		console.error('Error unpin tag: ', error.message, error.data);
-	}
+
 }

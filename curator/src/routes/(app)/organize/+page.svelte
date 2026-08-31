@@ -7,6 +7,7 @@
 
 	import { getAllNotebooks, createOneNotebookbyName } from '$lib/api/notebook.remote';
 	import { getAllTags, createOneTagbyName } from '$lib/api/tag.remote';
+	import { toast } from 'svelte-sonner';
 
 	const allNotebooks = $derived(await getAllNotebooks());
 	const notebooks = $derived(allNotebooks?.rootNotebooks ?? []);
@@ -92,11 +93,33 @@
 <New
 	bind:isOpen={isNewTagOpen}
 	newType="Tag"
-	action={async (newTagName) => await createOneTagbyName({ newName: newTagName })}
+	action={async (newTagName) => {
+		const promise = createOneTagbyName({ newName: newTagName })
+
+		toast.promise(promise, {
+			loading: `Creating ${newTagName}...`,
+			success: `Created ${newTagName}.`,
+			error: "Failed to create tag."
+		})  
+
+		await promise 
+		await getAllTags().refresh()
+	}}
 />
 
 <New
 	bind:isOpen={isNewNotebookOpen}
 	newType="Notebook"
-	action={async (newNotebookName) => await createOneNotebookbyName({ newName: newNotebookName })}
+	action={async (newNotebookName) => {
+		const promise = createOneNotebookbyName({ newName: newNotebookName })
+
+		toast.promise(promise, {
+			loading: `Creating ${newNotebookName}...`,
+			success: `Created ${newNotebookName}.`,
+			error: "Failed to create notebook."
+		})  
+
+		await promise 
+		await getAllNotebooks().refresh()
+	}}
 />

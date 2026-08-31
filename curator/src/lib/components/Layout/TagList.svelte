@@ -15,6 +15,7 @@
 		updateOneTagByName,
 		updateOneTagByParent
 	} from '$lib/api/tag.remote';
+	import { toast } from 'svelte-sonner';
 
 	type Props = {
 		tags: Tag[];
@@ -120,28 +121,82 @@
 		bind:isOpen={isEditOpen}
 		renameType="Tag"
 		currentName={selectedTag.name}
-		action={(renameTagName) => {
-			updateOneTagByName({ tagID: selectedTag?.id, newName: renameTagName });
+		action={async (newName) => {
+			if (!selectedTag) return;
+			const promise = updateOneTagByName({ tagID: selectedTag?.id, newName });
+
+			toast.promise(promise, {
+				loading: `Renaming ${selectedTag.name}...`,
+				success: `Renamed ${selectedTag.name}.`,
+				error: 'Failed to rename tag.'
+			});
+
+			await promise;
+			await getAllTags().refresh();
 		}}
 	/>
 
-	<Delete bind:isOpen={isDeleteOpen} name="Tag" action={() => deleteTag(selectedTag.id)}
-		>this tag?</Delete
+	<Delete
+		bind:isOpen={isDeleteOpen}
+		name="Tag"
+		action={async () => {
+			if (!selectedTag) return;
+			const promise = deleteTag(selectedTag.id);
+
+			toast.promise(promise, {
+				loading: `Deleting ${selectedTag.name}...`,
+				success: `Deleted ${selectedTag.name}.`,
+				error: 'Failed to delete tag.'
+			});
+
+			await promise;
+			await getAllTags().refresh();
+		}}>this tag?</Delete
 	>
+	{#if flatTags}
+		<ChangeParent
+			bind:isOpen={isChangeParentOpen}
+			type="tag"
+			fullList={flatTags}
+			currentItemID={selectedTag?.id}
+			clear={async () => {
+				if (!selectedTag) return;
+				await updateOneTagByParent({ tagID: selectedTag?.id, parentTagID: '' });
+				await getAllTags().refresh();
+			}}
+			action={async (parentTagID) => {
+				if (!selectedTag) return;
+				const promise = updateOneTagByParent({
+					tagID: selectedTag?.id,
+					parentTagID
+				});
 
-	<ChangeParent
-		bind:isOpen={isChangeParentOpen}
-		type="tag"
-		fullList={flatTags}
-		currentItemID={selectedTag?.id}
-		clear={() => updateOneTagByParent({ tagID: selectedTag?.id, parentTagID: '' })}
-		action={(selectedParentTagID) =>
-			updateOneTagByParent({ tagID: selectedTag?.id, parentTagID: selectedParentTagID })}
-	/>
+				toast.promise(promise, {
+					loading: `Changing parent tag for ${selectedTag.name}...`,
+					success: `Changed parent tag for ${selectedTag.name}.`,
+					error: 'Failed to change parent tag.'
+				});
 
+				await promise;
+				await getAllTags().refresh();
+			}}
+		/>
+	{/if}
 	<New
 		bind:isOpen={isNewTagOpen}
 		newType="Tag"
-		action={(newTagName) => createOneTagbyName({ name: newTagName, parentTagID: selectedTag.id })}
+		action={async (newName) => {
+			if (!selectedTag) return;
+			const promise = createOneTagbyName({ newName, parentTagID: selectedTag.id });
+
+			toast.promise(promise, {
+				loading: `Creating ${selectedTag.name}...`,
+				success: `Created ${selectedTag.name}.`,
+				error: 'Failed to create new tag.'
+			});
+
+			await promise;
+			await getAllTags().refresh();
+		}}
 	/>
 {/if}

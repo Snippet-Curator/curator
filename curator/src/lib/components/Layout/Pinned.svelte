@@ -4,8 +4,8 @@
 	import { Tag as TagIcon, Pin } from 'lucide-svelte';
 	import * as ContextMenu from '$lib/components/ui/context-menu/index';
 
-	import { unpinNotebook } from '$lib/api/notebook.remote';
-	import { unpinTags } from '$lib/api/tag.remote';
+	import { getAllNotebooks, unpinNotebook } from '$lib/api/notebook.remote';
+	import { getAllTags, unpinTags } from '$lib/api/tag.remote';
 	import type { Tag, Notebook } from '$lib/types';
 
 	type Props = {
@@ -34,6 +34,7 @@
 			<ContextMenu.Item
 				onSelect={async () => {
 					await unpinNotebook(notebook.id);
+					await getAllNotebooks().refresh()    
 				}}>Unpin</ContextMenu.Item
 			>
 		</ContextMenu.Content>
@@ -60,6 +61,7 @@
 			<ContextMenu.Item
 				onSelect={async () => {
 					await unpinTags(tag.id);
+					await getAllTags().refresh()
 				}}>Unpin</ContextMenu.Item
 			>
 		</ContextMenu.Content>

@@ -5,7 +5,7 @@
 	import * as ContextMenu from '$lib/components/ui/context-menu/index';
 	import { Delete, EditNotebook, EditTags, NoteLoading, EditNote } from '$lib/components/';
 
-	import type { NoteList, Note } from '$lib/types';
+	import type { Note } from '$lib/types';
 	import {
 		getNote,
 		archiveNote,
@@ -22,7 +22,7 @@
 
 	type Props = {
 		isBulkEdit: boolean;
-		notes: NoteList[];
+		notes: Note[];
 		selectedNotesID: string[];
 		update: () => Promise<void>;
 	};
@@ -105,8 +105,8 @@
 	<div
 		class="p-golden-md md:p-golden-lg lg:p-golden-xl gap-golden-lg space-y-golden-lg lg:gap-golden-xl lg:space-y-golden-xl relative mb-80 columns-1 md:mb-64 md:columns-2 lg:mb-32 lg:columns-3 2xl:columns-4"
 	>
-		{#if notes.items.length > 0}
-			{#each notes.items as note}
+		{#if notes.length > 0}
+			{#each notes as note}
 				<div class="group relative">
 					<ContextMenu.Root>
 						<ContextMenu.Trigger>
@@ -154,9 +154,9 @@
 									toast.promise(promise, {
 										loading: `Archiving note...`,
 										success: `Archived note`,
-										error: "Failed to archive note."
-									})
-									await promise
+										error: 'Failed to archive note.'
+									});
+									await promise;
 									update();
 								}}>Archive</ContextMenu.Item
 							>
@@ -187,13 +187,13 @@
 		bind:isOpen={isDeleteOpen}
 		name="Note"
 		action={async () => {
-			const promise = softDeleteNote(selectedNoteID)
+			const promise = softDeleteNote(selectedNoteID);
 			toast.promise(promise, {
 				loading: `Deleting note...`,
 				success: `Deleted note`,
-				error: "Failed to delete note."
-			})
-			await promise
+				error: 'Failed to delete note.'
+			});
+			await promise;
 			update();
 		}}>this note</Delete
 	>
@@ -202,7 +202,7 @@
 		currentNotebookID={selectedNote?.expand?.notebook?.id}
 		bind:isOpen={isEditNotebookOpen}
 		action={async (selectedNotebookID) => {
-			await changeNoteNotebook({ noteID: selectedNoteID, newNotebookID: selectedNotebookID })
+			await changeNoteNotebook({ noteID: selectedNoteID, newNotebookID: selectedNotebookID });
 			update();
 		}}
 	></EditNotebook>
