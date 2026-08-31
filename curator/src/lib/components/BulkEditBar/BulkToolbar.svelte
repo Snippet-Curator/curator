@@ -184,9 +184,16 @@
 <EditNotebook
 	bind:isOpen={isEditNotebookOpen}
 	action={async (newNotebookID) => {
-		await changeNotesNotebook({ selectedNotesID, newNotebookID });
-		selectedNotesID = [];
 		isBulkEdit = false;
+		await tick();
+		const promise = changeNotesNotebook({ selectedNotesID, newNotebookID });
+		toast.promise(promise, {
+			loading: `Changine notebook...`,
+			success: `Changed notebook.`,
+			error: 'Failed to change notebook.'
+		});
+		await promise;
+		selectedNotesID = [];
 		update();
 	}}
 />
@@ -199,11 +206,23 @@
 		update();
 	}}
 	remove={async (selectedTagID: string) => {
-		await removeTagFromNotes({ selectedNotesID, selectedTagID });
+		const promise = removeTagFromNotes({ selectedNotesID, selectedTagID });
+		toast.promise(promise, {
+			loading: `Removing tags...`,
+			success: `Removed tags.`,
+			error: 'Failed to remove tags.'
+		});
+		await promise;
 		update();
 	}}
 	clearAll={async () => {
-		await clearTagsFromNotes(selectedNotesID);
+		const promise = clearTagsFromNotes(selectedNotesID);
+		toast.promise(promise, {
+			loading: `Clearing tags...`,
+			success: `Cleared tags.`,
+			error: 'Failed to clear tags.'
+		});
+		await promise;
 		update();
 	}}
 />
