@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { Notebook as NotebookIcon } from 'lucide-svelte';
 	import { Pencil } from '@jis3r/icons';
 
-	import type { Notebook } from '$lib/types';
 	import { onDestroy, onMount } from 'svelte';
 
 	type Props = {

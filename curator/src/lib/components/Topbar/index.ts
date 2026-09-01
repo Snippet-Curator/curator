@@ -16,6 +16,7 @@ import Edit from './topbar-edit.svelte';
 import Filter from './topbar-filter.svelte';
 import Share from './topbar-share.svelte';
 import More from './topbar-more.svelte';
+import Sort from './topbar-sort.svelte';
 
 export {
 	Archive,
@@ -35,5 +36,6 @@ export {
 	Filter,
 	Share,
 	More,
+	Sort,
 	Topbar as Root
 };

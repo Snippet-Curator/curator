@@ -56,6 +56,7 @@
 	{#if notes && notes.length > 0}
 		<Topbar.Empty bind:isOpen={isEmptyTrashOpen} />
 	{/if}
+	<Topbar.Sort scrollToTop={() => scroll.scrollToTop()} />
 	<Topbar.Filter bind:isOpen={isFilterSearch} />
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>

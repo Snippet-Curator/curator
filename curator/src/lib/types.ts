@@ -132,7 +132,7 @@ export type NoteQuery = {
 	fullContent: boolean;
 	fullTextSearch: boolean;
 	status: 'active' | 'archived' | 'deleted';
-	sort: '-created' | '-score';
+	sort: 'created' | 'score' | '-created' | '-score';
 };
 
 // ------ Parser and Import ------
