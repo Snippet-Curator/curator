@@ -58,9 +58,10 @@
 	onMount(async () => {
 		await pb.collection('notes').subscribe('*', async () => {
 			if (guiUpdate.suppressRefresh) return;
-
 			await resubscribeToPocketNotes();
 		});
+
+		updateScreenWidth();
 	});
 
 	$effect(() => {

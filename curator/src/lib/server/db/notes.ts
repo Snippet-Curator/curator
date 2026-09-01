@@ -215,7 +215,7 @@ export async function getNote(pb: PocketBase, noteID: string) {
 }
 
 export async function updateLastOpened(pb: PocketBase, noteID: string) {
-	return await pb.collection(notesCollection).update(
+	return await pb.collection(notesCollection).update<Note>(
 		noteID,
 		{
 			last_opened: new Date()
