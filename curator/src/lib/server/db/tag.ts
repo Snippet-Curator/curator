@@ -6,20 +6,12 @@ import { type Tag } from '$lib/types';
 
 export async function getAllTags(pb: PocketBase) {
 	// const start = performance.now()
-	const { data: records, error } = await tryCatch(
-		pb.collection(viewTagsCollectionName).getFullList<Tag>({
-			sort: 'name',
-			expand: 'parent'
-		})
-	);
 
-	if (error) {
-		console.error('Error while getting all tags: ', error.message);
-	}
+	const records = await pb.collection(viewTagsCollectionName).getFullList<Tag>({
+		sort: 'name',
+		expand: 'parent'
+	});
 
-	if (!records) {
-		return;
-	}
 	// const mid = performance.now()
 	// console.log(`after db: ${mid - start} ms`)
 
@@ -54,47 +46,41 @@ export async function getAllTags(pb: PocketBase) {
 }
 
 export async function deleteTag(pb: PocketBase, recordID: string) {
-	await pb.collection(tagsCollection).delete(recordID)
+	await pb.collection(tagsCollection).delete(recordID);
 }
 
 export async function getOneTag(pb: PocketBase, tagID: string) {
-	return await pb.collection(tagsCollection).getOne(tagID)
+	return await pb.collection(tagsCollection).getOne(tagID);
 }
 
-export async function createOneTagbyName(pb: PocketBase, newName: string, parentTagID = "") {
-	await	pb.collection(tagsCollection).create({
-			name: newName,
-			parent: parentTagID,
-			user: pb.authStore.record?.id
-		})
+export async function createOneTagbyName(pb: PocketBase, newName: string, parentTagID = '') {
+	await pb.collection(tagsCollection).create({
+		name: newName,
+		parent: parentTagID,
+		user: pb.authStore.record?.id
+	});
 }
 
 export async function updateOneTagByName(pb: PocketBase, recordID: string, newName: string) {
-	
-	await 	pb.collection(tagsCollection).update(recordID, {
-			name: newName
-		})
+	await pb.collection(tagsCollection).update(recordID, {
+		name: newName
+	});
 }
 
 export async function updateOneTagByParent(pb: PocketBase, recordID: string, parentTagID: string) {
-	 
-	await	pb.collection(tagsCollection).update(recordID, {
-			parent: parentTagID
-		})
-
+	await pb.collection(tagsCollection).update(recordID, {
+		parent: parentTagID
+	});
 }
 
 export async function pinTag(pb: PocketBase, recordID: string) {
-	 
-	await	pb.collection(tagsCollection).update(recordID, {
-			status: 'pinned'
-		})
+	await pb.collection(tagsCollection).update(recordID, {
+		status: 'pinned'
+	});
 }
 
 export async function unpinTag(pb: PocketBase, recordID: string) {
-	 
-	await	pb.collection(tagsCollection).update(recordID, {
-			status: ''
-		})
-
+	await pb.collection(tagsCollection).update(recordID, {
+		status: ''
+	});
 }

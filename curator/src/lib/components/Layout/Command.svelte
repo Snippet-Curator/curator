@@ -115,6 +115,7 @@
 		<Command.Group heading="Notebooks">
 			{#each filteredNotebooks as notebook}
 				<Command.Item
+					value={notebook.name}
 					class="motion-opacity-in-0 motion-duration-75"
 					onSelect={() => {
 						goto(`/notebook/${notebook.id}`);

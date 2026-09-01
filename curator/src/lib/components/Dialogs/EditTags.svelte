@@ -67,7 +67,7 @@
 			<Command.Group>
 				{#each allTags?.flatTags.filter((tag) => !selectedTagList.has(tag.id)) as tag}
 					<Command.Item
-					value={tag.id}
+						value={tag.name}
 						onSelect={() => {
 							selectedTags.push(tag);
 							searchText = '';

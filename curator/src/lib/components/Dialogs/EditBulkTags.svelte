@@ -77,7 +77,7 @@
 			<Command.Group>
 				{#each allTags.flatTags.filter((tag) => !uniqueSelectedTags.has(tag.id)) as tag}
 					<Command.Item
-					value={tag.id}
+						value={tag.name}
 						onSelect={() => {
 							add(tag.id);
 							selectedTags.push(tag);

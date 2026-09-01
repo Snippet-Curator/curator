@@ -22,7 +22,7 @@
 			<Command.Group heading="">
 				{#each await notebooks as notebook}
 					<Command.Item
-					value={notebook.name}
+						value={notebook.name}
 						onSelect={() => {
 							action(notebook.id);
 							isOpen = false;
