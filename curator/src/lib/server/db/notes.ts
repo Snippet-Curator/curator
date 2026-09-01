@@ -376,78 +376,92 @@ export async function permaDeleteNote(pb: PocketBase, noteID: string) {
 	}
 }
 
-export async function changeTitle(pb: PocketBase, noteID: string, newTitle: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
-			title: newTitle
-		})
-	);
-
-	if (error) {
-		console.error('Error changing note title: ', error.message);
-	}
-}
-
-export async function changeDescription(pb: PocketBase, noteID: string, newDescription: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
-			description: newDescription
-		})
-	);
-
-	if (error) {
-		console.error('Error changing note description: ', error.message);
-	}
-}
-
-export async function changeSources(
+export async function updateNote(
 	pb: PocketBase,
 	noteID: string,
-	newSources: Note['sources'] | undefined
+	updates: Partial<{
+		title: string;
+		description: string;
+		sources: Note['sources'];
+		thumbnail: string;
+		content: string;
+	}>
 ) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
-			sources: newSources,
-			expand: 'notebook,tags'
-		})
-	);
-
-	if (error) {
-		console.error('Error changing note sources: ', error.message);
-	}
+	await pb.collection(notesCollection).update(noteID, updates);
 }
 
-export async function changeThumbnail(pb: PocketBase, noteID: string, url: string) {
-	const thumbURL = url ? `${url}?thumb=500x0` : '';
+// export async function changeTitle(pb: PocketBase, noteID: string, newTitle: string) {
+// 	const { data, error } = await tryCatch(
+// 		pb.collection(notesCollection).update(noteID, {
+// 			title: newTitle
+// 		})
+// 	);
 
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
-			thumbnail: thumbURL
-		})
-	);
+// 	if (error) {
+// 		console.error('Error changing note title: ', error.message);
+// 	}
+// }
 
-	if (error) {
-		console.error('Error changing note thumbnail: ', error.message);
-	}
-}
+// export async function changeDescription(pb: PocketBase, noteID: string, newDescription: string) {
+// 	const { data, error } = await tryCatch(
+// 		pb.collection(notesCollection).update(noteID, {
+// 			description: newDescription
+// 		})
+// 	);
 
-export async function updateContent(pb: PocketBase, noteID: string, newContent: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(
-			noteID,
-			{
-				content: newContent
-			},
-			{
-				expand: 'notebook,tags'
-			}
-		)
-	);
+// 	if (error) {
+// 		console.error('Error changing note description: ', error.message);
+// 	}
+// }
 
-	if (error) {
-		console.error('Error updating note content: ', error.message);
-	}
-}
+// export async function changeSources(
+// 	pb: PocketBase,
+// 	noteID: string,
+// 	newSources: Note['sources'] | undefined
+// ) {
+// 	const { data, error } = await tryCatch(
+// 		pb.collection(notesCollection).update(noteID, {
+// 			sources: newSources,
+// 			expand: 'notebook,tags'
+// 		})
+// 	);
+
+// 	if (error) {
+// 		console.error('Error changing note sources: ', error.message);
+// 	}
+// }
+
+// export async function changeThumbnail(pb: PocketBase, noteID: string, url: string) {
+// 	const thumbURL = url ? `${url}?thumb=500x0` : '';
+
+// 	const { data, error } = await tryCatch(
+// 		pb.collection(notesCollection).update(noteID, {
+// 			thumbnail: thumbURL
+// 		})
+// 	);
+
+// 	if (error) {
+// 		console.error('Error changing note thumbnail: ', error.message);
+// 	}
+// }
+
+// export async function updateContent(pb: PocketBase, noteID: string, newContent: string) {
+// 	const { data, error } = await tryCatch(
+// 		pb.collection(notesCollection).update(
+// 			noteID,
+// 			{
+// 				content: newContent
+// 			},
+// 			{
+// 				expand: 'notebook,tags'
+// 			}
+// 		)
+// 	);
+
+// 	if (error) {
+// 		console.error('Error updating note content: ', error.message);
+// 	}
+// }
 
 export async function appendContent(pb: PocketBase, noteID: string, newContent: string) {
 	const { data: record, error: recordError } = await tryCatch(

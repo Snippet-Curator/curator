@@ -11,11 +11,8 @@
 		archiveNote,
 		softDeleteNote,
 		changeNoteNotebook,
-		changeTitle,
-		changeDescription,
-		changeThumbnail,
-		changeSources,
-		updateTags
+		updateTags,
+		updateNote
 	} from '$lib/api/note.remote';
 	import { replacePbUrl } from '$lib/utils';
 	import { getSetting } from '$lib/api/setting.remote';
@@ -222,11 +219,16 @@
 			note={selectedNote}
 			thumbURL={selectedNote?.thumbnail}
 			bind:isOpen={isEditNoteOpen}
-			action={async (newTitle, newDescription, sources, selectedThumbnailURL) => {
-				await changeTitle({ noteID: selectedNoteID, newTitle });
-				await changeDescription({ noteID: selectedNoteID, newDescription });
-				await changeSources({ ntoeID: selectedNoteID, newSources: sources });
-				await changeThumbnail({ noteID: selectedNoteID, url: selectedThumbnailURL });
+			action={async (title, description, sources, thumbnail) => {
+				await updateNote({
+					noteID: selectedNoteID,
+					updates: {
+						title,
+						description,
+						sources,
+						thumbnail
+					}
+				});
 				selectedNote = await getNote(selectedNoteID).refresh();
 				update();
 			}}

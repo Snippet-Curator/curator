@@ -23,11 +23,8 @@
 		softDeleteNote,
 		permaDeleteNote,
 		changeNoteNotebook,
-		changeTitle,
-		changeDescription,
-		changeThumbnail,
-		changeSources,
-		updateTags
+		updateTags,
+		updateNote
 	} from '$lib/api/note.remote';
 	import { toast } from 'svelte-sonner';
 
@@ -247,11 +244,16 @@
 	{note}
 	thumbURL={note.thumbnail}
 	bind:isOpen={isEditNoteOpen}
-	action={async (newTitle, newDescription, sources, selectedThumbnailURL) => {
-		await changeTitle({ noteID, newTitle });
-		await changeDescription({ noteID, newDescription });
-		await changeSources({ noteID, newSources: sources });
-		await changeThumbnail({ noteID, url: selectedThumbnailURL });
+	action={async (title, description, sources, thumbnail) => {
+		await updateNote({
+			noteID,
+			updates: {
+				title,
+				description,
+				sources,
+				thumbnail
+			}
+		});
 		await getNote(noteID).refresh();
 	}}
 ></EditNote>

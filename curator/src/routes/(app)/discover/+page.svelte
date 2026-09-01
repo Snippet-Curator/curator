@@ -14,20 +14,17 @@
 
 	import {
 		archiveNote,
-		changeDescription,
 		changeNoteNotebook,
 		changeRating,
-		changeSources,
 		updateTags,
-		changeThumbnail,
-		changeTitle,
 		getNote,
 		getNotes,
 		restoreNote,
 		softDeleteNote,
-		updateLastOpened
+		updateLastOpened,
+		updateNote
 	} from '$lib/api/note.remote';
-	import type { NoteQuery, Note } from '$lib/types';
+	import type { NoteQuery } from '$lib/types';
 
 	import FilterDiscover from './FilterDiscover.svelte';
 	import { onMount, tick } from 'svelte';
@@ -223,11 +220,16 @@
 		{note}
 		thumbURL={note.thumbnail}
 		bind:isOpen={isEditNoteOpen}
-		action={async (newTitle, newDescription, sources, selectedThumbnailURL) => {
-			await changeTitle({ noteID, newTitle });
-			await changeDescription({ noteID, newDescription });
-			await changeSources({ noteID, newSources: sources });
-			await changeThumbnail({ noteID, url: selectedThumbnailURL });
+		action={async (title, description, sources, thumbnail) => {
+			await updateNote({
+				noteID,
+				updates: {
+					title,
+					description,
+					sources,
+					thumbnail
+				}
+			});
 			await getNote(noteID).refresh();
 		}}
 	></EditNote>
