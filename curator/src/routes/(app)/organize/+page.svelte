@@ -9,11 +9,12 @@
 	import { getAllTags, createOneTagbyName } from '$lib/api/tag.remote';
 	import { toast } from 'svelte-sonner';
 
-	const allNotebooks = $derived(await getAllNotebooks());
-	const notebooks = $derived(allNotebooks?.rootNotebooks ?? []);
-	const flatnotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
-	const allTags = $derived(await getAllTags());
-	const tags = $derived(allTags?.rootTags ?? []);
+	const notebooksObject = $derived(await getAllNotebooks());
+	const rootNotebooks = $derived(notebooksObject?.rootNotebooks ?? []);
+	const flatNotebooks = $derived(notebooksObject?.flatNotebooks ?? []);
+	const tagsObject = $derived(await getAllTags());
+	const rootTags = $derived(tagsObject?.rootTags ?? []);
+	const flatTags = $derived(tagsObject?.flatTags ?? []);
 
 	let isNewNotebookOpen = $state(false);
 	let isNewTagOpen = $state(false);
@@ -44,8 +45,8 @@
 
 		<div class="card p-golden-md">
 			<Pinned
-				pinnedNotebooks={allNotebooks?.pinnedNotebooks ?? []}
-				pinnedTags={allTags?.pinnedTags ?? []}
+				pinnedNotebooks={notebooksObject?.pinnedNotebooks ?? []}
+				pinnedTags={tagsObject?.pinnedTags ?? []}
 			/>
 		</div>
 
@@ -63,7 +64,7 @@
 
 		<div class="card">
 			<ul class="menu w-full">
-				<NotebookList allowEdit={true} {notebooks} />
+				<NotebookList allowEdit={true} {rootNotebooks} {flatNotebooks} />
 
 				<li class="mr-4 ml-0 pl-0"><a href="/archive"><Archive size={18} />Archive</a></li>
 
@@ -84,7 +85,7 @@
 		</div>
 
 		<ul class="menu w-full">
-			<TagList allowEdit={true} {tags} />
+			<TagList allowEdit={true} {rootTags} {flatTags} />
 		</ul>
 	</div>
 </div>
@@ -94,16 +95,16 @@
 	bind:isOpen={isNewTagOpen}
 	newType="Tag"
 	action={async (newTagName) => {
-		const promise = createOneTagbyName({ newName: newTagName })
+		const promise = createOneTagbyName({ newName: newTagName });
 
 		toast.promise(promise, {
 			loading: `Creating ${newTagName}...`,
 			success: `Created ${newTagName}.`,
-			error: "Failed to create tag."
-		})  
+			error: 'Failed to create tag.'
+		});
 
-		await promise 
-		await getAllTags().refresh()
+		await promise;
+		await getAllTags().refresh();
 	}}
 />
 
@@ -111,15 +112,15 @@
 	bind:isOpen={isNewNotebookOpen}
 	newType="Notebook"
 	action={async (newNotebookName) => {
-		const promise = createOneNotebookbyName({ newName: newNotebookName })
+		const promise = createOneNotebookbyName({ newName: newNotebookName });
 
 		toast.promise(promise, {
 			loading: `Creating ${newNotebookName}...`,
 			success: `Created ${newNotebookName}.`,
-			error: "Failed to create notebook."
-		})  
+			error: 'Failed to create notebook.'
+		});
 
-		await promise 
-		await getAllNotebooks().refresh()
+		await promise;
+		await getAllNotebooks().refresh();
 	}}
 />

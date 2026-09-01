@@ -18,11 +18,12 @@
 	import { toast } from 'svelte-sonner';
 
 	type Props = {
-		notebooks: Notebook[];
+		flatNotebooks: Notebook[];
+		rootNotebooks: Notebook[];
 		allowEdit?: boolean;
 	};
 
-	let { notebooks, allowEdit = false }: Props = $props();
+	let { flatNotebooks, rootNotebooks, allowEdit = false }: Props = $props();
 
 	let isEditOpen = $state(false);
 	let isDeleteOpen = $state(false);
@@ -93,7 +94,7 @@
 {/snippet}
 
 <svelte:boundary>
-	{#each notebooks as notebook}
+	{#each rootNotebooks as notebook}
 		{#if notebook.name != 'Inbox'}
 			<li class="group mr-4">
 				{#if notebook.children && notebook.children?.length > 0}
@@ -106,7 +107,7 @@
 
 						{#if notebook.children}
 							<ul>
-								<NotebookList {allowEdit} notebooks={notebook.children} />
+								<NotebookList {allowEdit} {flatNotebooks} rootNotebooks={notebook.children} />
 							</ul>
 						{/if}
 					</details>
@@ -163,7 +164,7 @@
 	<ChangeParent
 		bind:isOpen={isChangeParentOpen}
 		type="notebook"
-		fullList={notebooks}
+		fullList={flatNotebooks}
 		currentItemID={selectedNotebook?.id}
 		clear={async () => {
 			if (!selectedNotebook) return;

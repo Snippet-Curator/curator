@@ -19,14 +19,14 @@
 	import type { Notebook, Tag } from '$lib/types';
 
 	type Props = {
-		notebooks: Notebook[];
-		tags: Tag[];
+		flatNotebooks: Notebook[];
+		flatTags: Tag[];
 		inboxID: string;
 	};
 
-	let { notebooks, tags, inboxID }: Props = $props();
+	let { flatNotebooks, flatTags, inboxID }: Props = $props();
 
-	const filteredNotebooks = $derived(notebooks.filter((notebook) => notebook.name != 'Inbox'));
+	const filteredNotebooks = $derived(flatNotebooks.filter((notebook) => notebook.name != 'Inbox'));
 
 	let isOpen = $state(false);
 
@@ -126,6 +126,7 @@
 			{#each defaultNotebooks as notebook}
 				{@const Icon = notebook.icon}
 				<Command.Item
+					value={notebook.name}
 					onSelect={() => {
 						goto(notebook.url);
 						isOpen = false;
@@ -135,8 +136,9 @@
 			{/each}
 		</Command.Group>
 		<Command.Group heading="Tags">
-			{#each tags as tag}
+			{#each flatTags as tag}
 				<Command.Item
+					value={tag.name}
 					onSelect={() => {
 						goto(`/tags/${tag.id}`);
 						isOpen = false;
@@ -149,6 +151,7 @@
 			{#each otherPages as page}
 				{@const Icon = page.icon}
 				<Command.Item
+					value={page.name}
 					onSelect={() => {
 						goto(page.url);
 						isOpen = false;

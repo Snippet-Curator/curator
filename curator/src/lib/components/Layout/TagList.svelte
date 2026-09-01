@@ -18,14 +18,15 @@
 	import { toast } from 'svelte-sonner';
 
 	type Props = {
-		tags: Tag[];
+		rootTags: Tag[];
+		flatTags: Tag[];
 		allowEdit?: boolean;
 	};
 
-	let { tags, allowEdit = false }: Props = $props();
+	let { rootTags, flatTags, allowEdit = false }: Props = $props();
 
-	const allTags = $derived(await getAllTags());
-	const flatTags = $derived(allTags?.flatTags);
+	// const allTags = $derived(await getAllTags());
+	// const flatTags = $derived(allTags?.flatTags);
 
 	let isEditOpen = $state(false);
 	let isDeleteOpen = $state(false);
@@ -89,7 +90,7 @@
 {/snippet}
 
 <svelte:boundary>
-	{#each tags as tag}
+	{#each rootTags as tag}
 		<li class="group mr-4">
 			{#if tag.children && tag.children?.length > 0}
 				<details class="w-full cursor-pointer">
@@ -101,7 +102,7 @@
 
 					{#if tag.children}
 						<ul>
-							<TagList {allowEdit} tags={tag.children} />
+							<TagList {allowEdit} {flatTags} rootTags={tag.children} />
 						</ul>
 					{/if}
 				</details>

@@ -47,10 +47,14 @@
 	};
 
 	await getDefaultSettings();
-	const allNotebooks = $derived(await getAllNotebooks());
-	const notebooks = $derived(allNotebooks?.rootNotebooks ?? []);
-	const allTags = $derived(await getAllTags());
-	const tags = $derived(allTags?.rootTags ?? []);
+	const notebooksObject = $derived(await getAllNotebooks());
+	const flatNotebooks = $derived(notebooksObject?.flatNotebooks);
+	const rootNotebooks = $derived(notebooksObject?.rootNotebooks);
+	const pinnedNotebooks = $derived(notebooksObject?.pinnedNotebooks);
+	const tagsObject = $derived(await getAllTags());
+	const flatTags = $derived(tagsObject?.flatTags);
+	const rootTags = $derived(tagsObject?.rootTags);
+	const pinnedTags = $derived(tagsObject?.pinnedTags);
 	const inbox = $derived(await getInbox());
 	const inboxCount = $derived(inbox?.count ?? 0);
 	const inboxID = $derived(inbox?.id ?? '');
@@ -73,7 +77,7 @@
 	});
 </script>
 
-<Command {inboxID} {notebooks} {tags} />
+<Command {inboxID} {flatNotebooks} {flatTags} />
 
 {#if browser}
 	{#if mobileState.isMobile}
@@ -132,23 +136,20 @@
 					<div class="divider my-0 py-0"></div>
 
 					<div class="h-10 grow overflow-y-auto">
-						<Pinned
-							pinnedNotebooks={allNotebooks?.pinnedNotebooks ?? []}
-							pinnedTags={allTags?.pinnedTags ?? []}
-						/>
+						<Pinned pinnedNotebooks={pinnedNotebooks ?? []} pinnedTags={pinnedTags ?? []} />
 
 						<span
 							class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto text-xs tracking-widest uppercase"
 							>Notebooks</span
 						>
 
-						<NotebookList {notebooks} />
+						<NotebookList {flatNotebooks} {rootNotebooks} />
 
 						<span class="menu-title flex items-center gap-2 text-xs tracking-widest uppercase">
 							Tags</span
 						>
 
-						<TagList {tags} />
+						<TagList {flatTags} {rootTags} />
 					</div>
 
 					{#snippet renderBottomPages(name: string, url: string, icon: any)}

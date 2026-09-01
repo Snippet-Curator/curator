@@ -1,10 +1,10 @@
 {
 	"name": "curator-app",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"docker": "docker build -t kangruixiang/curator:0.1.3 . && docker tag kangruixiang/curator:0.1.3 kangruixiang/curator:latest && docker push kangruixiang/curator:0.1.3 && docker push kangruixiang/curator:latest",
+		"docker": "docker build -t kangruixiang/curator:0.1.4 . && docker tag kangruixiang/curator:0.1.4 kangruixiang/curator:latest && docker push kangruixiang/curator:0.1.4 && docker push kangruixiang/curator:latest",
 		"update": "pnpm up",
 		"build": "vite build",
 		"preview": "vite preview",
