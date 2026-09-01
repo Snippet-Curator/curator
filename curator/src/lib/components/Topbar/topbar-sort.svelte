@@ -33,6 +33,8 @@
 	async function changePage(sort: string) {
 		const url = new URL(pageState.url);
 		url.searchParams.set('sort', String(sort));
+		const popover = document.getElementById('popover-1') as HTMLElement | null;
+		popover?.hidePopover();
 		await goto(url);
 		scrollToTop();
 	}

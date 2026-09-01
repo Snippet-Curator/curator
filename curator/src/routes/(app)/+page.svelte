@@ -50,10 +50,10 @@
 <Topbar.Root>
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
 
+	<Topbar.Filter bind:isOpen={isFilterSearch} />
 	<Search bind:searchInput />
 
 	<Topbar.Sort scrollToTop={() => scroll.scrollToTop()} />
-	<Topbar.Filter bind:isOpen={isFilterSearch} />
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>
 
