@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { ScrollState } from 'runed';
 	import { page } from '$app/state';
+	import { onMount } from 'svelte';
 
 	import * as Topbar from '$lib/components/Topbar/index';
 	import { getNotes } from '$lib/api/note.remote';
+	import { saveScrollPosition, signalPageState } from '$lib/state/ui.svelte';
 
 	import {
 		Pagination,
@@ -32,6 +34,17 @@
 	let isBulkEdit = $state(false);
 	let isFilterSearch = $state(false);
 	let selectedNotesID = $state<string[]>([]);
+
+	onMount(async () => {
+		const scrollPosition = await signalPageState.scrollPositions.get(page.url.pathname);
+
+		scroll.scrollTo(0, scrollPosition);
+	});
+
+	$effect(() => {
+		if (scroll.y === 0) return;
+		saveScrollPosition(scroll.y);
+	});
 </script>
 
 <Topbar.Root>
