@@ -66,7 +66,7 @@
 			id="card-title"
 			class="{note.expand?.tags?.some((tag) => tag.name === 'nsfw') && isNsfwBlur
 				? 'font-redacted hover:font-display'
-				: ''} card-title overflow-hidden text-left text-pretty break-words text-ellipsis"
+				: ''} card-title overflow-hidden text-left text-pretty wrap-break-word text-ellipsis"
 		>
 			{note.title}
 		</div>
@@ -135,6 +135,7 @@
 							<ContextMenu.Item
 								onSelect={async () => {
 									selectedNoteID = note.id;
+									selectedNote = await getNote(selectedNoteID);
 									isEditNotebookOpen = true;
 								}}>Edit Notebook</ContextMenu.Item
 							>

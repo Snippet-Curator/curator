@@ -21,7 +21,7 @@
 	bind:checked
 	bind:indeterminate
 	class={cn(
-		'data-[highlighted]:bg-base-content/10 data-[highlighted]:text-base-content relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+		'data-highlighted:bg-base-content/10 data-highlighted:text-base-content relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none data-disabled:pointer-events-none data-disabled:opacity-50',
 		className
 	)}
 	{...restProps}

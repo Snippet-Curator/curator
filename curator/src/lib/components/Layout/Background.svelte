@@ -58,6 +58,6 @@
 		</svg>
 	</div>
 	<div
-		class="absolute inset-0 bg-gradient-to-br from-gray-50/30 via-transparent to-purple-50/30 dark:from-gray-950/20 dark:via-transparent dark:to-purple-950/20"
+		class="absolute inset-0 bg-linear-to-br from-gray-50/30 via-transparent to-purple-50/30 dark:from-gray-950/20 dark:via-transparent dark:to-purple-950/20"
 	/>
 </div>

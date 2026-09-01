@@ -22,7 +22,7 @@
 	<DialogPrimitive.Content
 		bind:ref
 		class={cn(
-			'data-[state=closed]:motion-opacity-out-0 data-[state=open]:motion-opacity-in-0 data-[state=closed]:motion-scale-out-95 data-[state=open]:motion-scale-in-95 motion-duration-75 bg-base-100 z-80 border-base-100 fixed left-[50%] top-[50%] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg sm:rounded-lg',
+			'data-[state=closed]:motion-opacity-out-0 data-[state=open]:motion-opacity-in-0 data-[state=closed]:motion-scale-out-95 data-[state=open]:motion-scale-in-95 motion-duration-200 bg-base-100 z-80 border-base-100 fixed left-[50%] top-[50%] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border p-6 shadow-lg sm:rounded-lg',
 			className
 		)}
 		{...restProps}

@@ -16,7 +16,7 @@
 	<ContextMenuPrimitive.Content
 		bind:ref
 		class={cn(
-			'bg-base-100 text-base-content border-base-content/20 z-50 min-w-[8rem] rounded-md border p-1 shadow-md focus:outline-none',
+			'bg-base-100 text-base-content border-base-content/20 z-50 min-w-32 rounded-md border p-1 shadow-md focus:outline-none',
 			className
 		)}
 		{...restProps}

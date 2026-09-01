@@ -48,7 +48,7 @@
 	</div>
 	<Combobox.Portal>
 		<Combobox.Content
-			class="focus-override border-base-content/20 bg-base-100  data-[state=closed]:motion-opacity-out-0 data-[state=open]:motion-opacity-in-0 motion-duration-75 data-[state=closed]:motion-scale-out-95 data-[state=open]:motion-scale-in-95 outline-hidden z-100 h-64 max-h-[var(--bits-combobox-content-available-height)] w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] select-none rounded-md border px-1 py-3"
+			class="focus-override border-base-content/20 bg-base-100 data-[state=closed]:motion-opacity-out-0 data-[state=open]:motion-opacity-in-0 motion-duration-2000 data-[state=closed]:motion-scale-out-95 data-[state=open]:motion-scale-in-95 outline-hidden z-100 h-64 max-h-(--bits-combobox-content-available-height) w-(--bits-combobox-anchor-width) min-w-(--bits-combobox-anchor-width) select-none rounded-md border px-1 py-3"
 			sideOffset={10}
 		>
 			<Combobox.ScrollUpButton class="flex w-full items-center justify-center py-1">
