@@ -220,16 +220,14 @@
 	}}>this note permanently</Delete
 >
 
-{#if note.expand?.tags}
-	<EditTags
-		bind:isOpen={isEditTagsOpen}
-		currentTags={note.expand?.tags}
-		update={async (selectedTags) => {
-			await updateTags({ noteID, selectedTags });
-			getNote(noteID).refresh();
-		}}
-	/>
-{/if}
+<EditTags
+	bind:isOpen={isEditTagsOpen}
+	currentTags={note.expand?.tags ?? []}
+	update={async (selectedTags) => {
+		await updateTags({ noteID, selectedTags });
+		getNote(noteID).refresh();
+	}}
+/>
 
 <EditNotebook
 	currentNotebookID={note.expand?.notebook?.id}

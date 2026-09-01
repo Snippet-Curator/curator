@@ -128,7 +128,7 @@
 							<ContextMenu.Item
 								onSelect={async () => {
 									selectedNoteID = note.id;
-
+									selectedNote = await getNote(selectedNoteID);
 									isEditNoteOpen = true;
 								}}>Edit</ContextMenu.Item
 							>

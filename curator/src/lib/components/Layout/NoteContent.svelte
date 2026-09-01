@@ -17,7 +17,7 @@
 	} from '$lib/api/file.remote';
 	import { getCustomStyles, replacePbUrl } from '$lib/utils';
 	import type { Note } from '$lib/types';
-	import { appendContent, changeTitle } from '$lib/api/note.remote';
+	import { appendContent, updateNote } from '$lib/api/note.remote';
 
 	type Props = {
 		note: Note;
@@ -237,9 +237,11 @@
 			class="card-title focus:ring-base-content/40 mr-2 grow truncate rounded-md border-0"
 			bind:value={noteTitle}
 			onchange={async () => {
-				await changeTitle({
+				await updateNote({
 					noteID: note.id,
-					newTitle: noteTitle
+					updates: {
+						title: noteTitle
+					}
 				});
 			}}
 		/>
