@@ -39,8 +39,8 @@
 
 	const updateScreenWidth = () => {
 		screenWidth = window.innerWidth;
-		mobileState.isMobile = screenWidth < 768 ? true : false;
-		// mobileState.isSidebarOpen = screenWidth < 768 ? false : true;
+		mobileState.isMobile = screenWidth < 768;
+		// mobileState.isSidebarOpen = screenWidth >= 768;
 		if (screenWidth < 768) {
 			mobileState.isSidebarOpen = false;
 		}
@@ -60,110 +60,120 @@
 			if (guiUpdate.suppressRefresh) return;
 			await resubscribeToPocketNotes();
 		});
-
-		updateScreenWidth();
 	});
 
-	$effect(() => {
+	onMount(() => {
+		updateScreenWidth();
+
 		window.addEventListener('resize', updateScreenWidth);
+
+		return () => {
+			window.removeEventListener('resize', updateScreenWidth);
+		};
 	});
 </script>
 
 <Command {inboxID} {notebooks} {tags} />
 
 {#if browser}
-	<Resizable.PaneGroup
-		direction="horizontal"
-		class="{mouseState.isBusy ? 'cursor-progress' : ''} max-h-screen min-h-screen w-full"
-	>
-		<Resizable.Pane
-			class={`${
-				mobileState.isSidebarOpen ? '-motion-translate-x-in-100 motion-duration-200' : 'hidden'
-			} menu bg-base-200 border-base-content/10 space-y-2 border-r`}
-			defaultSize={16}
-			minSize={10}
-			maxSize={30}
-			collapsible={true}
-			collapsedSize={0}
+	{#if mobileState.isMobile}
+		<div class="bg-base-100">{@render children()}</div>
+		<Dock />
+	{:else}
+		<Resizable.PaneGroup
+			direction="horizontal"
+			class="{mouseState.isBusy ? 'cursor-progress' : ''} max-h-screen min-h-screen w-full"
 		>
-			<div class="mt-2 mb-5 ml-1 flex h-6 items-center gap-x-1">
-				<Icon /> <span class="text-2xl font-semibold select-none">Curator</span>
-			</div>
-
-			<li>
-				<a class={page.url.pathname == '/discover' ? 'menu-active' : ''} href="/discover"
-					>Discover</a
+			{#if mobileState.isSidebarOpen}
+				<Resizable.Pane
+					class={`-motion-translate-x-in-100 motion-duration-200 menu bg-base-200
+				 border-base-content/10 min-w-0 space-y-2 overflow-hidden `}
+					defaultSize={16}
+					minSize={0}
+					maxSize={30}
+					collapsible={false}
+					collapsedSize={0}
+					order={1}
 				>
-			</li>
-			<li>
-				<a
-					class="{page.url.pathname == '/' || !page.url.pathname
-						? 'menu-active'
-						: ''} group flex w-full justify-between"
-					href="/"
-				>
-					<span>Search</span>
-					<span class="group-hover:text-base-content/70 text-base-content/50"
-						>{await getTotalNotecount()}</span
-					></a
-				>
-			</li>
+					<div class="mt-2 mb-5 ml-1 flex h-6 items-center gap-x-1">
+						<Icon /> <span class="text-2xl font-semibold select-none">Curator</span>
+					</div>
 
-			<li>
-				<a
-					class="{page.url.pathname == `/notebook/${inboxID}` &&
-						'menu-active'} group flex w-full justify-between"
-					href="/notebook/{inboxID}"
-					><span>Inbox</span>
-					<span class="group-hover:text-base-content/70 text-base-content/50">{inboxCount}</span></a
-				>
-			</li>
+					<li>
+						<a class={page.url.pathname == '/discover' ? 'menu-active' : ''} href="/discover"
+							>Discover</a
+						>
+					</li>
+					<li>
+						<a
+							class="{page.url.pathname == '/' || !page.url.pathname
+								? 'menu-active'
+								: ''} group flex w-full justify-between"
+							href="/"
+						>
+							<span>Search</span>
+							<span class="group-hover:text-base-content/70 text-base-content/50"
+								>{await getTotalNotecount()}</span
+							></a
+						>
+					</li>
 
-			<div class="divider my-0 py-0"></div>
+					<li>
+						<a
+							class="{page.url.pathname == `/notebook/${inboxID}` &&
+								'menu-active'} group flex w-full justify-between"
+							href="/notebook/{inboxID}"
+							><span>Inbox</span>
+							<span class="group-hover:text-base-content/70 text-base-content/50">{inboxCount}</span
+							></a
+						>
+					</li>
 
-			<div class="h-10 grow overflow-y-auto">
-				<Pinned
-					pinnedNotebooks={allNotebooks?.pinnedNotebooks ?? []}
-					pinnedTags={allTags?.pinnedTags ?? []}
-				/>
+					<div class="divider my-0 py-0"></div>
 
-				<span
-					class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto text-xs tracking-widest uppercase"
-					>Notebooks</span
-				>
+					<div class="h-10 grow overflow-y-auto">
+						<Pinned
+							pinnedNotebooks={allNotebooks?.pinnedNotebooks ?? []}
+							pinnedTags={allTags?.pinnedTags ?? []}
+						/>
 
-				<NotebookList {notebooks} />
-
-				<span class="menu-title flex items-center gap-2 text-xs tracking-widest uppercase">
-					Tags</span
-				>
-
-				<TagList {tags} />
-			</div>
-
-			{#snippet renderBottomPages(name: string, url: string, icon: any)}
-				{@const Icon = icon}
-				<li>
-					<a class={page.url.pathname == url ? 'menu-active' : ''} href={url}>
-						<span class="group-hover:text-base-content/70 text-base-content/50"
-							><Icon size={18} /></span
+						<span
+							class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto text-xs tracking-widest uppercase"
+							>Notebooks</span
 						>
 
-						{name}</a
-					>
-				</li>
-			{/snippet}
+						<NotebookList {notebooks} />
 
-			{#each bottomPages as page}
-				{@render renderBottomPages(page.name, page.url, page.icon)}
-			{/each}
-		</Resizable.Pane>
+						<span class="menu-title flex items-center gap-2 text-xs tracking-widest uppercase">
+							Tags</span
+						>
 
-		<Resizable.Handle />
-		<Resizable.Pane defaultSize={84}>
-			<div class="bg-base-100">{@render children()}</div>
-		</Resizable.Pane>
-	</Resizable.PaneGroup>
+						<TagList {tags} />
+					</div>
 
-	<Dock />
+					{#snippet renderBottomPages(name: string, url: string, icon: any)}
+						{@const Icon = icon}
+						<li>
+							<a class={page.url.pathname == url ? 'menu-active' : ''} href={url}>
+								<span class="group-hover:text-base-content/70 text-base-content/50"
+									><Icon size={18} /></span
+								>
+
+								{name}</a
+							>
+						</li>
+					{/snippet}
+
+					{#each bottomPages as page}
+						{@render renderBottomPages(page.name, page.url, page.icon)}
+					{/each}
+				</Resizable.Pane>
+				<Resizable.Handle />
+			{/if}
+
+			<Resizable.Pane defaultSize={84} order={2}>
+				<div class="bg-base-100">{@render children()}</div>
+			</Resizable.Pane>
+		</Resizable.PaneGroup>
+	{/if}
 {/if}
