@@ -44,12 +44,18 @@
 
 	const mobileState = getMobileState();
 
-	let result = $derived(await getNotes(query));
-	let notes = $derived(result.items);
+	let page = $state(1);
+	let totalPages = $state(0);
+
+	let initalResult = $state(await getNotes(query));
+
+	let notes = $state(initalResult.items);
 	let noteIndex = $state(0);
-	let note = $derived(result.items[noteIndex]);
+	totalPages = initalResult.totalPages;
+
+	let note = $derived(notes[noteIndex]);
 	let noteID = $derived(note.id);
-	let lastItemIndex = $derived(result.perPage ?? 30);
+	let hasMorePages = $derived(page < totalPages);
 
 	let isDeleteOpen = $state(false);
 	let isEditTagsOpen = $state(false);
@@ -58,24 +64,44 @@
 
 	let isFilterSearch = $state(false);
 
+	async function loadNotes() {
+		// loads more notes if there are more pages. Advance page as you load note. Pushes new notes to notes array.
+		if (!hasMorePages) return;
+		const nextPage = page + 1;
+		const result = await getNotes({ ...query, page: nextPage });
+
+		page = nextPage;
+		totalPages = result.totalPages;
+		notes.push(...result.items);
+	}
+
 	async function getNextNote() {
-		if (noteIndex == 23) {
-			await getNotes(query).refresh();
-			noteIndex = 0;
+		// load more pages if has more pages and near end of list
+		if (noteIndex >= notes.length - 1) {
+			if (!hasMorePages) return;
+			await loadNotes();
+			noteIndex++;
+			await tick();
+			await updateLastOpened(note.id);
+			return;
 		}
 
 		noteIndex++;
 
+		// Preload when we're getting close to the end
+		if (notes.length - noteIndex <= 5 && hasMorePages) {
+			loadNotes();
+		}
+
 		await tick();
 
-		if (note.id) {
+		if (note?.id) {
 			await updateLastOpened(note.id);
 		}
 	}
 
 	async function getPreviousNote() {
 		if (noteIndex == 0) return;
-
 		noteIndex--;
 	}
 
@@ -92,7 +118,7 @@
 		{#if !mobileState.isMobile}
 			<Topbar.NavBtns
 				currentIndex={noteIndex}
-				{lastItemIndex}
+				{hasMorePages}
 				onLeft={getPreviousNote}
 				onRight={getNextNote}
 			></Topbar.NavBtns>
@@ -158,11 +184,7 @@
 
 	<Navbar class="p-golden-md bg-base-100 flex flex-col items-end gap-y-2 rounded-md">
 		<div class="flex flex-row gap-x-2">
-			<Topbar.NavBtns
-				currentIndex={noteIndex}
-				{lastItemIndex}
-				onLeft={getPreviousNote}
-				onRight={getNextNote}
+			<Topbar.NavBtns currentIndex={noteIndex} onLeft={getPreviousNote} onRight={getNextNote}
 			></Topbar.NavBtns>
 		</div>
 		<Topbar.Rating

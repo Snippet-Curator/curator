@@ -4,14 +4,12 @@
 
 	type Props = {
 		currentIndex: number;
-
-		lastItemIndex: number;
-
+		hasMorePages?: boolean;
 		onLeft: () => void;
 		onRight: () => void;
 	};
 
-	let { onLeft, onRight, currentIndex, lastItemIndex }: Props = $props();
+	let { onLeft, onRight, currentIndex, hasMorePages = true }: Props = $props();
 	let nextButton: HTMLButtonElement;
 	let previousButton: HTMLButtonElement;
 
@@ -70,10 +68,7 @@
 	>
 </div>
 <div class="md:tooltip md:tooltip-bottom z-30" data-tip="Next">
-	<button
-		bind:this={nextButton}
-		disabled={currentIndex == lastItemIndex}
-		class="btn btn-square"
-		onclick={onRight}><ArrowRight size={18} /></button
+	<button bind:this={nextButton} disabled={!hasMorePages} class="btn btn-square" onclick={onRight}
+		><ArrowRight size={18} /></button
 	>
 </div>
