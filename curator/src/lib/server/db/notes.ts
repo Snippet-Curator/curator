@@ -57,17 +57,9 @@ export async function getNotes(pb: PocketBase, query: NoteQuery): Promise<ListRe
 }
 
 export async function emptyTrash(pb: PocketBase) {
-	const { data, error } = await tryCatch(
-		pb.collection(viewNotesCollection).getFullList({
-			filter: `status="deleted"`
-		})
-	);
-
-	if (error) {
-		console.error('Unable to get deleted notes: ', error);
-	}
-
-	if (!data) return;
+	const data = await pb.collection(viewNotesCollection).getFullList<Note>({
+		filter: `status="deleted"`
+	});
 
 	await Promise.all(
 		data.map((note) => {
@@ -79,13 +71,9 @@ export async function emptyTrash(pb: PocketBase) {
 export async function softDeleteMultiple(pb: PocketBase, recordIDs: string[]) {
 	await Promise.all(
 		recordIDs.map(async (recordID) => {
-			const { data, error } = await pb.collection(notesCollection).update(recordID, {
+			await pb.collection(notesCollection).update(recordID, {
 				status: 'deleted'
 			});
-
-			if (error) {
-				console.error('Unable to delete note: ', error);
-			}
 		})
 	);
 }
@@ -93,13 +81,9 @@ export async function softDeleteMultiple(pb: PocketBase, recordIDs: string[]) {
 export async function unSoftDeleteMultiple(pb: PocketBase, recordIDs: string[]) {
 	await Promise.all(
 		recordIDs.map(async (recordID) => {
-			const { data, error } = await pb.collection(notesCollection).update(recordID, {
+			await pb.collection(notesCollection).update(recordID, {
 				status: 'active'
 			});
-
-			if (error) {
-				console.error('Unable to restore deleted note: ', error);
-			}
 		})
 	);
 }
@@ -107,13 +91,9 @@ export async function unSoftDeleteMultiple(pb: PocketBase, recordIDs: string[]) 
 export async function archiveMultiple(pb: PocketBase, recordIDs: string[]) {
 	await Promise.all(
 		recordIDs.map(async (recordID) => {
-			const { data, error } = await pb.collection(notesCollection).update(recordID, {
+			await pb.collection(notesCollection).update(recordID, {
 				status: 'archived'
 			});
-
-			if (error) {
-				console.error('Unable to archive note: ', error);
-			}
 		})
 	);
 }
@@ -121,13 +101,9 @@ export async function archiveMultiple(pb: PocketBase, recordIDs: string[]) {
 export async function unArchiveMultiple(pb: PocketBase, recordIDs: string[]) {
 	await Promise.all(
 		recordIDs.map(async (recordID) => {
-			const { data, error } = await pb.collection(notesCollection).update(recordID, {
+			await pb.collection(notesCollection).update(recordID, {
 				status: 'active'
 			});
-
-			if (error) {
-				console.error('Unable to un-archive note: ', error);
-			}
 		})
 	);
 }
@@ -139,14 +115,9 @@ export async function changeNotesNotebook(
 ) {
 	await Promise.all(
 		selectedNotesID.map(async (noteID) => {
-			const { data, error } = await tryCatch(
-				pb.collection(notesCollection).update(noteID, {
-					notebook: newNotebookID
-				})
-			);
-			if (error) {
-				console.error('Error changing notebook: ', noteID, error);
-			}
+			await pb.collection(notesCollection).update(noteID, {
+				notebook: newNotebookID
+			});
 		})
 	);
 }
@@ -158,14 +129,9 @@ export async function addTagToNotes(
 ) {
 	await Promise.all(
 		selectedNotesID.map(async (noteID) => {
-			const { data, error } = await tryCatch(
-				pb.collection(notesCollection).update(noteID, {
-					'tags+': selectedTagID
-				})
-			);
-			if (error) {
-				console.error('Error adding tag: ', noteID, error);
-			}
+			await pb.collection(notesCollection).update(noteID, {
+				'tags+': selectedTagID
+			});
 		})
 	);
 }
@@ -177,14 +143,9 @@ export async function removeTagFromNotes(
 ) {
 	await Promise.all(
 		selectedNotesID.map(async (noteID) => {
-			const { data, error } = await tryCatch(
-				pb.collection(notesCollection).update(noteID, {
-					'tags-': selectedTagID
-				})
-			);
-			if (error) {
-				console.error('Error removing tag: ', noteID, error);
-			}
+			await pb.collection(notesCollection).update(noteID, {
+				'tags-': selectedTagID
+			});
 		})
 	);
 }
@@ -196,14 +157,9 @@ export async function updateTagsForNotes(
 ) {
 	await Promise.all(
 		selectedNotesID.map(async (noteID) => {
-			const { data, error } = await tryCatch(
-				pb.collection(notesCollection).update(noteID, {
-					tags: selectedTagsID
-				})
-			);
-			if (error) {
-				console.error('Error removing tag: ', noteID, error);
-			}
+			await pb.collection(notesCollection).update(noteID, {
+				tags: selectedTagsID
+			});
 		})
 	);
 }
@@ -259,121 +215,119 @@ export async function getNote(pb: PocketBase, noteID: string) {
 }
 
 export async function updateLastOpened(pb: PocketBase, noteID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
+	return await pb.collection(notesCollection).update(
+		noteID,
+		{
 			last_opened: new Date()
-		})
+		},
+		{
+			expand: 'notebook,tags'
+		}
 	);
-
-	if (error) {
-		console.error('Error updating note last opened date: ', error.message);
-	}
 }
 
 export async function deleteNote(pb: PocketBase, noteID: string) {
-	const { data, error } = await tryCatch(pb.collection(notesCollection).delete(noteID));
-	if (error) {
-		console.error('Error deleting note: ', noteID, error);
-	}
+	await pb.collection(notesCollection).delete(noteID);
 }
 
 export async function softDeleteNote(pb: PocketBase, noteID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
+	return await pb.collection(notesCollection).update<Note>(
+		noteID,
+		{
 			status: 'deleted'
-		})
+		},
+		{
+			expand: 'notebook,tags'
+		}
 	);
-
-	if (error) {
-		console.error('Unable to delete note: ', error);
-	}
 }
 
 export async function changeNoteNotebook(pb: PocketBase, noteID: string, newNotebookID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
+	return await pb.collection(notesCollection).update<Note>(
+		noteID,
+		{
 			notebook: newNotebookID
-		})
+		},
+		{
+			expand: 'notebook,tags'
+		}
 	);
-	if (error) {
-		console.error('Error changing notebook: ', noteID, error);
-	}
 }
 
 export async function updateTags(pb: PocketBase, noteID: string, selectedTags: string[]) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
+	return await pb.collection(notesCollection).update<Note>(
+		noteID,
+		{
 			tags: selectedTags
-		})
+		},
+		{
+			expand: 'notebook,tags'
+		}
 	);
-	if (error) {
-		console.error('Error changing tags: ', noteID, error);
-	}
 }
 
 export async function addTagToNote(pb: PocketBase, noteID: string, selectedTagID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
+	return await pb.collection(notesCollection).update<Note>(
+		noteID,
+		{
 			'tags+': selectedTagID
-		})
+		},
+		{
+			expand: 'notebook,tags'
+		}
 	);
-	if (error) {
-		console.error('Error adding tag: ', noteID, error);
-	}
 }
 
 export async function removeTagFromNote(pb: PocketBase, noteID: string, selectedTagID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
+	return await pb.collection(notesCollection).update<Note>(
+		noteID,
+		{
 			'tags-': selectedTagID
-		})
+		},
+		{
+			expand: 'notebook,tags'
+		}
 	);
-	if (error) {
-		console.error('Error removing tag: ', noteID, error);
-	}
 }
 
 export async function changeRating(pb: PocketBase, noteID: string, newRating: number) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
+	return await pb.collection(notesCollection).update<Note>(
+		noteID,
+		{
 			rating: newRating
-		})
+		},
+		{
+			expand: 'notebook,tags'
+		}
 	);
-	if (error) {
-		console.error('Error changing rating: ', noteID, error.message);
-	}
 }
 
 export async function archiveNote(pb: PocketBase, noteID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
+	return await pb.collection(notesCollection).update<Note>(
+		noteID,
+		{
 			status: 'archived'
-		})
+		},
+		{
+			expand: 'notebook,tags'
+		}
 	);
-
-	if (error) {
-		console.error('Error archiving note: ', error.message);
-	}
 }
 
 export async function restoreNote(pb: PocketBase, noteID: string) {
-	const { data, error } = await tryCatch(
-		pb.collection(notesCollection).update(noteID, {
+	return await pb.collection(notesCollection).update<Note>(
+		noteID,
+		{
 			status: 'active'
-		})
+		},
+		{
+			expand: 'notebook,tags'
+		}
 	);
-
-	if (error) {
-		console.error('Error restoring note: ', error.message);
-	}
 }
 
 export async function permaDeleteNote(pb: PocketBase, noteID: string) {
-	const { data, error } = await tryCatch(pb.collection(notesCollection).delete(noteID));
-
-	if (error) {
-		console.error('Error deleting note: ', error.message);
-	}
+	await pb.collection(notesCollection).delete(noteID);
 }
 
 export async function updateNote(
@@ -387,81 +341,10 @@ export async function updateNote(
 		content: string;
 	}>
 ) {
-	await pb.collection(notesCollection).update(noteID, updates);
+	return await pb.collection(notesCollection).update<Note>(noteID, updates, {
+		expand: 'notebook,tags'
+	});
 }
-
-// export async function changeTitle(pb: PocketBase, noteID: string, newTitle: string) {
-// 	const { data, error } = await tryCatch(
-// 		pb.collection(notesCollection).update(noteID, {
-// 			title: newTitle
-// 		})
-// 	);
-
-// 	if (error) {
-// 		console.error('Error changing note title: ', error.message);
-// 	}
-// }
-
-// export async function changeDescription(pb: PocketBase, noteID: string, newDescription: string) {
-// 	const { data, error } = await tryCatch(
-// 		pb.collection(notesCollection).update(noteID, {
-// 			description: newDescription
-// 		})
-// 	);
-
-// 	if (error) {
-// 		console.error('Error changing note description: ', error.message);
-// 	}
-// }
-
-// export async function changeSources(
-// 	pb: PocketBase,
-// 	noteID: string,
-// 	newSources: Note['sources'] | undefined
-// ) {
-// 	const { data, error } = await tryCatch(
-// 		pb.collection(notesCollection).update(noteID, {
-// 			sources: newSources,
-// 			expand: 'notebook,tags'
-// 		})
-// 	);
-
-// 	if (error) {
-// 		console.error('Error changing note sources: ', error.message);
-// 	}
-// }
-
-// export async function changeThumbnail(pb: PocketBase, noteID: string, url: string) {
-// 	const thumbURL = url ? `${url}?thumb=500x0` : '';
-
-// 	const { data, error } = await tryCatch(
-// 		pb.collection(notesCollection).update(noteID, {
-// 			thumbnail: thumbURL
-// 		})
-// 	);
-
-// 	if (error) {
-// 		console.error('Error changing note thumbnail: ', error.message);
-// 	}
-// }
-
-// export async function updateContent(pb: PocketBase, noteID: string, newContent: string) {
-// 	const { data, error } = await tryCatch(
-// 		pb.collection(notesCollection).update(
-// 			noteID,
-// 			{
-// 				content: newContent
-// 			},
-// 			{
-// 				expand: 'notebook,tags'
-// 			}
-// 		)
-// 	);
-
-// 	if (error) {
-// 		console.error('Error updating note content: ', error.message);
-// 	}
-// }
 
 export async function appendContent(pb: PocketBase, noteID: string, newContent: string) {
 	const { data: record, error: recordError } = await tryCatch(
@@ -536,31 +419,3 @@ export async function unshareNote(pb: PocketBase, noteID: string) {
 	}
 	return sharedToken;
 }
-
-// Archived
-
-// export async function upvoteWeight(pb: PocketBase, noteID: string) {
-// 	const newWeight = note.weight + 1;
-
-// 	const { data, error } = await tryCatch(
-// 		pb.collection(notesCollection).update(noteID, {
-// 			weight: newWeight
-// 		})
-// 	);
-// 	if (error) {
-// 		console.error('Error changing weight: ', noteID, error.message);
-// 	}
-// }
-
-// export async function downvoteWeight(pb: PocketBase, noteID: string) {
-// 	const newWeight = note.weight - 1;
-
-// 	const { data, error } = await tryCatch(
-// 		pb.collection(notesCollection).update(noteID, {
-// 			weight: newWeight
-// 		})
-// 	);
-// 	if (error) {
-// 		console.error('Error changing weight: ', noteID, error.message);
-// 	}
-// }

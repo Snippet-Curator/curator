@@ -138,8 +138,8 @@
 		{#if !mobileState.isMobile}
 			<Topbar.Rating
 				rating={note.rating}
-				action={(newRating) => {
-					changeRating({ noteID: note.id, newRating });
+				action={async (newRating) => {
+					notes[noteIndex] = await changeRating({ noteID: note.id, newRating });
 				}}
 			/>
 		{/if}
@@ -158,8 +158,8 @@
 					error: 'Failed to archive note.'
 				});
 
-				await promise;
-
+				const updatedNote = await promise;
+				notes[noteIndex] = updatedNote;
 				getNextNote();
 			}}
 			unarchive={() => {
@@ -189,8 +189,8 @@
 		</div>
 		<Topbar.Rating
 			rating={note.rating}
-			action={(newRating) => {
-				changeRating({ noteID: note.id, newRating });
+			action={async (newRating) => {
+				notes[noteIndex] = await changeRating({ noteID: note.id, newRating });
 			}}
 		/>
 	</Navbar>
@@ -212,7 +212,8 @@
 				success: `Deleted note.`,
 				error: 'Failed to delete note.'
 			});
-			await promise;
+			const updatedNote = await promise;
+			notes[noteIndex] = updatedNote;
 			getNextNote();
 		}}>this note</Delete
 	>
@@ -221,8 +222,8 @@
 		<EditNotebook
 			currentNotebookID={note.expand?.notebook.id}
 			bind:isOpen={isEditNotebookOpen}
-			action={(newNotebookID) => {
-				changeNoteNotebook({ noteID: note.id, newNotebookID });
+			action={async (newNotebookID) => {
+				notes[noteIndex] = await changeNoteNotebook({ noteID: note.id, newNotebookID });
 			}}
 		></EditNotebook>
 	{/if}
@@ -231,8 +232,7 @@
 		bind:isOpen={isEditTagsOpen}
 		currentTags={note.expand?.tags ?? []}
 		update={async (selectedTags) => {
-			await updateTags({ noteID, selectedTags });
-			getNote(noteID).refresh();
+			notes[noteIndex] = await updateTags({ noteID, selectedTags });
 		}}
 	/>
 
@@ -241,7 +241,7 @@
 		thumbURL={note.thumbnail}
 		bind:isOpen={isEditNoteOpen}
 		action={async (title, description, sources, thumbnail) => {
-			await updateNote({
+			notes[noteIndex] = await updateNote({
 				noteID,
 				updates: {
 					title,
@@ -250,7 +250,6 @@
 					thumbnail
 				}
 			});
-			await getNote(noteID).refresh();
 		}}
 	></EditNote>
 

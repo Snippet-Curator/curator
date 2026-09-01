@@ -22,7 +22,7 @@ export const getNote = query(v.string(), async (noteID) => {
 });
 
 export const updateLastOpened = command(v.string(), async (noteID) => {
-	await db.updateLastOpened(getPB(), noteID);
+	return await db.updateLastOpened(getPB(), noteID);
 });
 
 export const deleteNote = command(v.string(), async (noteID) => {
@@ -30,7 +30,7 @@ export const deleteNote = command(v.string(), async (noteID) => {
 });
 
 export const softDeleteNote = command(v.string(), async (noteID) => {
-	await db.softDeleteNote(getPB(), noteID);
+	return await db.softDeleteNote(getPB(), noteID);
 });
 
 const sourceSchema = v.object({
@@ -50,7 +50,7 @@ export const updateNote = command(
 		})
 	}),
 	async ({ noteID, updates }) => {
-		await db.updateNote(getPB(), noteID, updates);
+		return await db.updateNote(getPB(), noteID, updates);
 	}
 );
 
@@ -60,7 +60,7 @@ export const changeNoteNotebook = command(
 		newNotebookID: v.string()
 	}),
 	async ({ noteID, newNotebookID }) => {
-		await db.changeNoteNotebook(getPB(), noteID, newNotebookID);
+		return await db.changeNoteNotebook(getPB(), noteID, newNotebookID);
 	}
 );
 
@@ -70,7 +70,7 @@ export const updateTags = command(
 		selectedTags: v.array(v.string())
 	}),
 	async ({ noteID, selectedTags }) => {
-		await db.updateTags(getPB(), noteID, selectedTags);
+		return await db.updateTags(getPB(), noteID, selectedTags);
 	}
 );
 
@@ -80,7 +80,7 @@ export const addTagToNote = command(
 		selectedTagID: v.string()
 	}),
 	async ({ noteID, selectedTagID }) => {
-		await db.addTagToNote(getPB(), noteID, selectedTagID);
+		return await db.addTagToNote(getPB(), noteID, selectedTagID);
 	}
 );
 
@@ -90,7 +90,7 @@ export const removeTagFromNote = command(
 		selectedTagID: v.string()
 	}),
 	async ({ noteID, selectedTagID }) => {
-		await db.removeTagFromNote(getPB(), noteID, selectedTagID);
+		return await db.removeTagFromNote(getPB(), noteID, selectedTagID);
 	}
 );
 
@@ -100,71 +100,21 @@ export const changeRating = command(
 		newRating: v.number()
 	}),
 	async ({ newRating, noteID }) => {
-		await db.changeRating(getPB(), noteID, newRating);
+		return await db.changeRating(getPB(), noteID, newRating);
 	}
 );
 
 export const archiveNote = command(v.string(), async (noteID) => {
-	await db.archiveNote(getPB(), noteID);
+	return await db.archiveNote(getPB(), noteID);
 });
 
 export const restoreNote = command(v.string(), async (noteID) => {
-	await db.restoreNote(getPB(), noteID);
+	return await db.restoreNote(getPB(), noteID);
 });
 
 export const permaDeleteNote = command(v.string(), async (noteID) => {
 	await db.permaDeleteNote(getPB(), noteID);
 });
-
-// export const changeTitle = command(
-// 	v.object({
-// 		noteID: v.string(),
-// 		newTitle: v.string()
-// 	}),
-// 	async ({ noteID, newTitle }) => {
-// 		await db.changeTitle(getPB(), noteID, newTitle);
-// 	}
-// );
-
-// export const changeDescription = command(
-// 	v.object({
-// 		noteID: v.string(),
-// 		newDescription: v.string()
-// 	}),
-// 	async ({ noteID, newDescription }) => {
-// 		await db.changeDescription(getPB(), noteID, newDescription);
-// 	}
-// );
-
-// export const changeSources = command(
-// 	v.object({
-// 		noteID: v.string(),
-// 		newSources: v.string()
-// 	}),
-// 	async ({ noteID, newSources }) => {
-// 		await db.changeSources(getPB(), noteID, newSources);
-// 	}
-// );
-
-// export const changeThumbnail = command(
-// 	v.object({
-// 		noteID: v.string(),
-// 		url: v.string()
-// 	}),
-// 	async ({ noteID, url }) => {
-// 		await db.changeThumbnail(getPB(), noteID, url);
-// 	}
-// );
-
-// export const updateContent = command(
-// 	v.object({
-// 		noteID: v.string(),
-// 		newContent: v.string()
-// 	}),
-// 	async ({ noteID, newContent }) => {
-// 		await db.updateContent(getPB(), noteID, newContent);
-// 	}
-// );
 
 export const appendContent = command(
 	v.object({
