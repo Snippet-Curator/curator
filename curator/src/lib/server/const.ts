@@ -8,3 +8,4 @@ export const viewNotebooksCollection = 'notebooks_with_note_counts';
 export const settingCollection = 'settings';
 export const inboxNotebook = 'Inbox';
 export const importCollection = 'imports';
+export const userCollection = 'users';
