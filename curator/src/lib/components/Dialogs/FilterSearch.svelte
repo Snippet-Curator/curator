@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import * as Dialog from '$lib/components/ui/dialog/index';
 
 	import { getAllNotebooks } from '$lib/api/notebook.remote';
@@ -7,30 +8,41 @@
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 
 	import type { NoteQuery } from '$lib/types';
+	import { updateQueryParams } from '$lib/utils';
 
 	type Props = {
 		isOpen: boolean;
 		query: NoteQuery;
 	};
 
-	let { isOpen = $bindable(), query = $bindable() }: Props = $props();
+	let { isOpen = $bindable(), query }: Props = $props();
 
 	const allNotebooks = $derived(await getAllNotebooks());
 	const allTags = $derived(await getAllTags());
 	const flatNotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
 	const flatTags = $derived(allTags?.flatTags ?? []);
 
-	let searchInput = $state(query.search ?? '');
+	let searchInput = $derived(query.search ?? '');
 	let selectedNotebookID = $state(query.notebookID ?? '');
 	let selectTagIdArray = $state<string[]>(query.tagIDs ?? []);
 	let selectExcludeTagIdArray = $state<string[]>(query.excludedTagIDs ?? []);
 
 	function submitForm() {
-		query.page = 1;
-		query.search = searchInput;
-		query.notebookID = selectedNotebookID;
-		query.tagIDs = selectTagIdArray;
-		query.excludedTagIDs = selectExcludeTagIdArray;
+		const newQuery = {
+			page: 1,
+			search: searchInput,
+			notebookID: selectedNotebookID,
+			tagIDs: selectTagIdArray,
+			excludedTagIDs: selectExcludeTagIdArray
+		};
+
+		const url = updateQueryParams(new URL(window.location.href), newQuery);
+
+		goto(url, {
+			replaceState: true,
+			keepFocus: true,
+			noScroll: true
+		});
 
 		isOpen = false;
 	}

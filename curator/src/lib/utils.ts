@@ -126,7 +126,10 @@ export const debouncedSearch = debounce(async (searchInput: string) => {
 }, 300);
 
 // updates url parameters based on query
-export function updateQueryParams(url: URL, updates: Record<string, string | string[] | null>) {
+export function updateQueryParams(
+	url: URL,
+	updates: Record<string, string | number | boolean | string[] | null>
+) {
 	for (const [key, value] of Object.entries(updates)) {
 		url.searchParams.delete(key);
 
@@ -137,7 +140,7 @@ export function updateQueryParams(url: URL, updates: Record<string, string | str
 				url.searchParams.append(key, item);
 			}
 		} else {
-			url.searchParams.set(key, value);
+			url.searchParams.set(key, String(value));
 		}
 	}
 

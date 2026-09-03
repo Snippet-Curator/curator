@@ -83,4 +83,4 @@
 	{/if}
 </div>
 
-<FilterSearch bind:isOpen={isFilterSearch} bind:query />
+<FilterSearch bind:isOpen={isFilterSearch} {query} />

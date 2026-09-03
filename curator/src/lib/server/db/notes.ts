@@ -44,7 +44,7 @@ export async function getNotes(pb: PocketBase, query: NoteQuery): Promise<ListRe
 	}
 
 	for (const tagID of query.excludedTagIDs ?? []) {
-		filters.push(`!(tags ~ "${tagID}")`);
+		filters.push(`tags !~ "${tagID}"`);
 	}
 
 	const filter = filters.join(' && ');

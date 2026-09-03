@@ -40,7 +40,7 @@
 		/>
 		<Combobox.Trigger>
 			<button
-				class="hover:bg-base-200/30 absolute right-2 top-1/2 z-30 -translate-y-1/2 rounded-sm p-1 hover:cursor-pointer"
+				class="hover:bg-base-200/30 absolute top-1/2 right-2 z-30 -translate-y-1/2 rounded-sm p-1 hover:cursor-pointer"
 			>
 				<ChevronsUpDown size={16} />
 			</button>
@@ -48,7 +48,7 @@
 	</div>
 	<Combobox.Portal>
 		<Combobox.Content
-			class="focus-override border-base-content/20 bg-base-100 data-[state=closed]:motion-opacity-out-0 data-[state=open]:motion-opacity-in-0 motion-duration-2000 data-[state=closed]:motion-scale-out-95 data-[state=open]:motion-scale-in-95 outline-hidden z-100 h-64 max-h-(--bits-combobox-content-available-height) w-(--bits-combobox-anchor-width) min-w-(--bits-combobox-anchor-width) select-none rounded-md border px-1 py-3"
+			class="focus-override border-base-content/20 bg-base-100 data-[state=closed]:motion-opacity-out-0 data-[state=open]:motion-opacity-in-0 motion-duration-200 data-[state=closed]:motion-scale-out-95 data-[state=open]:motion-scale-in-95 z-100 h-64 max-h-(--bits-combobox-content-available-height) w-(--bits-combobox-anchor-width) min-w-(--bits-combobox-anchor-width) rounded-md border px-1 py-3 outline-hidden select-none"
 			sideOffset={10}
 		>
 			<Combobox.ScrollUpButton class="flex w-full items-center justify-center py-1">
@@ -57,7 +57,7 @@
 			<Combobox.Viewport class="p-1">
 				{#each filteredNotebooks as notebook}
 					<Combobox.Item
-						class="rounded-button data-highlighted:bg-primary/30 outline-hidden flex h-10 w-full select-none items-center rounded-sm py-3 pl-5 pr-1.5 text-sm"
+						class="rounded-button data-highlighted:bg-primary/30 flex h-10 w-full items-center rounded-sm py-3 pr-1.5 pl-5 text-sm outline-hidden select-none"
 						value={notebook.id}
 						label={notebook.name}
 					>
