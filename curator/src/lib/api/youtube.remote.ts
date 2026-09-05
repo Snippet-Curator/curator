@@ -37,6 +37,7 @@ export const makeDiscoverPlaylist = command(noteQuerySchema, async (query) => {
 	const urlRecords = await getNotes(pb, query);
 
 	const urlList = urlRecords.items.flatMap(getYoutubeUrlsFromNote);
+	console.log('Found urlList', urlList);
 	const discoverID = (await getOrCreateStatusPlaylists(pb, token)).discoverID;
 
 	console.log('Clearing existing playlist');
