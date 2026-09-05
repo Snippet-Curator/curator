@@ -8,6 +8,7 @@ import {
 	fetchAllPlaylistItems,
 	movePlaylistItem
 } from '$lib/server/youtube';
+import { getInbox } from '$lib/server/db/notebook';
 
 export const startImport = command(
 	v.object({
@@ -48,11 +49,13 @@ export const importPlaylist = command(v.string(), async (playlistId) => {
 		let succeeded = false;
 		console.log(`Importing ${videoUrl}`);
 
+		const inbox = await getInbox(pb);
+
 		try {
 			await processImport({
 				type: 'youtube',
 				url: videoUrl,
-				selectedNotebookID: '',
+				selectedNotebookID: inbox.id,
 				selectedTagIdArray: []
 			});
 			succeeded = true;

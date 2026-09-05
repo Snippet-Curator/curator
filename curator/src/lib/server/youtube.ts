@@ -41,12 +41,15 @@ export async function getOrCreateStatusPlaylists(pb: PocketBase, token: string) 
 	let youtubeSuccessPlaylistID = await getSetting<string>(pb, 'youtubeSuccessPlaylistID', '');
 	let youtubeErrorPlaylistID = await getSetting<string>(pb, 'youtubeErrorPlaylistID', '');
 
-	if (!youtubeSuccessPlaylistID)
+	if (!youtubeSuccessPlaylistID) {
 		youtubeSuccessPlaylistID = await createPlaylist(token, 'Curator Imported ✅');
-	await changeSetting(pb, 'youtubeSuccessPlaylistID', youtubeSuccessPlaylistID);
-	if (!youtubeErrorPlaylistID)
+		await changeSetting(pb, 'youtubeSuccessPlaylistID', youtubeSuccessPlaylistID);
+	}
+
+	if (!youtubeErrorPlaylistID) {
 		youtubeErrorPlaylistID = await createPlaylist(token, 'Curator Errors ⚠️');
-	await changeSetting(pb, 'youtubeErrorPlaylistID', youtubeErrorPlaylistID);
+		await changeSetting(pb, 'youtubeErrorPlaylistID', youtubeErrorPlaylistID);
+	}
 
 	return { successId: youtubeSuccessPlaylistID, errorId: youtubeErrorPlaylistID };
 }
