@@ -46,7 +46,7 @@ export type Note = {
 	original_content: string;
 	notebook: string;
 	added: string;
-	last_opened: string;
+	last_opened: Date;
 	created: string;
 	updated: string;
 	status: 'active' | 'archived' | 'deleted';

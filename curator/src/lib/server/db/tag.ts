@@ -52,6 +52,10 @@ export async function getOneTag(pb: PocketBase, tagID: string) {
 	return await pb.collection(tagsCollection).getOne(tagID);
 }
 
+export async function getOneTagByName(pb: PocketBase, tagName: string) {
+	return await pb.collection(tagsCollection).getFirstListItem(`name="${tagName}"`);
+}
+
 export async function createOneTagbyName(pb: PocketBase, newName: string, parentTagID = '') {
 	await pb.collection(tagsCollection).create({
 		name: newName,

@@ -1,6 +1,18 @@
 import PocketBase from 'pocketbase';
 import { env } from '$env/dynamic/private';
-import { changeSetting, getSetting } from './db/setting';
+import { changeSetting, getReadOnlySetting, getSetting } from './db/setting';
+import type { Note } from '$lib/types';
+
+export function extractVideoId(url: string): string | null {
+	const match = url.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([a-zA-Z0-9_-]{11})/);
+	return match ? match[1] : null;
+}
+
+export function getYoutubeUrlsFromNote(note: Note): string[] {
+	if (!note.sources) return [];
+
+	return note.sources.filter((s) => extractVideoId(s.source_url) !== null).map((s) => s.source_url);
+}
 
 export async function getValidAccessToken(pb: PocketBase) {
 	const youtubeAccessToken = await getSetting(pb, 'youtubeAccessToken', '');
@@ -38,8 +50,9 @@ export async function getValidAccessToken(pb: PocketBase) {
 }
 
 export async function getOrCreateStatusPlaylists(pb: PocketBase, token: string) {
-	let youtubeSuccessPlaylistID = await getSetting<string>(pb, 'youtubeSuccessPlaylistID', '');
-	let youtubeErrorPlaylistID = await getSetting<string>(pb, 'youtubeErrorPlaylistID', '');
+	let youtubeSuccessPlaylistID = await getReadOnlySetting<string>(pb, 'youtubeSuccessPlaylistID');
+	let youtubeErrorPlaylistID = await getReadOnlySetting<string>(pb, 'youtubeErrorPlaylistID');
+	let discoverPlaylistID = await getReadOnlySetting<string>(pb, 'discoverPlaylistID');
 
 	if (!youtubeSuccessPlaylistID) {
 		youtubeSuccessPlaylistID = await createPlaylist(token, 'Curator Imported ✅');
@@ -51,7 +64,16 @@ export async function getOrCreateStatusPlaylists(pb: PocketBase, token: string) 
 		await changeSetting(pb, 'youtubeErrorPlaylistID', youtubeErrorPlaylistID);
 	}
 
-	return { successId: youtubeSuccessPlaylistID, errorId: youtubeErrorPlaylistID };
+	if (!discoverPlaylistID) {
+		discoverPlaylistID = await createPlaylist(token, 'Curated Playlist');
+		await changeSetting(pb, 'discoverPlaylistID', discoverPlaylistID);
+	}
+
+	return {
+		successId: youtubeSuccessPlaylistID,
+		errorId: youtubeErrorPlaylistID,
+		discoverID: discoverPlaylistID
+	};
 }
 
 async function createPlaylist(token: string, title: string) {
@@ -82,6 +104,29 @@ export async function fetchAllPlaylistItems(token: string, playlistId: string) {
 	return items; // each item has .id (playlistItem id, needed to delete) and .contentDetails.videoId
 }
 
+export async function clearPlaylist(token: string, playlistId: string) {
+	const items = await fetchAllPlaylistItems(token, playlistId); // from earlier
+	for (const item of items) {
+		const res = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?id=${item.id}`, {
+			method: 'DELETE',
+			headers: { Authorization: `Bearer ${token}` }
+		});
+		if (!res.ok) console.error(`Failed to delete item ${item.id}`, await res.text());
+	}
+}
+
+export async function addVideoToPlaylist(token: string, playlistId: string, videoId: string) {
+	const res = await fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet', {
+		method: 'POST',
+		headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			snippet: { playlistId, resourceId: { kind: 'youtube#video', videoId } }
+		})
+	});
+	if (!res.ok) throw new Error(await res.text());
+	return res.json();
+}
+
 export async function movePlaylistItem(
 	token: string,
 	{
@@ -94,13 +139,7 @@ export async function movePlaylistItem(
 		destinationPlaylistId: string;
 	}
 ) {
-	await fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet', {
-		method: 'POST',
-		headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			snippet: { playlistId: destinationPlaylistId, resourceId: { kind: 'youtube#video', videoId } }
-		})
-	});
+	await addVideoToPlaylist(token, destinationPlaylistId, videoId);
 	await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?id=${playlistItemId}`, {
 		method: 'DELETE',
 		headers: { Authorization: `Bearer ${token}` }

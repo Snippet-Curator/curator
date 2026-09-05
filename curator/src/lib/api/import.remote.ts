@@ -32,50 +32,57 @@ export const startYTImport = command(
 	}
 );
 
-export const importPlaylist = command(v.string(), async (playlistId) => {
-	const pb = getPB();
-	console.log('getting access tokens');
-	const token = await getValidAccessToken(pb);
-	console.log('getting or creating playlists');
-	const { successId, errorId } = await getOrCreateStatusPlaylists(pb, token);
-	const items = await fetchAllPlaylistItems(token, playlistId);
+export const importPlaylist = command(
+	v.object({
+		playlistID: v.string(),
+		selectedNotebookID: v.string(),
+		selectedTagIdArray: v.array(v.string())
+	}),
+	async ({ playlistID, selectedNotebookID, selectedTagIdArray }) => {
+		const pb = getPB();
+		console.log('getting access tokens');
+		const token = await getValidAccessToken(pb);
+		console.log('getting or creating playlists');
+		const { successId, errorId } = await getOrCreateStatusPlaylists(pb, token);
+		const items = await fetchAllPlaylistItems(token, playlistID);
 
-	const results = { total: items.length, succeeded: 0, failed: 0 };
-	console.log(`getting ${results.total} items`);
+		const results = { total: items.length, succeeded: 0, failed: 0 };
+		console.log(`getting ${results.total} items`);
 
-	for (const item of items) {
-		const videoId = item.contentDetails.videoId;
-		const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
-		let succeeded = false;
-		console.log(`Importing ${videoUrl}`);
+		for (const item of items) {
+			const videoId = item.contentDetails.videoId;
+			const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+			let succeeded = false;
+			console.log(`Importing ${videoUrl}`);
 
-		const inbox = await getInbox(pb);
+			const inbox = await getInbox(pb);
 
-		try {
-			await processImport({
-				type: 'youtube',
-				url: videoUrl,
-				selectedNotebookID: inbox.id,
-				selectedTagIdArray: []
-			});
-			succeeded = true;
-		} catch (e) {
-			console.error(`DB import failed for ${videoUrl}`, e);
+			try {
+				await processImport({
+					type: 'youtube',
+					url: videoUrl,
+					selectedNotebookID: selectedNotebookID ?? inbox.id,
+					selectedTagIdArray: selectedTagIdArray ?? []
+				});
+				succeeded = true;
+			} catch (e) {
+				console.error(`DB import failed for ${videoUrl}`, e);
+			}
+
+			try {
+				console.log(`Moving ${videoUrl} item`);
+				await movePlaylistItem(token, {
+					playlistItemId: item.id,
+					videoId,
+					destinationPlaylistId: succeeded ? successId : errorId
+				});
+			} catch (e) {
+				console.error(`YouTube move failed for ${videoId}`, e);
+			}
+
+			succeeded ? results.succeeded++ : results.failed++;
 		}
-
-		try {
-			console.log(`Moving ${videoUrl} item`);
-			await movePlaylistItem(token, {
-				playlistItemId: item.id,
-				videoId,
-				destinationPlaylistId: succeeded ? successId : errorId
-			});
-		} catch (e) {
-			console.error(`YouTube move failed for ${videoId}`, e);
-		}
-
-		succeeded ? results.succeeded++ : results.failed++;
+		console.log('Finished importing videos');
+		return results;
 	}
-	console.log('Finished importing videos');
-	return results;
-});
+);

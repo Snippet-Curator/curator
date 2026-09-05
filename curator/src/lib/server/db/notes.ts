@@ -206,6 +206,25 @@ export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
 	await Promise.all(selectedNotes.slice(1).map((n) => pb.collection(notesCollection).delete(n.id)));
 }
 
+export async function updateNotes(
+	pb: PocketBase,
+	noteIDs: string[],
+	updates: Partial<{
+		title: string;
+		description: string;
+		sources: Note['sources'];
+		thumbnail: string;
+		content: string;
+		last_opened: Date;
+	}>
+) {
+	const batch = pb.createBatch();
+	for (const noteID of noteIDs) {
+		batch.collection(notesCollection).update(noteID, updates);
+	}
+	await batch.send();
+}
+
 // Single Note
 
 export async function getNote(pb: PocketBase, noteID: string) {

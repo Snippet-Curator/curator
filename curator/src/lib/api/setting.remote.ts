@@ -18,6 +18,7 @@ export const getYoutubeSettings = query(async () => {
 		'youtubeTokenExpiry',
 		new Date(Date.now()).toISOString()
 	);
+
 	return {
 		youtubeAccessToken,
 		youtubeRefreshToken,

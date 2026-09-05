@@ -3,19 +3,7 @@ import { command, query } from '$app/server';
 
 import * as db from '$lib/server/db/notes';
 import { getPB } from '$lib/server/pocketbase';
-
-const noteQuerySchema = v.object({
-	page: v.number(),
-	search: v.optional(v.string()),
-	tagIDs: v.optional(v.array(v.string())),
-	excludedTagIDs: v.optional(v.array(v.string())),
-	notebookID: v.optional(v.string()),
-	starred: v.optional(v.boolean()),
-	status: v.string(),
-	fullContent: v.boolean(),
-	fullTextSearch: v.boolean(),
-	sort: v.string()
-});
+import { noteQuerySchema } from './utils';
 
 export const getNote = query(v.string(), async (noteID) => {
 	return await db.getNote(getPB(), noteID);
@@ -201,6 +189,23 @@ export const updateTagsForNotes = command(
 	}),
 	async ({ selectedNotesID, selectedTagsID }) => {
 		await db.updateTagsForNotes(getPB(), selectedNotesID, selectedTagsID);
+	}
+);
+
+export const updateNotes = command(
+	v.object({
+		noteIDs: v.array(v.string()),
+		updates: v.object({
+			title: v.optional(v.string()),
+			description: v.optional(v.string()),
+			sources: v.optional(v.array(sourceSchema)),
+			thumbnail: v.optional(v.string()),
+			content: v.optional(v.string()),
+			last_opened: v.optional(v.date())
+		})
+	}),
+	async ({ noteIDs, updates }) => {
+		return await db.updateNotes(getPB(), noteIDs, updates);
 	}
 );
 

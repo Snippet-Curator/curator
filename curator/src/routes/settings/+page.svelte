@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Topbar from '$lib/components/Topbar/index';
-	import { KBD, DiscoverSetting, Version, NoteSetting, User, APIs, Youtube } from './index';
+	import { KBD, DiscoverSetting, Version, NoteSetting, User, APIs } from './index';
 	import { Dock } from '$lib/components';
 
 	let { data, form } = $props();
@@ -22,8 +22,6 @@
 		<NoteSetting />
 		<div class="divider mb-0"></div>
 		<APIs {form} />
-		<div class="divider mb-0"></div>
-		<Youtube />
 		<div class="divider mb-0"></div>
 		<Version />
 	</div>

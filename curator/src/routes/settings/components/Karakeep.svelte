@@ -28,13 +28,13 @@
 	});
 </script>
 
-<div class="gap-x-golden-md gap-y-golden-sm grid grid-cols-12">
-	<div class="col-span-12 md:col-span-4">
+<div class="gap-x-golden-md gap-y-golden-sm grid grid-cols-12 items-start">
+	<div class="col-span-12 md:col-span-6">
 		<legend class="fieldset-legend">Karakeep</legend>
 	</div>
 
 	{#if isEdit}
-		<div class="col-span-12 justify-end md:col-span-8">
+		<div class="col-span-12 justify-end md:col-span-6">
 			<div class="gap-y-golden-sm flex flex-col">
 				<label for="server" class="label">Server URL</label>
 				<input
@@ -66,7 +66,7 @@
 			method="POST"
 			action="?/getUser"
 			use:enhance
-			class="gap-y-golden-sm col-span-12 flex flex-col justify-end md:col-span-8"
+			class="gap-y-golden-sm col-span-12 flex flex-col justify-end md:col-span-6"
 		>
 			{#if newURL && newApiKey}
 				<div class="place-self-end">
@@ -93,7 +93,7 @@
 			{/if}
 
 			<div class="place-self-end">
-				<button class="btn" type="submit">Test</button>
+				<button class="btn btn-neutral" type="submit">Test</button>
 				<button onclick={() => (isEdit = true)} class="btn">Edit</button>
 			</div>
 		</form>

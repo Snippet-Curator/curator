@@ -631,7 +631,7 @@ export function createMergedNoteData(notes: Note[], newResources: Resource[]) {
 		title: base.title,
 		notebook: base.notebook,
 		tags: [...new Set(notes.flatMap((n) => n.tags || []))],
-		last_opened: new Date().toISOString(),
+		last_opened: new Date(),
 		sources: mergeSources(notes),
 		resources: mergeResources(base.resources, newResources),
 		description: notes.map((n) => n.description).join('\n\n'),

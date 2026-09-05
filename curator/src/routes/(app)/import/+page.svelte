@@ -9,6 +9,7 @@
 
 	import { getAllNotebooks } from '$lib/api/notebook.remote';
 	import { getAllTags } from '$lib/api/tag.remote';
+	import YoutubePlaylist from './YoutubePlaylist.svelte';
 
 	let { data } = $props();
 	const inboxID = $derived(data.inboxID ?? '');
@@ -31,6 +32,7 @@
 	<div class="mx-auto mb-20 max-w-5xl">
 		<File {flatNotebooks} {flatTags} />
 		<Youtube notebooks={flatNotebooks} tags={flatTags} />
+		<YoutubePlaylist notebooks={flatNotebooks} tags={flatTags} />
 		<div class="divider"></div>
 		<!-- <Instagram {form} /> -->
 		<Status />
