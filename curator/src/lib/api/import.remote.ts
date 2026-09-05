@@ -73,5 +73,6 @@ export const importPlaylist = command(v.string(), async (playlistId) => {
 
 		succeeded ? results.succeeded++ : results.failed++;
 	}
+	console.log('Finished importing videos');
 	return results;
 });
