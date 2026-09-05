@@ -50,9 +50,9 @@ export async function getValidAccessToken(pb: PocketBase) {
 }
 
 export async function getOrCreateStatusPlaylists(pb: PocketBase, token: string) {
-	let youtubeSuccessPlaylistID = await getReadOnlySetting<string>(pb, 'youtubeSuccessPlaylistID');
-	let youtubeErrorPlaylistID = await getReadOnlySetting<string>(pb, 'youtubeErrorPlaylistID');
-	let discoverPlaylistID = await getReadOnlySetting<string>(pb, 'discoverPlaylistID');
+	let youtubeSuccessPlaylistID = await getSetting<string>(pb, 'youtubeSuccessPlaylistID', '');
+	let youtubeErrorPlaylistID = await getSetting<string>(pb, 'youtubeErrorPlaylistID', '');
+	let discoverPlaylistID = await getSetting<string>(pb, 'discoverPlaylistID', '');
 
 	if (!youtubeSuccessPlaylistID) {
 		youtubeSuccessPlaylistID = await createPlaylist(token, 'Curator Imported ✅');
