@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Karakeep from './Karakeep.svelte';
-	import Youtube from './Youtube.svelte';
 
 	let { form } = $props();
 </script>
@@ -11,7 +10,6 @@
 			API
 		</div>
 		<div class="gap-y-golden-md flex flex-col">
-			<Youtube />
 			<Karakeep {form} />
 		</div>
 	</div>

@@ -10,7 +10,7 @@ export const getMyPlaylists = query(async () => {
 		throw new Error('User is not authenticated');
 	}
 
-	const token = await getValidAccessToken(pb, pb.authStore.record.id);
+	const token = await getValidAccessToken(pb);
 
 	const res = await fetch(
 		'https://www.googleapis.com/youtube/v3/playlists?part=snippet,contentDetails&mine=true&maxResults=50',

@@ -10,6 +10,21 @@ export const getDefaultSettings = query(async () => {
 	return await db.getDefaultSettings(getPB());
 });
 
+export const getYoutubeSettings = query(async () => {
+	const youtubeAccessToken = await db.getSetting(getPB(), 'youtubeAccessToken', '');
+	const youtubeRefreshToken = await db.getSetting(getPB(), 'youtubeRefreshToken', '');
+	const youtubeTokenExpiry = await db.getSetting(
+		getPB(),
+		'youtubeTokenExpiry',
+		new Date(Date.now()).toISOString()
+	);
+	return {
+		youtubeAccessToken,
+		youtubeRefreshToken,
+		youtubeTokenExpiry
+	};
+});
+
 export const getSetting = query(v.string(), async (name) => {
 	return await db.getReadOnlySetting(getPB(), name);
 });

@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
-import { userCollection } from '$lib/server/const';
 import { getPB } from '$lib/server/pocketbase';
+import { changeSetting } from '$lib/server/db/setting';
 
 export async function GET({ url }) {
 	const code = url.searchParams.get('code');
@@ -32,11 +32,13 @@ export async function GET({ url }) {
 		throw redirect(302, '/login');
 	}
 
-	await pb.collection(userCollection).update(record.id, {
-		youtube_access_token: tokens.access_token,
-		youtube_refresh_token: tokens.refresh_token,
-		youtube_token_expiry: new Date(Date.now() + tokens.expires_in * 1000).toISOString()
-	});
+	await changeSetting(pb, 'youtubeAccessToken', tokens.access_token);
+	await changeSetting(pb, 'youtubeRefreshToken', tokens.refresh_token);
+	await changeSetting(
+		pb,
+		'youtube_token_expiry',
+		new Date(Date.now() + tokens.expires_in * 1000).toISOString()
+	);
 
 	throw redirect(302, '/settings');
 }
