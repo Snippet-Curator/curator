@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as Command from '$lib/components/ui/command/index.js';
-	import { getActiveNotebooks } from '$lib/api/notebook.remote';
+	import { getNotebookState } from '$lib/state/notebooks.svelte';
 
 	type Props = {
 		isOpen: boolean;
@@ -9,28 +9,25 @@
 	};
 
 	let { isOpen = $bindable(), action }: Props = $props();
-	let notebooks = $derived(getActiveNotebooks());
+	const notebooksState = getNotebookState();
+	const notebooks = $derived(notebooksState.activeNotebooks);
 </script>
 
 <Command.Dialog bind:open={isOpen}>
 	<Command.Input placeholder="Search Notebooks..." />
 	<Command.List>
-		{#if notebooks?.loading}
-			<div class="p-golden-xl text-center text-xs font-semibold">Loading Notebooks...</div>
-		{:else}
-			<Command.Empty>No notebook found.</Command.Empty>
-			<Command.Group heading="">
-				{#each await notebooks as notebook}
-					<Command.Item
-						value={notebook.name}
-						onSelect={() => {
-							action(notebook.id);
-							isOpen = false;
-						}}
-						>{notebook.name}
-					</Command.Item>
-				{/each}
-			</Command.Group>
-		{/if}
+		<Command.Empty>No notebook found.</Command.Empty>
+		<Command.Group heading="">
+			{#each await notebooks as notebook}
+				<Command.Item
+					value={notebook.name}
+					onSelect={() => {
+						action(notebook.id);
+						isOpen = false;
+					}}
+					>{notebook.name}
+				</Command.Item>
+			{/each}
+		</Command.Group>
 	</Command.List>
 </Command.Dialog>

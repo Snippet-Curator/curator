@@ -8,13 +8,18 @@
 	import { getAllNotebooks, createOneNotebookbyName } from '$lib/api/notebook.remote';
 	import { getAllTags, createOneTagbyName } from '$lib/api/tag.remote';
 	import { toast } from 'svelte-sonner';
+	import { getNotebookState } from '$lib/state/notebooks.svelte';
+	import { getTagState } from '$lib/state/tags.svelte';
 
-	const notebooksObject = $derived(await getAllNotebooks());
-	const rootNotebooks = $derived(notebooksObject?.rootNotebooks ?? []);
-	const flatNotebooks = $derived(notebooksObject?.flatNotebooks ?? []);
-	const tagsObject = $derived(await getAllTags());
-	const rootTags = $derived(tagsObject?.rootTags ?? []);
-	const flatTags = $derived(tagsObject?.flatTags ?? []);
+	const notebooksState = getNotebookState();
+	const tagState = getTagState();
+
+	const flatNotebooks = $derived(notebooksState.flatNotebooks);
+	const rootNotebooks = $derived(notebooksState.rootNotebooks);
+	const pinnedNotebooks = $derived(notebooksState.pinnedNotebooks);
+	const flatTags = $derived(tagState?.flatTags);
+	const rootTags = $derived(tagState?.rootTags);
+	const pinnedTags = $derived(tagState?.pinnedTags);
 
 	let isNewNotebookOpen = $state(false);
 	let isNewTagOpen = $state(false);
@@ -44,10 +49,7 @@
 		</div>
 
 		<div class="card p-golden-md">
-			<Pinned
-				pinnedNotebooks={notebooksObject?.pinnedNotebooks ?? []}
-				pinnedTags={tagsObject?.pinnedTags ?? []}
-			/>
+			<Pinned pinnedNotebooks={pinnedNotebooks ?? []} pinnedTags={pinnedTags ?? []} />
 		</div>
 
 		<div class="divider"></div>

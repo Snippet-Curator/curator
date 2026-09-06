@@ -12,6 +12,7 @@ export const baseURL = 'http://127.0.0.1:8090/api/files';
 const isDev = import.meta.env.DEV;
 // console.log('isDev:', isDev);
 // console.log('browser', browser);
+// Pocketbase collections
 
 export function getPbURL() {
 	const pbURL = isDev

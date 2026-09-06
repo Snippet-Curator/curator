@@ -75,36 +75,16 @@ export async function getAllNotebooks(pb: PocketBase) {
 }
 
 export async function getActiveNotebooks(pb: PocketBase) {
-	const { data: records, error } = await tryCatch(
-		pb.collection(viewNotebooksCollection).getFullList<Notebook>({
-			sort: 'name',
-			filter: 'name != "Archive" && name != "Trash"'
-		})
-	);
-
-	if (error) {
-		console.error('Error while get all notebooks: ', error.message);
-	}
-
-	if (!records) {
-		return;
-	}
-
-	return records;
+	return await pb.collection(viewNotebooksCollection).getFullList<Notebook>({
+		sort: 'name',
+		filter: 'name != "Archive" && name != "Trash"'
+	});
 }
 
 export async function getInbox(pb: PocketBase) {
-	const { data: inbox, error } = await tryCatch(
-		pb.collection(viewNotebooksCollection).getFirstListItem(`name="Inbox"`)
-	);
-
-	if (error) {
-		console.error('Error while getting inbox: ', error.message);
-	}
-
-	if (!inbox) {
-		return;
-	}
+	const inbox = await pb
+		.collection<Notebook>(viewNotebooksCollection)
+		.getFirstListItem(`name="Inbox"`);
 
 	return {
 		inbox,
@@ -132,13 +112,11 @@ export async function createOneNotebookbyName(
 	newName: string,
 	parentNotebookID?: string
 ) {
-
 	await pb.collection(notebooksCollection).create({
-			name: newName,
-			parent: parentNotebookID,
-			user: pb.authStore.record?.id
-		})
-
+		name: newName,
+		parent: parentNotebookID,
+		user: pb.authStore.record?.id
+	});
 }
 
 export async function getOneNotebookByName(pb: PocketBase, notebookName: string) {
@@ -185,8 +163,9 @@ export async function deleteNotebook(pb: PocketBase, recordID: string, inboxID: 
 }
 
 export async function updateOneNotebookByName(pb: PocketBase, recordID: string, newName: string) {
-	 await pb.collection(notebooksCollection).update(recordID, {
-			name: newName})
+	await pb.collection(notebooksCollection).update(recordID, {
+		name: newName
+	});
 }
 
 export async function updateOneNotebookByParent(
@@ -195,21 +174,18 @@ export async function updateOneNotebookByParent(
 	parentNotebook: string
 ) {
 	await pb.collection(notebooksCollection).update(recordID, {
-			parent: parentNotebook
-		})
+		parent: parentNotebook
+	});
 }
 
 export async function pinNotebook(pb: PocketBase, recordID: string) {
-	
 	await pb.collection(notebooksCollection).update(recordID, {
-			status: 'pinned'
-		})
-	}
+		status: 'pinned'
+	});
+}
 
 export async function unpinNotebook(pb: PocketBase, recordID: string) {
-
-		await pb.collection(notebooksCollection).update(recordID, {
-			status: ''
-		})
-
+	await pb.collection(notebooksCollection).update(recordID, {
+		status: ''
+	});
 }

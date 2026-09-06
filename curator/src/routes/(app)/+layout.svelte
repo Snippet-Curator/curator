@@ -13,14 +13,15 @@
 		setMouseState
 	} from '$lib/state/ui.svelte';
 
-	import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
-	import { getAllTags } from '$lib/api/tag.remote';
+	import { getTotalNotecount } from '$lib/api/notebook.remote';
 	import { getDefaultSettings } from '$lib/api/setting.remote';
 
 	import { bottomPages } from './links';
 	import { onMount } from 'svelte';
 	import { guiUpdate } from '$lib/state/ui.svelte';
 	import { resubscribeToPocketNotes } from '$lib/utils';
+	import { getNotebookState, setNotebookState } from '$lib/state/notebooks.svelte';
+	import { getTagState, setTagState } from '$lib/state/tags.svelte';
 
 	let { children } = $props();
 
@@ -31,9 +32,13 @@
 
 	setMobileState();
 	setMouseState();
+	setNotebookState();
+	setTagState();
 
 	const mobileState = getMobileState();
 	const mouseState = getMouseState();
+	const notebooksState = getNotebookState();
+	const tagState = getTagState();
 
 	let screenWidth = 100;
 
@@ -47,17 +52,15 @@
 	};
 
 	await getDefaultSettings();
-	const notebooksObject = $derived(await getAllNotebooks());
-	const flatNotebooks = $derived(notebooksObject?.flatNotebooks);
-	const rootNotebooks = $derived(notebooksObject?.rootNotebooks);
-	const pinnedNotebooks = $derived(notebooksObject?.pinnedNotebooks);
-	const tagsObject = $derived(await getAllTags());
-	const flatTags = $derived(tagsObject?.flatTags);
-	const rootTags = $derived(tagsObject?.rootTags);
-	const pinnedTags = $derived(tagsObject?.pinnedTags);
-	const inbox = $derived(await getInbox());
-	const inboxCount = $derived(inbox?.count ?? 0);
-	const inboxID = $derived(inbox?.id ?? '');
+
+	const flatNotebooks = $derived(notebooksState.flatNotebooks);
+	const rootNotebooks = $derived(notebooksState.rootNotebooks);
+	const pinnedNotebooks = $derived(notebooksState.pinnedNotebooks);
+	const flatTags = $derived(tagState?.flatTags);
+	const rootTags = $derived(tagState?.rootTags);
+	const pinnedTags = $derived(tagState?.pinnedTags);
+	const inboxCount = $derived(notebooksState.inboxCount);
+	const inboxID = $derived(notebooksState.inboxID);
 
 	onMount(async () => {
 		await pb.collection('notes').subscribe('*', async () => {

@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { createOneTagbyName, getAllTags } from '$lib/api/tag.remote';
+	import { createOneTagbyName } from '$lib/api/tag.remote';
 	import * as Command from '$lib/components/ui/command/index.js';
+	import { getTagState } from '$lib/state/tags.svelte';
 
 	import type { Tag } from '$lib/types';
 
@@ -13,6 +14,9 @@
 	let { isOpen = $bindable(), currentTags = [], update }: Props = $props();
 
 	let wasOpen = false;
+	const tagState = getTagState();
+	const flatTags = $derived(tagState?.flatTags);
+
 	let selectedTags = $state<Tag[]>(currentTags ?? []);
 	let searchText = $state('');
 	let selectedTagList = $derived.by(() => {
@@ -46,11 +50,6 @@
 	{/if}
 	<Command.List>
 		<svelte:boundary>
-			{@const allTags = await getAllTags()}
-			{#snippet pending()}
-				<div class="p-golden-xl text-center text-xs font-semibold">Loading Tags...</div>
-			{/snippet}
-
 			<Command.Empty class="px-2 py-1">
 				<button
 					onclick={async () => {
@@ -65,7 +64,7 @@
 				>
 			</Command.Empty>
 			<Command.Group>
-				{#each allTags?.flatTags.filter((tag) => !selectedTagList.has(tag.id)) as tag}
+				{#each flatTags.filter((tag) => !selectedTagList.has(tag.id)) as tag}
 					<Command.Item
 						value={tag.name}
 						onSelect={() => {

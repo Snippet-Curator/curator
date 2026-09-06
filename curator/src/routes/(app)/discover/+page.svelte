@@ -17,7 +17,6 @@
 		changeNoteNotebook,
 		changeRating,
 		updateTags,
-		getNote,
 		getNotes,
 		restoreNote,
 		softDeleteNote,
