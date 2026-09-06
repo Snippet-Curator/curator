@@ -202,10 +202,17 @@
 	bind:isOpen={isEditTagsOpen}
 	{currentTagID}
 	add={async (selectedTagID: string) => {
-		await addTagToNotes({ selectedNotesID, selectedTagID });
+		const promise = addTagToNotes({ selectedNotesID, selectedTagID });
+		toast.promise(promise, {
+			loading: `Adding tags...`,
+			success: `Added tags.`,
+			error: 'Failed to add tags.'
+		});
+		await promise;
 		update();
 	}}
 	remove={async (selectedTagID: string) => {
+		isBulkEdit = false;
 		const promise = removeTagFromNotes({ selectedNotesID, selectedTagID });
 		toast.promise(promise, {
 			loading: `Removing tags...`,

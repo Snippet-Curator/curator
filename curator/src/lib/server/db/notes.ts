@@ -69,43 +69,43 @@ export async function emptyTrash(pb: PocketBase) {
 }
 
 export async function softDeleteMultiple(pb: PocketBase, recordIDs: string[]) {
-	await Promise.all(
-		recordIDs.map(async (recordID) => {
-			await pb.collection(notesCollection).update(recordID, {
-				status: 'deleted'
-			});
-		})
-	);
+	const batch = pb.createBatch();
+	for (const recordID of recordIDs) {
+		batch.collection(notesCollection).update(recordID, {
+			status: 'de;eted'
+		});
+	}
+	await batch.send();
 }
 
 export async function unSoftDeleteMultiple(pb: PocketBase, recordIDs: string[]) {
-	await Promise.all(
-		recordIDs.map(async (recordID) => {
-			await pb.collection(notesCollection).update(recordID, {
-				status: 'active'
-			});
-		})
-	);
+	const batch = pb.createBatch();
+	for (const recordID of recordIDs) {
+		batch.collection(notesCollection).update(recordID, {
+			status: 'active'
+		});
+	}
+	await batch.send();
 }
 
 export async function archiveMultiple(pb: PocketBase, recordIDs: string[]) {
-	await Promise.all(
-		recordIDs.map(async (recordID) => {
-			await pb.collection(notesCollection).update(recordID, {
-				status: 'archived'
-			});
-		})
-	);
+	const batch = pb.createBatch();
+	for (const recordID of recordIDs) {
+		batch.collection(notesCollection).update(recordID, {
+			status: 'archived'
+		});
+	}
+	await batch.send();
 }
 
 export async function unArchiveMultiple(pb: PocketBase, recordIDs: string[]) {
-	await Promise.all(
-		recordIDs.map(async (recordID) => {
-			await pb.collection(notesCollection).update(recordID, {
-				status: 'active'
-			});
-		})
-	);
+	const batch = pb.createBatch();
+	for (const recordID of recordIDs) {
+		batch.collection(notesCollection).update(recordID, {
+			status: 'active'
+		});
+	}
+	await batch.send();
 }
 
 export async function changeNotesNotebook(
@@ -113,13 +113,13 @@ export async function changeNotesNotebook(
 	selectedNotesID: string[],
 	newNotebookID: string
 ) {
-	await Promise.all(
-		selectedNotesID.map(async (noteID) => {
-			await pb.collection(notesCollection).update(noteID, {
-				notebook: newNotebookID
-			});
-		})
-	);
+	const batch = pb.createBatch();
+	for (const noteID of selectedNotesID) {
+		batch.collection(notesCollection).update(noteID, {
+			notebook: newNotebookID
+		});
+	}
+	await batch.send();
 }
 
 export async function addTagToNotes(
@@ -127,13 +127,13 @@ export async function addTagToNotes(
 	selectedNotesID: string[],
 	selectedTagID: string
 ) {
-	await Promise.all(
-		selectedNotesID.map(async (noteID) => {
-			await pb.collection(notesCollection).update(noteID, {
-				'tags+': selectedTagID
-			});
-		})
-	);
+	const batch = pb.createBatch();
+	for (const noteID of selectedNotesID) {
+		batch.collection(notesCollection).update(noteID, {
+			'tags+': selectedTagID
+		});
+	}
+	await batch.send();
 }
 
 export async function removeTagFromNotes(
@@ -141,13 +141,13 @@ export async function removeTagFromNotes(
 	selectedNotesID: string[],
 	selectedTagID: string
 ) {
-	await Promise.all(
-		selectedNotesID.map(async (noteID) => {
-			await pb.collection(notesCollection).update(noteID, {
-				'tags-': selectedTagID
-			});
-		})
-	);
+	const batch = pb.createBatch();
+	for (const noteID of selectedNotesID) {
+		batch.collection(notesCollection).update(noteID, {
+			'tags-': selectedTagID
+		});
+	}
+	await batch.send();
 }
 
 export async function updateTagsForNotes(
@@ -155,13 +155,13 @@ export async function updateTagsForNotes(
 	selectedNotesID: string[],
 	selectedTagsID: string[]
 ) {
-	await Promise.all(
-		selectedNotesID.map(async (noteID) => {
-			await pb.collection(notesCollection).update(noteID, {
-				tags: selectedTagsID
-			});
-		})
-	);
+	const batch = pb.createBatch();
+	for (const noteID of selectedNotesID) {
+		batch.collection(notesCollection).update(noteID, {
+			tags: selectedTagsID
+		});
+	}
+	await batch.send();
 }
 
 export async function mergeNotes(pb: PocketBase, selectedNotesID: string[]) {
