@@ -2,6 +2,7 @@ import * as v from 'valibot';
 
 export const noteQuerySchema = v.object({
 	page: v.number(),
+	perPage: v.number(),
 	search: v.optional(v.string()),
 	tagIDs: v.optional(v.array(v.string())),
 	excludedTagIDs: v.optional(v.array(v.string())),

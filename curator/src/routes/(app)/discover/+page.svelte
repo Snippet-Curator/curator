@@ -32,6 +32,7 @@
 
 	let query = $state<NoteQuery>({
 		page: 1,
+		perPage: 24,
 		search: '',
 		notebookID: '',
 		fullContent: true,

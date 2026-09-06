@@ -26,6 +26,7 @@
 	let query = $derived(getQueryFromURL(page.url));
 	const newQuery = $derived<NoteQuery>({
 		page: query.page ?? 1,
+		perPage: query.perPage ?? 24,
 		search: query.search ?? '',
 		notebookID: page.params.slug ?? '',
 		tagIDs: [...(query.tagIDs ?? '')],

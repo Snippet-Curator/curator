@@ -16,9 +16,10 @@
 	let selectedTagIdArray = $state<string[]>([]);
 	let youtubeTag = $derived((await getOneTagByName('youtube')).id);
 
-	const query = $state<NoteQuery>({
+	const discoverQuery = $state<NoteQuery>({
 		page: 1,
 		search: '',
+		perPage: 50,
 		notebookID: '',
 		tagIDs: [youtubeTag],
 		fullContent: false,
@@ -107,7 +108,7 @@
 					<button
 						class="btn btn-neutral"
 						onclick={async () => {
-							const promise = makeDiscoverPlaylist(query);
+							const promise = makeDiscoverPlaylist(discoverQuery);
 
 							toast.promise(promise, {
 								loading: `Making discover playlist...`,

@@ -131,6 +131,7 @@ export type NoteQuery = {
 	starred?: boolean;
 	fullContent: boolean;
 	fullTextSearch: boolean;
+	perPage: number;
 	status: 'active' | 'archived' | 'deleted';
 	sort: 'created' | 'score' | '-created' | '-score';
 };

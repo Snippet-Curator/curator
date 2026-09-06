@@ -23,6 +23,7 @@ export async function getCurrentNotebook(pb: PocketBase, notebookID: string) {
 
 export async function getNotes(pb: PocketBase, query: NoteQuery): Promise<ListResult<Note>> {
 	const page = query.page ?? 1;
+	const perPage = query.perPage ?? 24;
 	const sort = query.sort ?? '-created';
 	const collection = query.fullContent ? notesCollection : viewNotesCollection;
 
@@ -49,7 +50,7 @@ export async function getNotes(pb: PocketBase, query: NoteQuery): Promise<ListRe
 
 	const filter = filters.join(' && ');
 
-	return await pb.collection(collection).getList<Note>(page, 24, {
+	return await pb.collection(collection).getList<Note>(page, perPage, {
 		sort,
 		filter,
 		expand: 'notebook,tags'
@@ -131,6 +132,16 @@ export async function addTagToNotes(
 	for (const noteID of selectedNotesID) {
 		batch.collection(notesCollection).update(noteID, {
 			'tags+': selectedTagID
+		});
+	}
+	await batch.send();
+}
+
+export async function addTagsToNotes(pb: PocketBase, noteIDs: string[], selectedTagIDs: string[]) {
+	const batch = pb.createBatch();
+	for (const noteID of noteIDs) {
+		batch.collection(notesCollection).update(noteID, {
+			'tags+': selectedTagIDs
 		});
 	}
 	await batch.send();

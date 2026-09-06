@@ -152,7 +152,8 @@ type Sort = '-created' | '-score';
 // getSearchQuery
 export function getQueryFromURL(url: URL): NoteQuery {
 	return {
-		page: Number(url.searchParams.get('page') ?? 1),
+		page: Number(url.searchParams.get('page')) ?? 1,
+		perPage: Number(url.searchParams.get('perPage')) ?? 24,
 		search: url.searchParams.get('search') ?? '',
 		tagIDs: url.searchParams.getAll('tagIDs'),
 		excludedTagIDs: url.searchParams.getAll('excludedTagIDs'),
