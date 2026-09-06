@@ -8,7 +8,7 @@
 
 	type Props = {
 		isOpen: boolean;
-		add: (selectedTagID: string) => void;
+		add: (selectedTagIDs: string[]) => void;
 		remove: (selectedTagID: string) => void;
 		clearAll: () => void;
 		currentTagID?: string;
@@ -44,7 +44,6 @@
 			{#each selectedTags as tag}
 				<button
 					onclick={() => {
-						remove(tag.id);
 						selectedTags = selectedTags.filter((existingTag) => existingTag.id != tag.id);
 					}}
 					class="badge badge-primary hover:badge-ghost group flex items-center justify-center text-nowrap"
@@ -67,7 +66,6 @@
 						if (!newTag) {
 							return;
 						}
-						add(newTag.id);
 						selectedTags.push(newTag);
 						searchText = '';
 					}}
@@ -79,7 +77,6 @@
 					<Command.Item
 						value={tag.name}
 						onSelect={() => {
-							add(tag.id);
 							selectedTags.push(tag);
 							searchText = '';
 						}}
@@ -92,6 +89,15 @@
 
 	<div class="gap-x-golden-md p-golden-md border-t-base-content/10 flex w-full border-t">
 		<div class="grow"></div>
+		<button
+			class="btn btn-neutral"
+			onclick={() => {
+				const newTags = [...uniqueSelectedTags];
+				add(newTags);
+				isOpen = false;
+				searchText = '';
+			}}>Confirm</button
+		>
 		<button
 			onclick={() => {
 				clearAll();

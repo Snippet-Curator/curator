@@ -168,6 +168,16 @@ export const addTagToNotes = command(
 	}
 );
 
+export const addTagsToNotes = command(
+	v.object({
+		noteIDs: v.array(v.string()),
+		selectedTagIDs: v.array(v.string())
+	}),
+	async ({ noteIDs, selectedTagIDs }) => {
+		return await db.addTagsToNotes(getPB(), noteIDs, selectedTagIDs);
+	}
+);
+
 export const removeTagFromNotes = command(
 	v.object({
 		selectedNotesID: v.array(v.string()),

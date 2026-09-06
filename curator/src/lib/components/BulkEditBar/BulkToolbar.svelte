@@ -11,7 +11,8 @@
 		changeNotesNotebook,
 		addTagToNotes,
 		removeTagFromNotes,
-		clearTagsFromNotes
+		clearTagsFromNotes,
+		addTagsToNotes
 	} from '$lib/api/note.remote';
 	import { guiUpdate } from '$lib/state/ui.svelte';
 	import { Delete, EditNotebook, EditBulkTags } from '$lib/components/';
@@ -201,28 +202,23 @@
 <EditBulkTags
 	bind:isOpen={isEditTagsOpen}
 	{currentTagID}
-	add={async (selectedTagID: string) => {
-		const promise = addTagToNotes({ selectedNotesID, selectedTagID });
+	add={async (selectedTagIDs: string[]) => {
+		isBulkEdit = false;
+		await tick();
+		const promise = addTagsToNotes({ noteIDs: selectedNotesID, selectedTagIDs });
 		toast.promise(promise, {
 			loading: `Adding tags...`,
 			success: `Added tags.`,
 			error: 'Failed to add tags.'
 		});
 		await promise;
+		selectedNotesID = [];
 		update();
 	}}
-	remove={async (selectedTagID: string) => {
-		isBulkEdit = false;
-		const promise = removeTagFromNotes({ selectedNotesID, selectedTagID });
-		toast.promise(promise, {
-			loading: `Removing tags...`,
-			success: `Removed tags.`,
-			error: 'Failed to remove tags.'
-		});
-		await promise;
-		update();
-	}}
+	remove={async () => {}}
 	clearAll={async () => {
+		isBulkEdit = false;
+		await tick();
 		const promise = clearTagsFromNotes(selectedNotesID);
 		toast.promise(promise, {
 			loading: `Clearing tags...`,
@@ -230,6 +226,7 @@
 			error: 'Failed to clear tags.'
 		});
 		await promise;
+		selectedNotesID = [];
 		update();
 	}}
 />
