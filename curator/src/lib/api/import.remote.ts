@@ -45,6 +45,8 @@ export const importPlaylist = command(
 		console.log('getting or creating playlists');
 		const { successId, errorId } = await getOrCreateStatusPlaylists(pb, token);
 		const items = await fetchAllPlaylistItems(token, playlistID);
+		const inbox = await getInbox(pb);
+		const notebookID = selectedNotebookID || inbox.id;
 
 		const results = { total: items.length, succeeded: 0, failed: 0 };
 		console.log(`getting ${results.total} items`);
@@ -55,13 +57,11 @@ export const importPlaylist = command(
 			let succeeded = false;
 			console.log(`Importing ${videoUrl}`);
 
-			const inbox = await getInbox(pb);
-
 			try {
 				await processImport({
 					type: 'youtube',
 					url: videoUrl,
-					selectedNotebookID: selectedNotebookID ?? inbox.id,
+					selectedNotebookID: notebookID,
 					selectedTagIdArray: selectedTagIdArray ?? []
 				});
 				succeeded = true;
