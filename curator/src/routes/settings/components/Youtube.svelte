@@ -6,8 +6,10 @@
 	let youtubeSettings = $derived(await getYoutubeSettings());
 	let youtubeAPIKey = $derived(await getSetting('youtubeAPIKey'));
 	let isEdit = $state(false);
-	let newYoutubeAccessToken = $state(youtubeSettings.youtubeAccessToken);
+	// let newYoutubeAccessToken = $state(youtubeSettings.youtubeAccessToken);
 	let newYoutubeRefreshToken = $state(youtubeSettings.youtubeRefreshToken);
+	let newGOOGLE_CLIENT_SECRET = $state(youtubeSettings.GOOGLE_CLIENT_ID);
+	let newGOOGLE_CLIENT_ID = $state(youtubeSettings.GOOGLE_CLIENT_SECRET);
 </script>
 
 <div class="gap-y-golden-lg flex flex-col">
@@ -33,30 +35,27 @@
 	<div class="gap-x-golden-md grid grid-cols-12 items-start">
 		<div class="col-span-12"><legend class="fieldset-legend">Connect to Youtube</legend></div>
 		<div class="col-span-12 md:col-span-6">
-			<span class="text-base-content/70"
-				>The refresh token and access token are displayed here. You'll need to add Google client ID
-				and secret under .env file.
-			</span>
+			<span class="text-base-content/70">Add Google Client ID and Secret here. </span>
 		</div>
 
 		<div class="gap-y-golden-md col-span-12 flex flex-col justify-end md:col-span-6">
 			{#if isEdit}
 				<div class="justify-end">
 					<div class="gap-y-golden-sm flex flex-col">
-						<label for="refresh token" class="label">Refresh Token</label>
+						<label for="refresh token" class="label">Client ID</label>
 						<input
 							name="refresh token"
 							type="text"
 							class="input w-full"
-							bind:value={newYoutubeRefreshToken}
+							bind:value={newGOOGLE_CLIENT_ID}
 						/>
 
-						<label for="access token" class="label">Access Token</label>
+						<label for="access token" class="label">Client Secret</label>
 						<input
 							type="text"
 							name="access token"
 							class="input w-full"
-							bind:value={newYoutubeAccessToken}
+							bind:value={newGOOGLE_CLIENT_SECRET}
 						/>
 					</div>
 
@@ -64,12 +63,12 @@
 						<button
 							onclick={async () => {
 								await changeSetting({
-									name: 'youtubeAccessToken',
-									newValue: newYoutubeAccessToken
+									name: 'googleClientID',
+									newValue: newGOOGLE_CLIENT_ID
 								});
 								await changeSetting({
-									name: 'youtubeRefreshToken',
-									newValue: newYoutubeRefreshToken
+									name: 'googleClientSecret',
+									newValue: newGOOGLE_CLIENT_SECRET
 								});
 								isEdit = false;
 							}}
@@ -78,8 +77,8 @@
 						<button
 							class="btn"
 							onclick={() => {
-								newYoutubeRefreshToken = youtubeSettings.youtubeRefreshToken;
-								newYoutubeAccessToken = youtubeSettings.youtubeAccessToken;
+								newGOOGLE_CLIENT_ID = youtubeSettings.GOOGLE_CLIENT_ID;
+								newGOOGLE_CLIENT_SECRET = youtubeSettings.GOOGLE_CLIENT_SECRET;
 								isEdit = false;
 							}}>Cancel</button
 						>
@@ -89,16 +88,16 @@
 				<div class="gap-y-golden-sm col-span-12 flex flex-col justify-end md:col-span-8">
 					{#if newYoutubeRefreshToken}
 						<div class="">
-							<label for="url" class="label">Refresh Token</label>
+							<label for="url" class="label">Client ID</label>
 							<span class="text-base-content/70 block truncate text-clip"
-								>{newYoutubeRefreshToken}</span
+								>{newGOOGLE_CLIENT_ID}</span
 							>
 						</div>
 
 						<div class="">
-							<label for="apiKey" class="label"> Access Token</label>
+							<label for="apiKey" class="label">Client Secret</label>
 							<span class="text-base-content/70 block truncate text-clip"
-								>{newYoutubeAccessToken}</span
+								>{newGOOGLE_CLIENT_SECRET}</span
 							>
 						</div>
 					{/if}

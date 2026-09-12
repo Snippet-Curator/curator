@@ -1,7 +1,7 @@
 import PocketBase from 'pocketbase';
-import { env } from '$env/dynamic/private';
 import { changeSetting, getReadOnlySetting, getSetting } from './db/setting';
 import type { Note } from '$lib/types';
+import { getYoutubeSettings } from '$lib/api/setting.remote';
 
 export function extractVideoId(url: string): string | null {
 	const match = url.match(/(?:v=|youtu\.be\/|shorts\/|embed\/)([a-zA-Z0-9_-]{11})/);
@@ -15,13 +15,12 @@ export function getYoutubeUrlsFromNote(note: Note): string[] {
 }
 
 export async function getValidAccessToken(pb: PocketBase) {
-	const youtubeAccessToken = await getSetting(pb, 'youtubeAccessToken', '');
-	const youtubeRefreshToken = await getSetting(pb, 'youtubeRefreshToken', '');
-	const youtubeTokenExpiry = await getSetting(
-		pb,
-		'youtubeTokenExpiry',
-		new Date(Date.now()).toISOString()
-	);
+	const youtubeSettings = await getYoutubeSettings();
+	const youtubeAccessToken = youtubeSettings.youtubeAccessToken;
+	const youtubeRefreshToken = youtubeSettings.youtubeRefreshToken;
+	const youtubeTokenExpiry = youtubeSettings.youtubeTokenExpiry;
+	const googleClientID = youtubeSettings.GOOGLE_CLIENT_ID;
+	const googleClientSecret = youtubeSettings.GOOGLE_CLIENT_SECRET;
 
 	if (new Date(youtubeTokenExpiry) > new Date(Date.now() + 60_000)) {
 		return youtubeAccessToken; // still valid
@@ -33,12 +32,13 @@ export async function getValidAccessToken(pb: PocketBase) {
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body: new URLSearchParams({
 			refresh_token: youtubeRefreshToken,
-			client_id: env.GOOGLE_CLIENT_ID!,
-			client_secret: env.GOOGLE_CLIENT_SECRET!,
+			client_id: googleClientID,
+			client_secret: googleClientSecret,
 			grant_type: 'refresh_token'
 		})
 	});
 	const fresh = await res.json();
+	console.log(fresh);
 	await changeSetting(pb, 'youtubeAccessToken', fresh.access_token);
 	await changeSetting(
 		pb,

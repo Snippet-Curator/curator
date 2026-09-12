@@ -52,7 +52,7 @@
 					Start by<a href="/settings">connecting to Youtube</a>
 				{/if}
 			</div>
-			<div class="col-span-12 max-h-96 overflow-y-auto">
+			<div class="card border-base-content/20 col-span-12 max-h-96 overflow-y-auto border">
 				{#if showPlaylists}
 					{#await getMyPlaylists()}
 						<p>Loading Playlists</p>
@@ -76,7 +76,9 @@
 											toast.promise(promise, {
 												loading: `Importing youtube playlist...`,
 												success: `Finished importing youtube playlist.`,
-												error: 'Failed to import youtube playlist.'
+												error: (err) => {
+													return `Failed to import youtue playlist: ${err.status} ${err.body.message}`;
+												}
 											});
 
 											await promise;

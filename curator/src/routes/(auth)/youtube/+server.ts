@@ -1,10 +1,14 @@
 import { redirect } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { getYoutubeSettings } from '$lib/api/setting.remote';
 
-export function GET({ url }) {
+export async function GET({ url }) {
 	const redirectUri = `${url.origin}/youtube/callback`;
+
+	const youtubeSettings = await getYoutubeSettings();
+	const googleClientID = youtubeSettings.GOOGLE_CLIENT_ID;
+
 	const params = new URLSearchParams({
-		client_id: env.GOOGLE_CLIENT_ID!,
+		client_id: googleClientID,
 		redirect_uri: redirectUri,
 		response_type: 'code',
 		access_type: 'offline', // needed to get a refresh_token

@@ -11,6 +11,8 @@ export const getDefaultSettings = query(async () => {
 });
 
 export const getYoutubeSettings = query(async () => {
+	const GOOGLE_CLIENT_ID = await db.getSetting(getPB(), 'googleClientID', '');
+	const GOOGLE_CLIENT_SECRET = await db.getSetting(getPB(), 'googleClientSecret', '');
 	const youtubeAccessToken = await db.getSetting(getPB(), 'youtubeAccessToken', '');
 	const youtubeRefreshToken = await db.getSetting(getPB(), 'youtubeRefreshToken', '');
 	const youtubeTokenExpiry = await db.getSetting(
@@ -20,6 +22,8 @@ export const getYoutubeSettings = query(async () => {
 	);
 
 	return {
+		GOOGLE_CLIENT_ID,
+		GOOGLE_CLIENT_SECRET,
 		youtubeAccessToken,
 		youtubeRefreshToken,
 		youtubeTokenExpiry
