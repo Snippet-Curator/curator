@@ -118,7 +118,7 @@
 								: ''} group flex w-full justify-between"
 							href="/"
 						>
-							<span>Search</span>
+							<span>Home</span>
 							<span class="group-hover:text-base-content/70 text-base-content/50"
 								>{await getTotalNotecount()}</span
 							></a
