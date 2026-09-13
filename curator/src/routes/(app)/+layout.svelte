@@ -123,7 +123,7 @@
 							href="/"
 						>
 							<span>All Notes</span>
-							<span class="group-hover:text-base-content/70 text-base-content/50"
+							<span class="group-hover:text-base-content/70 text-gray-400"
 								>{await getTotalNotecount()}</span
 							></a
 						>
@@ -135,8 +135,7 @@
 								'menu-active'} group flex w-full justify-between"
 							href="/notebook/{inboxID}"
 							><span>Inbox</span>
-							<span class="group-hover:text-base-content/70 text-base-content/50">{inboxCount}</span
-							></a
+							<span class="group-hover:text-base-content/70 text-gray-400">{inboxCount}</span></a
 						>
 					</li>
 
@@ -193,13 +192,16 @@
 							class="tooltip text-base-content/70 tooltip-top z-30 flex w-full items-center justify-center"
 							data-tip={name}
 						>
-							<a class={page.url.pathname == url ? 'menu-active' : ''} href={url}>
-								<button class="btn btn-ghost"><Icon size={20} /></button>
+							<a href={url}>
+								<button
+									class="{page.url.pathname == url ? 'btn-active btn-neutral' : ''} btn btn-ghost"
+									><Icon size={20} /></button
+								>
 							</a>
 						</div>
 					{/snippet}
 
-					<div class="flex min-h-10 w-full">
+					<div class="flex min-h-10">
 						{#each bottomPages as page}
 							{@render renderBottomPages(page.name, page.url, page.icon)}
 						{/each}

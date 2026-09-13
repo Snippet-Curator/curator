@@ -42,7 +42,7 @@
 		>
 			{notebook.name}
 		</a>
-		<span class="text-base-content/50 group-hover:text-base-content/70 text-right"
+		<span class="group-hover:text-base-content/70 text-right text-gray-400"
 			>{notebook.note_count > 0 ? notebook.note_count : ''}</span
 		>
 	</div>
