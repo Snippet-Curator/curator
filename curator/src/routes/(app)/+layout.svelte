@@ -155,7 +155,9 @@
 						<TagList {flatTags} {rootTags} />
 					</div>
 
-					{#snippet renderBottomPages(name: string, url: string, icon: any)}
+					<div class="divider my-0 py-0"></div>
+
+					{#snippet renderBottomPages2(name: string, url: string, icon: any)}
 						{@const Icon = icon}
 						<li>
 							<a class={page.url.pathname == url ? 'menu-active' : ''} href={url}>
@@ -168,9 +170,23 @@
 						</li>
 					{/snippet}
 
-					{#each bottomPages as page}
-						{@render renderBottomPages(page.name, page.url, page.icon)}
-					{/each}
+					{#snippet renderBottomPages(name: string, url: string, icon: any)}
+						{@const Icon = icon}
+						<div
+							class="tooltip text-base-content/70 tooltip-top z-30 flex w-full items-center justify-center"
+							data-tip={name}
+						>
+							<a class={page.url.pathname == url ? 'menu-active' : ''} href={url}>
+								<button class="btn btn-ghost"><Icon size={20} /></button>
+							</a>
+						</div>
+					{/snippet}
+
+					<div class="flex min-h-10 w-full">
+						{#each bottomPages as page}
+							{@render renderBottomPages(page.name, page.url, page.icon)}
+						{/each}
+					</div>
 				</Resizable.Pane>
 				<Resizable.Handle />
 			{/if}
