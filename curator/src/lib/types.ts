@@ -110,6 +110,12 @@ export type Setting = {
 	jsonValue?: string;
 };
 
+export type Filter = {
+	id: string;
+	name: string;
+	query_string: string;
+};
+
 // ------ Frontend ------
 export interface Props {
 	data: {

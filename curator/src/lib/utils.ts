@@ -7,6 +7,7 @@ import { type NoteQuery } from '$lib/types';
 import { goto } from '$app/navigation';
 
 import { getAllNotebooks, getInbox, getTotalNotecount } from '$lib/api/notebook.remote';
+import { getAllFilters } from '$lib/api/filter.remote';
 import { getAllTags } from '$lib/api/tag.remote';
 
 // ─────────────────────────────

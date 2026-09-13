@@ -21,6 +21,7 @@ export { default as NoteListContainer } from '../archived/NoteListContainer.svel
 export { default as TagList } from './Layout/TagList.svelte';
 export { default as NotebookList } from './Layout/NotebookList.svelte';
 export { default as NoteLoading } from './Layout/NoteLoading.svelte';
+export { default as FilterList } from './Layout/FilterList.svelte';
 
 // dialogs
 export { default as New } from './Dialogs/New.svelte';
@@ -33,3 +34,4 @@ export { default as EditBulkTags } from './Dialogs/EditBulkTags.svelte';
 export { default as EditNote } from './Dialogs/EditNote.svelte';
 export { default as FilterSearch } from './Dialogs/FilterSearch.svelte';
 export { default as ShareNote } from './Dialogs/ShareNote.svelte';
+export { default as EditFilter } from './Dialogs/EditFilter.svelte';

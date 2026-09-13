@@ -4,7 +4,7 @@
 	import { browser } from '$app/environment';
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 
-	import { Command, Dock, Icon, NotebookList, Pinned, TagList } from '$lib/components';
+	import { Command, Dock, Icon, NotebookList, Pinned, TagList, FilterList } from '$lib/components';
 
 	import {
 		getMobileState,
@@ -22,6 +22,7 @@
 	import { resubscribeToPocketNotes } from '$lib/utils';
 	import { getNotebookState, setNotebookState } from '$lib/state/notebooks.svelte';
 	import { getTagState, setTagState } from '$lib/state/tags.svelte';
+	import { getFilterState, setFilterState } from '$lib/state/filter.svelte';
 
 	let { children } = $props();
 
@@ -34,11 +35,13 @@
 	setMouseState();
 	setNotebookState();
 	setTagState();
+	setFilterState();
 
 	const mobileState = getMobileState();
 	const mouseState = getMouseState();
 	const notebooksState = getNotebookState();
 	const tagState = getTagState();
+	const filterState = getFilterState();
 
 	let screenWidth = 100;
 
@@ -61,6 +64,7 @@
 	const pinnedTags = $derived(tagState?.pinnedTags);
 	const inboxCount = $derived(notebooksState.inboxCount);
 	const inboxID = $derived(notebooksState.inboxID);
+	const filters = $derived(filterState.filters);
 
 	onMount(async () => {
 		await pb.collection('notes').subscribe('*', async () => {
@@ -118,7 +122,7 @@
 								: ''} group flex w-full justify-between"
 							href="/"
 						>
-							<span>Home</span>
+							<span>All Notes</span>
 							<span class="group-hover:text-base-content/70 text-base-content/50"
 								>{await getTotalNotecount()}</span
 							></a
@@ -139,7 +143,20 @@
 					<div class="divider my-0 py-0"></div>
 
 					<div class="h-10 grow overflow-y-auto">
+						<span
+							class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto text-xs tracking-widest uppercase"
+							>Pinned</span
+						>
+
 						<Pinned pinnedNotebooks={pinnedNotebooks ?? []} pinnedTags={pinnedTags ?? []} />
+
+						{#if filters.length > 0}
+							<span
+								class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto text-xs tracking-widest uppercase"
+								>Saved Filters</span
+							>
+							<FilterList />
+						{/if}
 
 						<span
 							class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto text-xs tracking-widest uppercase"

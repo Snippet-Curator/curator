@@ -9,3 +9,4 @@ export const settingCollection = 'settings';
 export const inboxNotebook = 'Inbox';
 export const importCollection = 'imports';
 export const userCollection = 'users';
+export const filterCollection = 'filters';

@@ -9,6 +9,8 @@
 
 	import type { NoteQuery } from '$lib/types';
 	import { updateQueryParams } from '$lib/utils';
+	import { createFilter } from '$lib/api/filter.remote';
+	import { getFilterState } from '$lib/state/filter.svelte';
 
 	type Props = {
 		isOpen: boolean;
@@ -21,13 +23,15 @@
 	const allTags = $derived(await getAllTags());
 	const flatNotebooks = $derived(allNotebooks?.flatNotebooks ?? []);
 	const flatTags = $derived(allTags?.flatTags ?? []);
+	const filterState = getFilterState();
 
 	let searchInput = $derived(query.search ?? '');
 	let selectedNotebookID = $state(query.notebookID ?? '');
 	let selectTagIdArray = $state<string[]>(query.tagIDs ?? []);
 	let selectExcludeTagIdArray = $state<string[]>(query.excludedTagIDs ?? []);
+	let filterName = $state('');
 
-	function submitForm() {
+	async function submitForm() {
 		const newQuery = {
 			page: 1,
 			search: searchInput,
@@ -45,6 +49,11 @@
 		});
 
 		isOpen = false;
+
+		url.searchParams.delete('page');
+		const queryString = url.searchParams.toString();
+		await createFilter({ name: filterName, queryString });
+		await filterState.refresh();
 	}
 </script>
 
@@ -108,6 +117,26 @@
 			<div class="col-span-9 col-start-4 text-right">
 				<SelectTags tags={flatTags} bind:selectedTagIdArray={selectExcludeTagIdArray} />
 			</div>
+		</div>
+
+		<div class="gap-x-golden-md grid grid-cols-12 items-center">
+			<div class="col-span-3">
+				<legend class="fieldset-legend">Save Filter</legend>
+			</div>
+
+			<input
+				type="text"
+				class="input col-span-8 col-start-4 w-full"
+				placeholder="Save filter name..."
+				bind:value={filterName}
+			/>
+
+			<button
+				onclick={() => {
+					filterName = '';
+				}}
+				class="btn col-span-1">Clear</button
+			>
 		</div>
 
 		<div class="flex justify-end gap-x-2">
