@@ -18,6 +18,7 @@
 
 	import { getQueryFromURL } from '$lib/utils';
 	import { type NoteQuery } from '$lib/types';
+	import { getOneTag } from '$lib/api/tag.remote';
 
 	const scroll = new ScrollState({
 		element: () => scrollEl
@@ -48,6 +49,7 @@
 	let isBulkEdit = $state(false);
 	let isFilterSearch = $state(false);
 	let selectedNotesID = $state<string[]>([]);
+	let tagName = $derived('#' + (await getOneTag(page.params.slug ?? '')).name);
 
 	onMount(async () => {
 		const scrollPosition = await signalPageState.scrollPositions.get(page.url.pathname);
@@ -63,9 +65,8 @@
 
 <Topbar.Root>
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
-
 	<Topbar.Filter bind:isOpen={isFilterSearch} />
-	<Search bind:searchInput />
+	<Search bind:searchInput searchPlaceholder={tagName} />
 	<Topbar.Sort scrollToTop={() => scroll.scrollToTop()} />
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>

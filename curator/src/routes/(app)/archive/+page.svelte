@@ -63,7 +63,7 @@
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
 
 	<Topbar.Filter bind:isOpen={isFilterSearch} />
-	<Search bind:searchInput />
+	<Search bind:searchInput searchPlaceholder="Archive" />
 	<Topbar.Sort scrollToTop={() => scroll.scrollToTop()} />
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>

@@ -130,6 +130,10 @@ export async function getOneNotebookByName(pb: PocketBase, notebookName: string)
 	return data;
 }
 
+export async function getNotebook(pb: PocketBase, notebookID: string) {
+	return await pb.collection(viewNotebooksCollection).getOne<Notebook>(notebookID);
+}
+
 export async function deleteNotebook(pb: PocketBase, recordID: string, inboxID: string) {
 	const { data: recordsToMove, error: errorsToMove } = await tryCatch(
 		pb.collection(viewNotesCollection).getFullList({

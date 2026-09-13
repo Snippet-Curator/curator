@@ -5,6 +5,7 @@
 
 	import * as Topbar from '$lib/components/Topbar/index';
 	import { getNotes } from '$lib/api/note.remote';
+	import { getNotebook } from '$lib/api/notebook.remote';
 	import { saveScrollPosition, signalPageState } from '$lib/state/ui.svelte';
 
 	import {
@@ -63,9 +64,8 @@
 
 <Topbar.Root>
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
-
 	<Topbar.Filter bind:isOpen={isFilterSearch} />
-	<Search bind:searchInput />
+	<Search bind:searchInput searchPlaceholder={(await getNotebook(page.params.slug ?? '')).name} />
 	<Topbar.Sort scrollToTop={() => scroll.scrollToTop()} />
 	<BulkEditBtn bind:isBulkEdit bind:selectedNotesID />
 </Topbar.Root>

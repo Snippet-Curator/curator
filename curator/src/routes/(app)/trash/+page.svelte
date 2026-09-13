@@ -53,8 +53,9 @@
 <Topbar.Root>
 	<Topbar.SidebarIcon></Topbar.SidebarIcon>
 	<Topbar.Back />
+
 	<Topbar.Filter bind:isOpen={isFilterSearch} />
-	<Search bind:searchInput />
+	<Search bind:searchInput searchPlaceholder="Trash" />
 	{#if notes && notes.length > 0}
 		<Topbar.Empty bind:isOpen={isEmptyTrashOpen} />
 	{/if}

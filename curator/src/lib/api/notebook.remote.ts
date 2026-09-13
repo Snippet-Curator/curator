@@ -24,6 +24,10 @@ export const getInbox = query(async () => {
 	return await db.getInbox(getPB());
 });
 
+export const getNotebook = query(v.string(), async (recordID) => {
+	return await db.getNotebook(getPB(), recordID);
+});
+
 export const pinNotebook = command(v.string(), async (recordID) => {
 	await db.pinNotebook(getPB(), recordID);
 });

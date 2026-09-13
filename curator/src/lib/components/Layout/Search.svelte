@@ -5,9 +5,10 @@
 
 	type Props = {
 		searchInput: string;
+		searchPlaceholder?: string;
 	};
 
-	let { searchInput = $bindable() }: Props = $props();
+	let { searchInput = $bindable(), searchPlaceholder }: Props = $props();
 
 	async function clearNote() {
 		await goto(`?page=1`, {
@@ -21,7 +22,7 @@
 		type="text"
 		bind:value={searchInput}
 		oninput={() => debouncedSearch(searchInput)}
-		placeholder="Search..."
+		placeholder={`Search ${searchPlaceholder ? searchPlaceholder : '...'}`}
 		class="input relative w-full pr-10 pl-10"
 	/>
 	<div class="text-base-content/50 absolute inset-y-0 left-5 z-30 flex items-center">
