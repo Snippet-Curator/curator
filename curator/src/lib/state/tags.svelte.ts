@@ -17,6 +17,10 @@ export class TagState {
 		this.rootTags = allTags?.rootTags ?? [];
 		this.pinnedTags = allTags?.pinnedTags ?? [];
 	}
+
+	async refresh() {
+		await getAllTags().refresh();
+	}
 }
 
 const TAG_KEY = Symbol('TAG');

@@ -19,7 +19,6 @@
 	import { bottomPages } from './links';
 	import { onMount } from 'svelte';
 	import { guiUpdate } from '$lib/state/ui.svelte';
-	import { resubscribeToPocketNotes } from '$lib/utils';
 	import { getNotebookState, setNotebookState } from '$lib/state/notebooks.svelte';
 	import { getTagState, setTagState } from '$lib/state/tags.svelte';
 	import { getFilterState, setFilterState } from '$lib/state/filter.svelte';
@@ -69,7 +68,13 @@
 	onMount(async () => {
 		await pb.collection('notes').subscribe('*', async () => {
 			if (guiUpdate.suppressRefresh) return;
-			await resubscribeToPocketNotes();
+			await Promise.all([
+				await notebooksState.refresh(),
+				await notebooksState.load(),
+				await getTotalNotecount().refresh(),
+				await tagState.refresh(),
+				await tagState.load()
+			]);
 		});
 	});
 

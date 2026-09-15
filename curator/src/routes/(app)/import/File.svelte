@@ -3,12 +3,16 @@
 	import { SelectTags, SelectNotebook } from '$lib/components/index';
 	import { getImportState } from './import.svelte';
 	import { guiUpdate } from '$lib/state/ui.svelte';
-	import { resubscribeToPocketNotes } from '$lib/utils';
+	import { getNotebookState } from '$lib/state/notebooks.svelte';
+	import { getTagState } from '$lib/state/tags.svelte';
+	import { getTotalNotecount } from '$lib/api/notebook.remote';
 
 	let { flatNotebooks, flatTags } = $props();
 
 	const importState = getImportState();
 	const mouseState = getMouseState();
+	const notebooksState = getNotebookState();
+	const tagState = getTagState();
 
 	let selectedNotebookID = $state<string>('');
 	let selectedTagIdArray = $state<string[]>([]);
@@ -26,7 +30,11 @@
 
 		// get initial counts again
 		guiUpdate.suppressRefresh = false;
-		await resubscribeToPocketNotes();
+		await notebooksState.refresh();
+		await notebooksState.load();
+		await getTotalNotecount().refresh();
+		await tagState.refresh();
+		await tagState.load();
 
 		mouseState.isBusy = false;
 	}

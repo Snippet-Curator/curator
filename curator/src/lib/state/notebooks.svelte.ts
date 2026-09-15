@@ -30,6 +30,11 @@ export class NotebookState {
 		this.inboxCount = this.inbox.count ?? 0;
 		this.inboxID = this.inbox.id ?? '';
 	}
+
+	async refresh() {
+		await getAllNotebooks().refresh();
+		await getInbox().refresh();
+	}
 }
 
 const NOTEBOOK_KEY = Symbol('NOTEBOOK');
