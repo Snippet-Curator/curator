@@ -52,6 +52,8 @@
 
 		url.searchParams.delete('page');
 		const queryString = url.searchParams.toString();
+
+		if (!filterName) return;
 		await createFilter({ name: filterName, queryString });
 		await filterState.refresh();
 	}
