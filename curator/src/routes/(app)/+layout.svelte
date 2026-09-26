@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { pb } from '$lib/pocketbase';
 	import { page } from '$app/state';
+	import { navigating } from '$app/state';
 	import { browser } from '$app/environment';
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 
@@ -211,8 +212,33 @@
 			{/if}
 
 			<Resizable.Pane defaultSize={84} order={2}>
+				{#if navigating.to}
+					<div class="loading-bar"></div>
+				{/if}
 				<div class="bg-base-100">{@render children()}</div>
 			</Resizable.Pane>
 		</Resizable.PaneGroup>
 	{/if}
 {/if}
+
+<style>
+	.loading-bar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		height: 3px;
+		width: 100%;
+		background: linear-gradient(90deg, transparent, var(--accent, #6b491a), transparent);
+		background-size: 200% 100%;
+		animation: loading 2s linear infinite;
+		z-index: 9999;
+	}
+	@keyframes loading {
+		0% {
+			background-position: 200% 0;
+		}
+		100% {
+			background-position: -200% 0;
+		}
+	}
+</style>
