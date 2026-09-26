@@ -4,15 +4,16 @@ import { viewTagsCollectionName, tagsCollection } from '$lib/server/const';
 import { type Tag } from '$lib/types';
 
 export async function getAllTags(pb: PocketBase) {
-	// const start = performance.now()
+	// const start = performance.now();
 
-	const records = await pb.collection(viewTagsCollectionName).getFullList<Tag>({
+	const records = await pb.collection(tagsCollection).getFullList<Tag>({
 		sort: 'name',
 		expand: 'parent'
 	});
+	// console.log('tag count', records.length);
 
-	// const mid = performance.now()
-	// console.log(`after db: ${mid - start} ms`)
+	// const mid = performance.now();
+	// console.log(`retrieve tag from db time: ${mid - start} ms`);
 
 	const flatTags = records;
 	const pinnedTags: Tag[] = [];
@@ -35,13 +36,17 @@ export async function getAllTags(pb: PocketBase) {
 		}
 	});
 
-	// const end = performance.now()
-	// console.log('tags updated in: ', end - start, 'ms')
+	// const end = performance.now();
+	// console.log('tag tree time: ', end - mid, 'ms');
 	return {
 		flatTags,
 		pinnedTags,
 		rootTags
 	};
+}
+
+export async function getTagCounts(pb: PocketBase) {
+	return await pb.collection(viewTagsCollectionName).getFullList();
 }
 
 export async function deleteTag(pb: PocketBase, recordID: string) {

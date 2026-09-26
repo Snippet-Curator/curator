@@ -10,31 +10,32 @@
 		createOneNotebookbyName,
 		deleteNotebook,
 		getAllNotebooks,
-		getInbox,
 		pinNotebook,
 		updateOneNotebookByName,
 		updateOneNotebookByParent
 	} from '$lib/api/notebook.remote';
 	import { toast } from 'svelte-sonner';
+	import { getNotebookState } from '$lib/state/notebooks.svelte';
 
 	type Props = {
 		flatNotebooks: Notebook[];
 		rootNotebooks: Notebook[];
-		allowEdit?: boolean;
 	};
 
-	let { flatNotebooks, rootNotebooks, allowEdit = false }: Props = $props();
-
+	let { flatNotebooks, rootNotebooks }: Props = $props();
 	let isEditOpen = $state(false);
 	let isDeleteOpen = $state(false);
 	let isChangeParentOpen = $state(false);
 	let isNewNotebookOpen = $state(false);
 	let selectedNotebook = $state<Notebook>();
-	let inbox = $derived(await getInbox());
-	let inboxID = $derived(inbox?.id);
+
+	const notebooksState = getNotebookState();
+	const inboxID = $derived(notebooksState.inboxID);
 </script>
 
 {#snippet renderNotebook(notebook: Notebook)}
+	{@const count = notebooksState.getNotebookCount(notebook.id)}
+
 	<div class="group flex w-full items-center justify-between">
 		<a
 			href="/notebook/{notebook.id}"
@@ -42,8 +43,9 @@
 		>
 			{notebook.name}
 		</a>
+
 		<span class="group-hover:text-base-content/70 text-right text-gray-400"
-			>{notebook.note_count > 0 ? notebook.note_count : ''}</span
+			>{count > 0 ? count : ''}</span
 		>
 	</div>
 {/snippet}
@@ -107,7 +109,7 @@
 
 						{#if notebook.children}
 							<ul>
-								<NotebookList {allowEdit} {flatNotebooks} rootNotebooks={notebook.children} />
+								<NotebookList {flatNotebooks} rootNotebooks={notebook.children} />
 							</ul>
 						{/if}
 					</details>
@@ -118,8 +120,8 @@
 		{/if}
 	{/each}
 
-	{#snippet failed()}
-		NotebookList Failed to Render
+	{#snippet failed(error)}
+		Notebook list failed: {error}
 	{/snippet}
 </svelte:boundary>
 

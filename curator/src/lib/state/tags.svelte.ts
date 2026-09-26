@@ -1,25 +1,23 @@
 import { getContext, setContext } from 'svelte';
-import type { Tag } from '$lib/types';
-import { getAllTags } from '$lib/api/tag.remote';
+import { getAllTags, getTagCounts } from '$lib/api/tag.remote';
 
 export class TagState {
-	rootTags = $state<Tag[]>([]);
-	flatTags = $state<Tag[]>([]);
-	pinnedTags = $state<Tag[]>([]);
+	tagQuery = getAllTags();
+	rootTags = $derived(this.tagQuery.current?.rootTags);
+	flatTags = $derived(this.tagQuery.current?.flatTags);
+	pinnedTags = $derived(this.tagQuery.current?.pinnedTags);
 
-	constructor() {
-		this.load();
-	}
-
-	async load() {
-		const allTags = await getAllTags();
-		this.flatTags = allTags?.flatTags ?? [];
-		this.rootTags = allTags?.rootTags ?? [];
-		this.pinnedTags = allTags?.pinnedTags ?? [];
-	}
+	tagCountsQuery = getTagCounts();
+	tagCounts = $derived(
+		Object.fromEntries((this.tagCountsQuery.current ?? []).map((c) => [c.id, c.note_count]))
+	);
 
 	async refresh() {
-		await getAllTags().refresh();
+		await this.tagQuery.refresh();
+	}
+
+	getTagCount(tagID: string) {
+		return this.tagCounts[tagID] ?? 0;
 	}
 }
 

@@ -16,6 +16,10 @@ export const getActiveNotebooks = query(async () => {
 	return await db.getActiveNotebooks(getPB());
 });
 
+export const getNotebookCounts = query(async () => {
+	return await db.getNotebookCounts(getPB());
+});
+
 export const getTotalNotecount = query(async () => {
 	return await db.getTotalNotecount(getPB());
 });

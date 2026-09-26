@@ -1,21 +1,12 @@
 import { getContext, setContext } from 'svelte';
-import type { Filter } from '$lib/types';
 import { getAllFilters } from '$lib/api/filter.remote';
 
 export class FilterState {
-	filters = $state<Filter[]>([]);
-
-	constructor() {
-		this.load();
-	}
-
-	async load() {
-		this.filters = await getAllFilters();
-	}
+	filterQuery = getAllFilters();
+	filters = $derived(this.filterQuery.current);
 
 	async refresh() {
-		await getAllFilters().refresh();
-		this.filters = await getAllFilters();
+		await this.filterQuery.refresh();
 	}
 }
 

@@ -66,7 +66,7 @@
 
 		<div class="card">
 			<ul class="menu w-full">
-				<NotebookList allowEdit={true} {rootNotebooks} {flatNotebooks} />
+				<NotebookList {rootNotebooks} {flatNotebooks} />
 
 				<li class="mr-4 ml-0 pl-0"><a href="/archive"><Archive size={18} />Archive</a></li>
 

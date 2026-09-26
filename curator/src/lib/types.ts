@@ -83,8 +83,12 @@ export type Notebook = {
 	name: string;
 	children?: Notebook[];
 	parent?: string;
-	note_count: number;
 	status: 'pinned' | undefined;
+};
+
+export type NotebookWithCount = {
+	id: string;
+	note_count: number;
 };
 
 export type Tag = {

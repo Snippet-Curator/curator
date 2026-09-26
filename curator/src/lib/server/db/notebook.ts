@@ -7,7 +7,7 @@ import {
 	viewNotebooksCollection,
 	inboxNotebook
 } from '$lib/server/const';
-import { type Notebook } from '$lib/types';
+import { type Notebook, type NotebookWithCount } from '$lib/types';
 
 export async function makeDefaultNotebook(pb: PocketBase) {
 	const { data, error } = await tryCatch(
@@ -28,22 +28,16 @@ export async function makeDefaultNotebook(pb: PocketBase) {
 }
 
 export async function getAllNotebooks(pb: PocketBase) {
-	// const start = performance.now()
-	const { data: records, error } = await tryCatch(
-		pb.collection(viewNotebooksCollection).getFullList<Notebook>({
-			sort: 'name',
-			// filter: 'name != "Inbox"',
-			expand: 'parent'
-		})
-	);
+	// const start = performance.now();
 
-	if (error) {
-		console.error('Error while get all notebooks: ', error.message);
-	}
+	const records = await pb.collection(notebooksCollection).getFullList<Notebook>({
+		sort: 'name',
+		expand: 'parent'
+	});
+	// console.log('notebook count', records.length);
 
-	if (!records) {
-		return;
-	}
+	// const mid = performance.now();
+	// console.log(`retrieve notebooks from db time: ${mid - start} ms`);
 
 	const flatNotebooks = records;
 	const pinnedNotebooks: Notebook[] = [];
@@ -65,8 +59,9 @@ export async function getAllNotebooks(pb: PocketBase) {
 			rootNotebooks.push(notebook);
 		}
 	});
-	// const end = performance.now()
-	// console.log(`notebooks in ${end - start} ms`)
+	// const end = performance.now();
+	// console.log(`notebooks tree time: ${end - mid} ms`);
+
 	return {
 		flatNotebooks,
 		pinnedNotebooks,
@@ -74,8 +69,12 @@ export async function getAllNotebooks(pb: PocketBase) {
 	};
 }
 
+export async function getNotebookCounts(pb: PocketBase) {
+	return await pb.collection(viewNotebooksCollection).getFullList<NotebookWithCount>();
+}
+
 export async function getActiveNotebooks(pb: PocketBase) {
-	return await pb.collection(viewNotebooksCollection).getFullList<Notebook>({
+	return await pb.collection(notebooksCollection).getFullList<Notebook>({
 		sort: 'name',
 		filter: 'name != "Archive" && name != "Trash"'
 	});
@@ -83,7 +82,7 @@ export async function getActiveNotebooks(pb: PocketBase) {
 
 export async function getInbox(pb: PocketBase) {
 	const inbox = await pb
-		.collection<Notebook>(viewNotebooksCollection)
+		.collection<NotebookWithCount>(viewNotebooksCollection)
 		.getFirstListItem(`name="Inbox"`);
 
 	return {
@@ -121,7 +120,7 @@ export async function createOneNotebookbyName(
 
 export async function getOneNotebookByName(pb: PocketBase, notebookName: string) {
 	const { data, error } = await tryCatch(
-		pb.collection(viewNotebooksCollection).getFirstListItem(`name="${notebookName}"`)
+		pb.collection(notebooksCollection).getFirstListItem(`name="${notebookName}"`)
 	);
 
 	if (error) {
@@ -131,7 +130,7 @@ export async function getOneNotebookByName(pb: PocketBase, notebookName: string)
 }
 
 export async function getNotebook(pb: PocketBase, notebookID: string) {
-	return await pb.collection(viewNotebooksCollection).getOne<Notebook>(notebookID);
+	return await pb.collection(notebooksCollection).getOne<Notebook>(notebookID);
 }
 
 export async function deleteNotebook(pb: PocketBase, recordID: string, inboxID: string) {

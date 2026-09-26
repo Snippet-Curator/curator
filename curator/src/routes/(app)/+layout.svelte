@@ -68,13 +68,8 @@
 	onMount(async () => {
 		await pb.collection('notes').subscribe('*', async () => {
 			if (guiUpdate.suppressRefresh) return;
-			await Promise.all([
-				await notebooksState.refresh(),
-				await notebooksState.load(),
-				await getTotalNotecount().refresh(),
-				await tagState.refresh(),
-				await tagState.load()
-			]);
+			await notebooksState.refreshCounts();
+			await tagState.refresh();
 		});
 	});
 
@@ -154,7 +149,7 @@
 
 						<Pinned pinnedNotebooks={pinnedNotebooks ?? []} pinnedTags={pinnedTags ?? []} />
 
-						{#if filters.length > 0}
+						{#if filters && filters.length > 0}
 							<span
 								class="menu-title flex max-h-60 items-center gap-2 overflow-y-auto text-xs tracking-widest uppercase"
 								>Saved Filters</span

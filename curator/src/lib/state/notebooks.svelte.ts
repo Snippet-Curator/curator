@@ -1,39 +1,44 @@
 import { getContext, setContext } from 'svelte';
-import type { Notebook } from '$lib/types';
-import { getActiveNotebooks, getAllNotebooks, getInbox } from '$lib/api/notebook.remote';
+import {
+	getActiveNotebooks,
+	getAllNotebooks,
+	getInbox,
+	getNotebookCounts,
+	getTotalNotecount
+} from '$lib/api/notebook.remote';
 
 export class NotebookState {
-	inbox = $state<{
-		inbox: Notebook;
-		id: string;
-		count: number;
-	}>();
-	inboxID = $state<string>('');
-	inboxCount = $state(0);
-	totalNoteCount = $state(0);
-	rootNotebooks = $state<Notebook[]>([]);
-	flatNotebooks = $state<Notebook[]>([]);
-	pinnedNotebooks = $state<Notebook[]>([]);
-	activeNotebooks = $state<Notebook[]>([]);
+	notebookQuery = getAllNotebooks();
+	rootNotebooks = $derived(this.notebookQuery.current?.rootNotebooks);
+	flatNotebooks = $derived(this.notebookQuery.current?.flatNotebooks);
+	pinnedNotebooks = $derived(this.notebookQuery.current?.pinnedNotebooks);
 
-	constructor() {
-		this.load();
-	}
+	notebookCountsQuery = getNotebookCounts();
+	notebookCounts = $derived(
+		Object.fromEntries((this.notebookCountsQuery.current ?? []).map((c) => [c.id, c.note_count]))
+	);
+	notesCountQuery = getTotalNotecount();
+	totalNoteCount = $derived(this.notesCountQuery.current);
 
-	async load() {
-		const allNotebooks = await getAllNotebooks();
-		this.flatNotebooks = allNotebooks?.flatNotebooks ?? [];
-		this.rootNotebooks = allNotebooks?.rootNotebooks ?? [];
-		this.pinnedNotebooks = allNotebooks?.pinnedNotebooks ?? [];
-		this.activeNotebooks = await getActiveNotebooks();
-		this.inbox = await getInbox();
-		this.inboxCount = this.inbox.count ?? 0;
-		this.inboxID = this.inbox.id ?? '';
-	}
+	activeNotebooks = $derived(getActiveNotebooks());
+
+	inboxQuery = getInbox();
+	inboxID = $derived(this.inboxQuery.current?.id ?? '');
+	inboxCount = $derived(this.inboxQuery.current?.count ?? 0);
 
 	async refresh() {
-		await getAllNotebooks().refresh();
-		await getInbox().refresh();
+		await this.notebookQuery.refresh();
+		await this.inboxQuery.refresh();
+	}
+
+	async refreshCounts() {
+		await this.inboxQuery.refresh();
+		await this.notebookCountsQuery.refresh();
+		await this.notesCountQuery.refresh();
+	}
+
+	getNotebookCount(notebookId: string) {
+		return this.notebookCounts[notebookId] ?? 0;
 	}
 }
 

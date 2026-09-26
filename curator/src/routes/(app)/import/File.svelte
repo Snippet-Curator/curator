@@ -31,10 +31,7 @@
 		// get initial counts again
 		guiUpdate.suppressRefresh = false;
 		await notebooksState.refresh();
-		await notebooksState.load();
-		await getTotalNotecount().refresh();
 		await tagState.refresh();
-		await tagState.load();
 
 		mouseState.isBusy = false;
 	}

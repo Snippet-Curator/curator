@@ -16,6 +16,7 @@
 		updateOneTagByParent
 	} from '$lib/api/tag.remote';
 	import { toast } from 'svelte-sonner';
+	import { getTagState } from '$lib/state/tags.svelte';
 
 	type Props = {
 		rootTags: Tag[];
@@ -25,17 +26,17 @@
 
 	let { rootTags, flatTags, allowEdit = false }: Props = $props();
 
-	// const allTags = $derived(await getAllTags());
-	// const flatTags = $derived(allTags?.flatTags);
-
 	let isEditOpen = $state(false);
 	let isDeleteOpen = $state(false);
 	let isChangeParentOpen = $state(false);
 	let isNewTagOpen = $state(false);
 	let selectedTag = $state<Tag>();
+
+	const tagState = getTagState();
 </script>
 
 {#snippet renderTag(tag: Tag)}
+	{@const count = tagState.getTagCount(tag.id)}
 	<ContextMenu.Root>
 		<ContextMenu.Trigger class="group flex cursor-auto items-center justify-between p-0 pr-2">
 			<a
@@ -51,7 +52,7 @@
 			</a>
 
 			<span class="group-hover:text-base-content/70 text-right text-gray-400"
-				>{tag.note_count > 0 ? tag.note_count : ''}</span
+				>{count > 0 ? count : ''}</span
 			>
 		</ContextMenu.Trigger>
 		<ContextMenu.Content>

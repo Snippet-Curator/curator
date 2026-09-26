@@ -8,6 +8,10 @@ export const getAllTags = query(async () => {
 	return await db.getAllTags(getPB());
 });
 
+export const getTagCounts = query(async () => {
+	return await db.getTagCounts(getPB());
+});
+
 export const getOneTag = query(v.string(), async (tagID) => {
 	return await db.getOneTag(getPB(), tagID);
 });
