@@ -4,7 +4,7 @@ services:
     volumes:
       - ./pb_data:/app/db/pb_data
     ports:
-      - "8090:8090"
+      - "8092:8090"
     restart: unless-stopped
 
   curator:
@@ -13,6 +13,7 @@ services:
       - PUBLIC_POCKETBASE_URL=http://localhost:8090
       - PUBLIC_INTERNAL_POCKETBASE_URL=http://pocketbase:8090
       - ORIGIN=http://127.0.0.1:3000
+      - BODY_SIZE_LIMIT=104857600
       - IG_SERVICE_URL=http://instanote:8000
     depends_on:
       - pocketbase
