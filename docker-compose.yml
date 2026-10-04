@@ -13,8 +13,15 @@ services:
       - PUBLIC_POCKETBASE_URL=http://localhost:8090
       - PUBLIC_INTERNAL_POCKETBASE_URL=http://pocketbase:8090
       - ORIGIN=http://127.0.0.1:3000
+      - IG_SERVICE_URL=http://instanote:8000
     depends_on:
       - pocketbase
     ports:
       - "3000:3000"
     restart: unless-stopped
+
+  instatonote:
+    build: ./instatonote
+    restart: unless-stopped
+    volumes:
+      - ./ig-data:/data
