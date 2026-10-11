@@ -6,6 +6,8 @@
 	import File from './File.svelte';
 	import Youtube from './Youtube.svelte';
 	import Status from './Status.svelte';
+	import Instagram from './Instagram.svelte';
+	import Karakeep from './Karakeep.svelte';
 
 	import { getAllNotebooks } from '$lib/api/notebook.remote';
 	import { getAllTags } from '$lib/api/tag.remote';
@@ -31,10 +33,12 @@
 <div class="h-[calc(100vh-60px)] overflow-y-auto">
 	<div class="mx-auto mb-20 max-w-5xl">
 		<File {flatNotebooks} {flatTags} />
+		<Instagram notebooks={flatNotebooks} tags={flatTags} />
+		<Karakeep notebooks={flatNotebooks} tags={flatTags} />
 		<Youtube notebooks={flatNotebooks} tags={flatTags} />
 		<YoutubePlaylist notebooks={flatNotebooks} tags={flatTags} />
+
 		<div class="divider"></div>
-		<!-- <Instagram {form} /> -->
 		<Status />
 	</div>
 </div>

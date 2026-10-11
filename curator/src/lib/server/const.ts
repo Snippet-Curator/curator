@@ -1,3 +1,6 @@
+import { env } from '$env/dynamic/private';
+export const instatonote_URL = env.IG_SERVICE_URL;
+
 // Pocketbase collections
 export const notebooksCollection = 'notebooks';
 export const notesCollection = 'notes';

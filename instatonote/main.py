@@ -75,5 +75,5 @@ def render(req: Req):
             images=images, videos=videos,
             caption=post.caption or "", profile=post.profile,
         )
-        return {"title": title, "url": canonical, "shortcode": shortcode,
+        return {"title": title, "url": canonical, "shortcode": shortcode, 'caption': post.caption,
                 "kind": kind, "html": html}

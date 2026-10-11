@@ -162,7 +162,14 @@ type YoutubeImport = {
 	selectedTagIdArray: string[];
 };
 
-export type ImportOptions = FileImport | YoutubeImport;
+type InstagramURLImport = {
+	type: 'instagramURLs';
+	url: string;
+	selectedNotebookID: string;
+	selectedTagIdArray: string[];
+};
+
+export type ImportOptions = FileImport | YoutubeImport | InstagramURLImport;
 
 export type EnResource = {
 	data: {

@@ -1,6 +1,7 @@
 import * as v from 'valibot';
-import { command } from '$app/server';
+import { command, query } from '$app/server';
 import { processImport } from '$lib/server/imports/processor';
+import * as karakeep from '$lib/server/karakeep';
 import { getPB } from '$lib/server/pocketbase';
 import {
 	getValidAccessToken,
@@ -31,6 +32,25 @@ export const startYTImport = command(
 		await processImport({ type: 'youtube', url, selectedNotebookID, selectedTagIdArray });
 	}
 );
+
+export const startInstagramImport = command(
+	v.object({
+		url: v.string(),
+		selectedNotebookID: v.string(),
+		selectedTagIdArray: v.array(v.string())
+	}),
+	async ({ url, selectedNotebookID, selectedTagIdArray }) => {
+		await processImport({ type: 'instagramURLs', url, selectedNotebookID, selectedTagIdArray });
+	}
+);
+
+export const getInstagramPosts = query(async () => {
+	return await karakeep.getInstagramPosts(getPB());
+});
+
+export const archiveKarakeepBookmark = command(v.string(), async (bookmarkId) => {
+	await karakeep.archiveKarakeepBookmark(getPB(), bookmarkId);
+});
 
 export const importPlaylist = command(
 	v.object({

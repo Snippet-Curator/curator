@@ -1,4 +1,10 @@
-import { startImport, startYTImport } from '$lib/api/import.remote';
+import {
+	startImport,
+	startYTImport,
+	startInstagramImport,
+	getInstagramPosts,
+	archiveKarakeepBookmark
+} from '$lib/api/import.remote';
 import { tryCatch } from '$lib/utils';
 import { getContext, setContext } from 'svelte';
 
@@ -68,6 +74,76 @@ export class ImportStateClass {
 
 			this.successFiles.push(file.name);
 			this.progress = Math.round(((index + 1) / this.totalFiles) * 100);
+		}
+		this.currentFile = '';
+		this.uploadStatus = 'completed';
+	}
+
+	async importInstagramURLs(urls: string) {
+		if (!urls) throw new Error('Error: no url provided');
+		const urlList = urls.split('\n');
+		console.log('urllist', urlList);
+		this.totalFiles = urlList.length;
+
+		this.uploadStatus = 'in progress';
+		for (const [index, url] of urlList.entries()) {
+			this.progress = Math.round(((index + 1) / this.totalFiles) * 100);
+			if (!url) continue;
+			this.currentFile = url.trim();
+			const { data, error } = await tryCatch(
+				startInstagramImport({
+					url: url.trim(),
+					selectedNotebookID: this.selectedNotebookID,
+					selectedTagIdArray: this.selectedTagIdArray
+				})
+			);
+
+			if (error) {
+				console.error(error);
+				this.failureFiles.push({
+					name: url,
+					error: error.message
+				});
+				continue;
+			}
+
+			this.successFiles.push(url);
+		}
+		this.currentFile = '';
+		this.uploadStatus = 'completed';
+	}
+
+	async importKarakeep() {
+		const posts = await getInstagramPosts();
+		console.log('instagram urls', posts);
+		const urlList = [...posts.keys()];
+
+		this.totalFiles = urlList.length;
+		this.uploadStatus = 'in progress';
+
+		for (const [index, url] of urlList.entries()) {
+			this.progress = Math.round(((index + 1) / this.totalFiles) * 100);
+			if (!url) continue;
+			this.currentFile = url.trim();
+			const { data, error } = await tryCatch(
+				startInstagramImport({
+					url: url.trim(),
+					selectedNotebookID: this.selectedNotebookID,
+					selectedTagIdArray: this.selectedTagIdArray
+				})
+			);
+
+			if (error) {
+				console.error(error);
+				this.failureFiles.push({
+					name: url,
+					error: error.message
+				});
+				continue;
+			}
+
+			await archiveKarakeepBookmark(posts.get(url)!);
+			this.successFiles.push(url);
 		}
 		this.currentFile = '';
 		this.uploadStatus = 'completed';

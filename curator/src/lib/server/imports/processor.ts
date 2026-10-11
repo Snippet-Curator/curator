@@ -3,6 +3,7 @@ import { FileImport } from '$lib/server/imports/parsers/file';
 import { ENEXImport } from '$lib/server/imports/parsers/evernote';
 import { HtmlImport } from '$lib/server/imports/parsers/html';
 import { YoutubeImport } from '$lib/server/imports/parsers/youtube';
+import { InstagramImport } from '$lib/server/imports/parsers/instagram';
 import type { ImportOptions } from '$lib/types';
 
 const decoder = new TextDecoder('utf-8');
@@ -37,10 +38,21 @@ async function importYoutube(
 	await ytImport.uploadToDB();
 }
 
+async function importInstagramURLs(
+	url: string,
+	selectedNotebookID: string,
+	selectedTagIdArray: string[]
+) {
+	const instagramImport = new InstagramImport(getPB(), url, selectedNotebookID, selectedTagIdArray);
+	await instagramImport.uploadToDB();
+}
+
 export async function processImport(options: ImportOptions) {
 	if (options.type === 'file') {
 		await importFile(options.file, options.selectedNotebookID, options.selectedTagIdArray);
 	} else if (options.type === 'youtube') {
 		await importYoutube(options.url, options.selectedNotebookID, options.selectedTagIdArray);
+	} else if (options.type === 'instagramURLs') {
+		await importInstagramURLs(options.url, options.selectedNotebookID, options.selectedTagIdArray);
 	}
 }
