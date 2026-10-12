@@ -61,9 +61,11 @@ def render(req: Req):
         )
 
         try:
+            print(f"Downloading Instagram post: {canonical}")
             post = instaloader.Post.from_shortcode(L.context, shortcode)
             L.download_post(post, target=tmp)
         except Exception as e:
+            print(f"Failed to download Instagram post: {canonical}, error: {str(e)[:300]}")
             raise HTTPException(502, str(e)[:300])
 
         images = [b64(p) for p in sorted(glob.glob(f"{tmp}/*.jpg"))]

@@ -1,6 +1,6 @@
 {
   "name": "instatonote",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "license": "ISC",
   "author": "",
@@ -9,6 +9,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "python -m uvicorn main:app --host 0.0.0.0 --port 8000",
-    "docker": "docker build -t kangruixiang/instatonote:0.0.2 . && docker tag kangruixiang/instatonote:0.0.2 kangruixiang/instatonote:latest && docker push kangruixiang/instatonote:0.0.2 && docker push kangruixiang/instatonote:latest"
+    "docker": "docker build -t kangruixiang/instatonote:0.0.3 . && docker tag kangruixiang/instatonote:0.0.3 kangruixiang/instatonote:latest && docker push kangruixiang/instatonote:0.0.3 && docker push kangruixiang/instatonote:latest"
   }
 }

@@ -43,6 +43,7 @@ export async function getInstagramPosts(pb: PocketBase, maxPages = Infinity) {
 	do {
 		const url = new URL('/api/v1/bookmarks', serverURL);
 		url.searchParams.set('limit', '100');
+		url.searchParams.set('archived', 'false');
 		if (cursor) url.searchParams.set('cursor', cursor);
 
 		const response = await fetch(url, {
@@ -72,6 +73,8 @@ export async function getInstagramPosts(pb: PocketBase, maxPages = Infinity) {
 
 export async function archiveKarakeepBookmark(pb: PocketBase, bookmarkId: string) {
 	const karakeep = await getJsonReadOnlySetting(pb, 'karakeep');
+
+	console.log('Archiving post:', bookmarkId);
 
 	const response = await fetch(new URL(`/api/v1/bookmarks/${bookmarkId}`, karakeep['url']), {
 		method: 'PATCH',

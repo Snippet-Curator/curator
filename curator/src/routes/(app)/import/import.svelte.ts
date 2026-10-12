@@ -122,6 +122,7 @@ export class ImportStateClass {
 		this.uploadStatus = 'in progress';
 
 		for (const [index, url] of urlList.entries()) {
+			console.log('importing', url);
 			this.progress = Math.round(((index + 1) / this.totalFiles) * 100);
 			if (!url) continue;
 			this.currentFile = url.trim();
