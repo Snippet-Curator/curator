@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
 
   instatonote:
-    image: kagnruixiang/instatonote:latest
+    image: kangruixiang/instatonote:latest
     restart: unless-stopped
     volumes:
       - ./ig-data:/data
